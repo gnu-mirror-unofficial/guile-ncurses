@@ -112,6 +112,9 @@
 /* Define to 1 if you have the `term_attrs' function. */
 #undef HAVE_TERM_ATTRS
 
+/* Define if you have uniconv.h */
+#undef HAVE_UNICONV_H
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -127,8 +130,7 @@
 /* define if your compiler has __attribute__ */
 #undef HAVE___ATTRIBUTE__
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Name of package */

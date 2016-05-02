@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script
 
-# Copyright (C) 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.
+# Copyright (C) 2009, 2010, 2011, 2013, 2014, 2016 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
@@ -199,6 +199,15 @@ else
 fi
 AC_MSG_RESULT([$ac_cv_guile_ucs4])
 AM_CONDITIONAL([UCS4],[test "$ac_cv_guile_ucs4" = yes])
+
+if test "$ac_cv_guile_ucs4" = yes
+then
+  AC_CHECK_HEADER([uniconv.h],
+                  [AC_DEFINE([HAVE_UNICONV_H],
+                             [1],
+                             [Define if you have uniconv.h])],
+                  [AC_MSG_FAILURE([uniconv.h could not be found])])
+fi
 
 
 AC_ARG_ENABLE([warnings],
