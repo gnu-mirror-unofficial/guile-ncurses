@@ -46,13 +46,13 @@
 
  (pass-if "unctrl x"
           (string=? "x" (unctrl #\x)))
- 
+
  (pass-if "unctrl xchar #\\bel"
           (string=? "^G" (unctrl (normal #\bel))))
 
  (pass-if "unctrl xchar x"
           (string=? "x" (unctrl (normal #\x))))
- 
+
  (pass-if "keyname #\\bel"
           (string=? "^G" (keyname #\bel)))
 
@@ -69,23 +69,30 @@
        (windata #f))
 
    (pass-if "putwin"
-            (begin
-              (addstr win "zzz" #:y 0 #:x 0)
-              (refresh win)
-              (set! windata (call-with-output-string
-                             (lambda (port)
-                               (putwin win port))))
-              (not (string-null? windata))))
+	    (if (string-prefix? "6.0"
+				(cadr (string-split (curses-version) #\space)))
+		'untested
+		(begin
+		  (addstr win "zzz" #:y 0 #:x 0)
+		  (refresh win)
+		  (set! windata (call-with-output-string
+				 (lambda (port)
+				   (putwin win port))))
+		  (not (string-null? windata)))))
 
    (pass-if "getwin"
-            (begin
-              (clear mainwin)
-              (refresh mainwin)
-              (let ((win (false-if-exception (call-with-input-string windata getwin))))
-		(and win
-		     (begin
-		       (refresh win)
-		       (string=? "zzz" (instr win #:y 0 #:x 0 #:n 3)))))))))
+	    (if (string-prefix? "6.0"
+				(cadr (string-split (curses-version) #\space)))
+		'untested
+
+		(begin
+		  (clear mainwin)
+		  (refresh mainwin)
+		  (let ((win (false-if-exception (call-with-input-string windata getwin))))
+		    (and win
+			 (begin
+			   (refresh win)
+			   (string=? "zzz" (instr win #:y 0 #:x 0 #:n 3))))))))))
 
 (endwin)
 
