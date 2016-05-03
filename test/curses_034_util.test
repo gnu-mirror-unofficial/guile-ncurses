@@ -81,9 +81,11 @@
             (begin
               (clear mainwin)
               (refresh mainwin)
-              (let ((win (call-with-input-string windata getwin)))
-                (refresh win)
-                (string=? "zzz" (instr win #:y 0 #:x 0 #:n 3)))))))
+              (let ((win (false-if-exception (call-with-input-string windata getwin))))
+		(and win
+		     (begin
+		       (refresh win)
+		       (string=? "zzz" (instr win #:y 0 #:x 0 #:n 3)))))))))
 
 (endwin)
 
