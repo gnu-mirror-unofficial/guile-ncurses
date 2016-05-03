@@ -68,6 +68,8 @@ port_read (void *cookie, char *buf, size_t siz)
       else
         buf[0] = c;
 
+      if (siz > 1)
+	buf[1] = '\0';
       return 1;
     }
   else
