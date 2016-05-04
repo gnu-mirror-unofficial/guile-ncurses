@@ -150,7 +150,7 @@ gc_free_panel (SCM x)
   retval = del_panel (gp->panel);
   if (retval != OK)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of panel"),
 		     scm_from_locale_string ("bad argument"),
 		     SCM_BOOL_F, SCM_BOOL_F);

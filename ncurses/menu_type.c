@@ -72,14 +72,14 @@ gucu_new_item (SCM name, SCM description)
     {
       if (errno == E_BAD_ARGUMENT)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-item"),
 			 scm_from_locale_string ("bad argument"),
 			 SCM_BOOL_F, SCM_BOOL_F);
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-item"),
 			 scm_from_locale_string ("system error"),
 			 SCM_BOOL_F, SCM_BOOL_F);
@@ -274,21 +274,21 @@ gc_free_menu (SCM x)
 
   if (retval == E_BAD_ARGUMENT)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of menu"),
 		     scm_from_locale_string ("bad argument"),
 		     SCM_BOOL_F, SCM_BOOL_F);
     }
   else if (retval == E_POSTED)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of menu"),
 		     scm_from_locale_string ("posted"),
 		     SCM_BOOL_F, SCM_BOOL_F);
     }
   else if (retval == E_SYSTEM_ERROR)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of menu"),
 		     scm_from_locale_string ("system error"),
 		     SCM_BOOL_F, SCM_BOOL_F);
@@ -391,7 +391,7 @@ gucu_new_menu (SCM items)
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-menu"),
 			 scm_from_locale_string ("system error"),
 			 SCM_BOOL_F, SCM_BOOL_F);
