@@ -87,14 +87,14 @@ gucu_new_field (SCM height, SCM width, SCM top, SCM left, SCM offscreen,
     {
       if (errno == E_BAD_ARGUMENT)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-field"),
 			 scm_from_locale_string ("bad argument"),
 			 SCM_BOOL_F, SCM_BOOL_F);
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-field"),
 			 scm_from_locale_string ("system error"),
 			 SCM_BOOL_F, SCM_BOOL_F);
@@ -322,14 +322,14 @@ gc_free_form (SCM x)
       form->form = (FORM *) NULL;
       if (retval == E_BAD_ARGUMENT)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("garbage collection of form"),
 			 scm_from_locale_string ("bad argument"),
 			 SCM_BOOL_F, SCM_BOOL_F);
 	}
       else if (retval == E_POSTED)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("garbage collection of form"),
 			 scm_from_locale_string ("posted"),
 			 SCM_BOOL_F, SCM_BOOL_F);
@@ -439,21 +439,21 @@ gucu_new_form (SCM fields)
       free (c_fields);
       if (errno == E_BAD_ARGUMENT)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-form"),
 			 scm_from_locale_string ("bad argument"),
 			 fields, SCM_BOOL_F);
 	}
       else if (errno == E_CONNECTED)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-form"),
 			 scm_from_locale_string ("connected"),
 			 SCM_BOOL_F, SCM_BOOL_F);
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-form"),
 			 scm_from_locale_string ("system error"),
 			 SCM_BOOL_F, SCM_BOOL_F);

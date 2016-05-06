@@ -128,9 +128,13 @@ mark_panel (SCM x)
 
   gp = (struct gucu_panel *) SCM_SMOB_DATA (x);
 
-  scm_gc_mark (gp->window);
+  if (gp != NULL)
+    {
+      scm_gc_mark (gp->window);
+      scm_gc_mark (gp->win_guard);
+    }
 
-  return gp->win_guard;
+  return NULL;
 }
 
 /* The curses primitive that frees memory is called del_panel. Note

@@ -72,14 +72,14 @@ gucu_new_item (SCM name, SCM description)
     {
       if (errno == E_BAD_ARGUMENT)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-item"),
 			 scm_from_locale_string ("bad argument"),
 			 SCM_BOOL_F, SCM_BOOL_F);
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-item"),
 			 scm_from_locale_string ("system error"),
 			 SCM_BOOL_F, SCM_BOOL_F);
@@ -274,21 +274,21 @@ gc_free_menu (SCM x)
 
   if (retval == E_BAD_ARGUMENT)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of menu"),
 		     scm_from_locale_string ("bad argument"),
 		     SCM_BOOL_F, SCM_BOOL_F);
     }
   else if (retval == E_POSTED)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of menu"),
 		     scm_from_locale_string ("posted"),
 		     SCM_BOOL_F, SCM_BOOL_F);
     }
   else if (retval == E_SYSTEM_ERROR)
     {
-      scm_error_scm (SCM_BOOL_F,
+      scm_error_scm (scm_from_locale_symbol ("ncurses"),
 		     scm_from_locale_string ("garbage collection of menu"),
 		     scm_from_locale_string ("system error"),
 		     SCM_BOOL_F, SCM_BOOL_F);
@@ -359,6 +359,17 @@ gucu_new_menu (SCM items)
       if (!_scm_is_item (entry))
 	scm_wrong_type_arg ("new-menu", SCM_ARG1, items);
     }
+  for (i = 0; i < len; i++)
+    {
+      entry = scm_list_ref (items, scm_from_int (i));
+      ITEM *it = _scm_to_item (entry);
+      if (item_index (it) != ERR)
+	scm_error_scm (scm_from_locale_symbol ("ncurses"),
+		       scm_from_locale_string ("new-menu"),
+		       scm_from_locale_string ("~A is already assigned to a menu"),
+		       scm_list_1 (entry),
+		       SCM_BOOL_F);
+    }
 
   // Step 1: allocate memory
   gm = scm_gc_malloc (sizeof (struct gucu_menu), "gucu_menu");
@@ -391,7 +402,7 @@ gucu_new_menu (SCM items)
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (SCM_BOOL_F,
+	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
 			 scm_from_locale_string ("new-menu"),
 			 scm_from_locale_string ("system error"),
 			 SCM_BOOL_F, SCM_BOOL_F);
