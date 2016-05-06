@@ -359,6 +359,17 @@ gucu_new_menu (SCM items)
       if (!_scm_is_item (entry))
 	scm_wrong_type_arg ("new-menu", SCM_ARG1, items);
     }
+  for (i = 0; i < len; i++)
+    {
+      entry = scm_list_ref (items, scm_from_int (i));
+      ITEM *it = _scm_to_item (entry);
+      if (item_index (it) != ERR)
+	scm_error_scm (scm_from_locale_symbol ("ncurses"),
+		       scm_from_locale_string ("new-menu"),
+		       scm_from_locale_string ("~A is already assigned to a menu"),
+		       scm_list_1 (entry),
+		       SCM_BOOL_F);
+    }
 
   // Step 1: allocate memory
   gm = scm_gc_malloc (sizeof (struct gucu_menu), "gucu_menu");
