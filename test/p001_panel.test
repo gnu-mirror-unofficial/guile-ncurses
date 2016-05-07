@@ -40,7 +40,7 @@
             (not (panel? win))))
 
  (pass-if "new panel windows are panels"
-          (let ((win (newwin 5 5 5 5 #:panel)))
+          (let ((win (newwin 5 5 5 5 #:panel #t)))
             (panel? win)))
 
  (pass-if "make-panel! windows are panels"

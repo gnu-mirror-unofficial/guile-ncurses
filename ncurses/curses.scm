@@ -1580,7 +1580,7 @@ usually not necessary."
   (assert-window win)
   (%delwin win))
 
-(define* (derwin origwin nlines ncols begin_y begin_x #:optional panel)
+(define* (derwin origwin nlines ncols begin_y begin_x #:key (panel #f))
   "Creates and returns a new window with the given number of lines and
 columns.  The window is at position BEGIN_Y, BEGIN_X on the original
 window ORIGWIN.  The window is made in the middle of the window
@@ -2189,14 +2189,14 @@ or #f on failure"
      (else
       ret))))
 
-(define* (newwin nlines ncols begin_y begin_x #:optional panel)
+(define* (newwin nlines ncols begin_y begin_x #:key (panel #f))
   "Creates and returns a window with the given number of lines and columns.
 The upper, left-hand corner of the window is at line BEGIN_Y and column
 BEGIN_X.  If either NLINES or NCOLS is zero, the window will extend to the
 bottom, right-hand cornder of the screen.  A new, full-screen window is
 created by calling (newwin 0 0 0 0).
 
-If panel is #t, the window is converted to a panel."
+If the optional keyword argument #:panel is #t, the window is converted to a panel."
   (for-each (lambda (x) (assert-integer x))
             (list nlines ncols begin_y begin_x))
   (let ((win (%newwin nlines ncols begin_y begin_x)))
@@ -2477,14 +2477,14 @@ returns #f on failure or a window structure on success"
   (assert-integer begin_x)
   (%subpad origwin nlines ncols begin_y begin_x))
 
-(define* (subwin origwin nlines ncols begin_y begin_x #:optional panel)
+(define* (subwin origwin nlines ncols begin_y begin_x #:key (panel #f))
   "Creates and returns a new window with the given number of lines and
 columns.  The window is at position BEGIN_Y, BEGIN_X on the screen.
 The window is made in the middle of the window ORIGWIN, so that
 changes made to one window will affect both windows.  The subwindow
 shares memory with the original window.
 
-If panel is #t, the window is converted into a panel."
+If optional keyword argument #:panel is #t, the window is converted into a panel."
   (assert-window origwin)
   (assert-integer nlines)
   (assert-integer ncols)
