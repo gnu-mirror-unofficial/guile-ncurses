@@ -164,6 +164,8 @@ struct gucu_window
   PANEL *panel;
 };
 
+GUCU_LOCAL size_t free_window (SCM x);
+
 GUCU_LOCAL int _scm_is_window (SCM x);
 GUCU_LOCAL WINDOW *_scm_to_window (SCM x);
 GUCU_LOCAL SCM _scm_from_window (WINDOW * x);

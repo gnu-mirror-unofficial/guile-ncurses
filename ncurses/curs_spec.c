@@ -110,19 +110,8 @@ gucu_color_content (SCM s_color)
 SCM
 gucu_delwin (SCM win)
 {
-  WINDOW *c_win = _scm_to_window (win);
-
-  SCM_SET_SMOB_DATA (win, NULL);
-
-  if (c_win != NULL)
-    {
-      int ret = delwin (c_win);
-      if (ret == ERR)
-	return SCM_BOOL_F;
-      else
-	return SCM_BOOL_T;
-    }
-  return SCM_BOOL_F;
+  free_window (win);
+  return SCM_BOOL_T;
 }
 
 
