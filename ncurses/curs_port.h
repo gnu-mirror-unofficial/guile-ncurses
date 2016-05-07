@@ -30,8 +30,12 @@ License along with Guile-Ncurses.  If not, see
 #endif
 
 #ifdef GUCU_USE_COOKIE
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
+#ifndef _LARGEFILE64_SOURCE
 #define _LARGEFILE64_SOURCE
+#endif
 #endif
 
 #include <libguile.h>
