@@ -87,17 +87,11 @@ gucu_new_field (SCM height, SCM width, SCM top, SCM left, SCM offscreen,
     {
       if (errno == E_BAD_ARGUMENT)
 	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-field"),
-			 scm_from_locale_string ("bad argument"),
-			 SCM_BOOL_F, SCM_BOOL_F);
+	  scm_misc_error ("new-field", "bad argument", SCM_EOL);
 	}
       else if (errno == E_SYSTEM_ERROR)
 	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-field"),
-			 scm_from_locale_string ("system error"),
-			 SCM_BOOL_F, SCM_BOOL_F);
+	  scm_misc_error ("new-field", "system error", SCM_EOL);
 	}
       else
 	abort ();
