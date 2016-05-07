@@ -1848,7 +1848,7 @@ one-fifth of a second.
 @node Panels Library, Menu Library, Interfacing with the mouse, Curses Tutorial
 @section Panels Library
 
-Curses was originally build around the idea of having tiled text
+Curses was originally built around the idea of having tiled text
 windows, where they did not overlap.  The API is not set up to do the
 bookkeeping for overlapping windows.
 
@@ -6144,6 +6144,14 @@ curses to a single line, instead of the to the entire screen.
 @node Window creation, Terminal resizing, Miscellaneous utilities, The basic curses library
 @subsection Window creation
 
+@deffn Procedure window? win
+
+Returns @code{#t} if @var{win} is a window, and @code{#f} otherwise.
+
+Note that panel windows also return @code{#t}.
+
+@end deffn
+
 @deffn Procedure newwin nlines ncols begin-y begin-x #:key panel 
 @cindex Windows, creation
 
@@ -6441,11 +6449,19 @@ high-level curses calls, and work anywhere terminfo curses does.
 
 @deffn Procedure make-panel! win
 
-This procedure allocates a PANEL structure, associates it with
-@var{win}, places the panel on the top of the stack (causes it to be
+This procedure converts a regular window @var{win} into a panel
+window.  It places the panel on the top of the stack (causes it to be
 displayed above any other panel).
 
 The return value is unspecified.
+
+@end deffn
+
+@deffn Procedure panel? win
+
+This procedure returns @code{#t} if @var{win} is a panel window,
+and it returns @code{#f} if it is a plain window or it is not
+a window.
 
 @end deffn
 
