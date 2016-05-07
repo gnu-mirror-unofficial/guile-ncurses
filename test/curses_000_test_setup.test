@@ -47,9 +47,11 @@
 
 ;; (format #t "TERMINFO ~a~%" (getenv "TERMINFO"))
 
-(if (not (string=? (getenv "ORIGTERM") "xterm"))
+(if (or (not (string? (getenv "ORIGTERM")))
+	(not (string=? (getenv "ORIGTERM") "xterm")))
     (begin
-      (if (string-null? (getenv "ORIGTERM"))
+      (if (or (not (string? (getenv "ORIGTERM")))
+	      (string-null? (getenv "ORIGTERM")))
 	  (format #t "WARNING: I can't detect the terminal you're running now.~%")
 	  (format #t "WARNING: This terminal is a ~s.~%" (getenv "ORIGTERM")))
       (format #t
