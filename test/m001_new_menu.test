@@ -45,7 +45,15 @@
             (maybe-sleep 1)
             (unpost-menu m)
             (refresh win)
-            (menu? m))))
+            (menu? m)))
+
+  (pass-if "items can't be used in more than one menu"
+	   (let* ((item (new-item "item1" "description1"))
+		  (m1 (new-menu (list item)))
+		  (m2 (false-if-exception (new-menu (list item)))))
+	     (not (menu? m2))))
+
+  )
 
 (endwin)
 
