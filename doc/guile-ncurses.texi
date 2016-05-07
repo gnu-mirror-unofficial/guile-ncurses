@@ -674,15 +674,6 @@ created with the function @code{newterm} and used by the function
 This type is usually only found in programs that use multiple
 terminals.
 
-@item The @code{#<panel>} type
-
-@tindex #<panel>
-@findex new-panel
-
-The @code{#<panel>} type is an opaque type that represents a window's
-place in a stack of windows.  It is created with @code{new-panel}.  It
-is used in functions that deal with overlapping windows
-
 @item The @code{#<item>} type
 
 @tindex #<item>
@@ -1892,15 +1883,17 @@ take a close peek into panels.
 @node Panels Basics, Compiling With the Panels Library, Panels Library, Panels Library
 @subsection Panels Basics
 
-The @code{#<panel>} object is a window that is implicitly treated as
-part of a deck including all other panel objects. The deck is treated
+The panel library can handle the redrawing of your
+overlapping windows.
+The window being managed by the panel library is implicitly treated as
+part of a deck including all other panel windows. The deck is treated
 as a stack with the top panel being completely visible and the other
 panels may or may not be obscured according to their positions. So the
 basic idea is to create a stack of overlapping panels and use panels
 library to display them correctly. There is a function similar to
 @code{refresh} which, when called , displays panels in the correct
 order. Functions are provided to hide or show panels, move panels,
-change its size etc.. The overlapping problem is managed by the panels
+change its size, etc.  The overlapping problem is managed by the panels
 library during all the calls to these functions.
 
 The general flow of a panel program goes like this:
@@ -1910,25 +1903,45 @@ The general flow of a panel program goes like this:
 Create the windows (with @code{newwin}) to be attached to the panels.
 
 @item
-Create panels with the chosen visibility order. Stack them up
-according to the desired visibility. The function @code{new-panel} is
-used to create panels.
+@findex make-panel!
+@cindex Panels, initialization
+Convert standard windows to panel windows with the chosen visibility order. Stack them up
+according to the desired visibility. The function @code{make-panel!} is
+used to create convert a standard window to a panel window.
 
 @item
+@findex update-panels
+@cindex Panels, display
 Call @code{update-panels} to write the panels to the virtual screen in
 correct visibility order. Do a @code{doupdate} to show it on the
 screen.
 
 @item
+@findex show-panel
+@findex hide-panel
+@findex move-panel
+@findex panel-hidden
 Manipulate the panels with @code{show-panel}, @code{hide-panel},
 @code{move-panel} etc.  Make use of helper functions like
-@code{panel-hidden} and @code{panel-window}.
+@code{panel-hidden}.
 
 @item
-When you are done with the panel use @code{del-panel} to delete the
-panel.
+If you ever wish to convert the panel window back into a manually
+managed window, use @code{del-panel!} to delete the
+panel functionality from the window.
 
+@item
+The procedure @code{delwin} frees the window.
 @end enumerate
+
+Note that there is also a shorter way to create and window and
+convert it to a panel window. The procedure @code{newwin} (as well
+as @code{subwin} and @code{derwin} take an optional parameter @code{#:panel}
+that, when true, creates the window as a panel window, as in the code snippet below:
+
+@example
+(define pwin (newwin 10 10 10 10 #:panel #t))
+@end example
 
 Let's make the concepts clear, with some programs. The following is a simple
 program which creates 3 overlapping panels and shows them on the screen.
@@ -1944,8 +1957,8 @@ To use panels library functions, you have to use the module
 @end example
 
 As you can see, above program follows a simple flow. The windows are
-created with @code{newwin} and then they are attached to panels with
-@code{new-panel}. As we attach one panel after another, the stack of
+created with @code{newwin} and then they are marked as panels with
+@code{make-panel!}. As we attach one panel after another, the stack of
 panels gets updated.  To put them on screen @code{update-panels} and
 @code{doupdate} are called.
 
@@ -1962,14 +1975,7 @@ desired location. It does not change the position of the panel in the
 stack. Make sure that you use @code{move-panel} instead @code{mvwin}
 on the window associated with the panel.
 
-Resizing a panel is slightly complex. There is no straight forward
-function just to resize the window associated with a panel. A solution
-to resize a panel is to create a new window with the desired sizes,
-change the window associated with the panel using
-@code{replace-panel!}. Don't forget to delete the old window. The
-window associated with a panel can be found by using the function
-@code{panel-window}.
-
+A limitation of panel windows is that, once created, they cannot be resized.
 
 @node Menu Library, Forms Library, Panels Library, Curses Tutorial
 @section Menu Library
@@ -6138,7 +6144,7 @@ curses to a single line, instead of the to the entire screen.
 @node Window creation, Terminal resizing, Miscellaneous utilities, The basic curses library
 @subsection Window creation
 
-@deffn Procedure newwin nlines ncols begin-y begin-x
+@deffn Procedure newwin nlines ncols begin-y begin-x #:key panel 
 @cindex Windows, creation
 
 Calling @code{newwin} creates and returns a pointer to a new window
@@ -6147,6 +6153,10 @@ corner of the window is at line @var{begin-y}, column @var{begin-x}.
 If either @var{nlines} or @var{ncols} is zero, they default to
 @code{(- (lines) begin-y)} and @code{(- (cols) begin-x)}.  A new
 full-screen window is created by calling @code{(newwin 0 0 0 0)}.
+
+If the optional keyword argument @code{#:panel} is @code{#t}, the window
+is created as a panel window, and the panel library functions are
+used to draw and move the window.
 
 @end deffn
 
@@ -6174,7 +6184,7 @@ The return value is unspecified;
 @end deffn
 
 
-@deffn Procedure subwin orig nlines ncols begin-y begin-x
+@deffn Procedure subwin orig nlines ncols begin-y begin-x #:key panel 
 @cindex Windows, derived
 @cindex Subwindows
 
@@ -6193,6 +6203,10 @@ When using this routine, it is necessary to call @code{touchwin} or
 @code{touchline} on @var{orig} before calling @code{refresh} on the
 subwindow.
 
+If the optional keyword argument @code{#:panel} is @code{#t}, the
+window is created as a panel window, and the panel library functions
+are used to draw and move the window.
+
 @end deffn
 
 @findex %is-subwin-broken
@@ -6209,7 +6223,7 @@ the constant @code{%is-subwin-broken}, which will be #f is @code{is-subwin?}
 actually works.
 @end deffn
 
-@deffn Procedure derwin orig nlines ncols begin-y begin-x
+@deffn Procedure derwin orig nlines ncols begin-y begin-x #:key panel
 @cindex Windows, derived
 @cindex Subwindows
 
@@ -6218,10 +6232,13 @@ that @var{begin-y} and @var{begin-x} are relative to the origin of the
 window @var{orig} rather than the screen. There is no difference
 between the subwindows and the derived windows.
 
+If the optional keyword argument @code{#:panel} is @code{#t}, the
+window is created as a panel window, and the panel library functions
+are used to draw and move the window.
+
 It returns a window that shares memory with @var{orig}, or @code{#f}
 if the window could not be created.
 @end deffn
-
 
 @deffn Procedure mvderwin win par-y par-x
 
@@ -6414,18 +6431,21 @@ set of currently visible panels is the stack of panels.  The
 @code{stdscr} window is beneath all panels, and is not considered part
 of the stack.
 
-A window is associated with every panel. The panel routines enable you
+A regular window may be converted to a panel window to enable the use
+of panel functions on it.  The panel routines enable you
 to create, move, hide, and show panels, as well as position a panel at
 any desired location in the stack.
 
 Panel routines are a functional layer added to curses, make only
 high-level curses calls, and work anywhere terminfo curses does.
 
-@deffn Procedure new-panel win
+@deffn Procedure make-panel! win
 
 This procedure allocates a PANEL structure, associates it with
 @var{win}, places the panel on the top of the stack (causes it to be
-displayed above any other panel) and returns the new panel.
+displayed above any other panel).
+
+The return value is unspecified.
 
 @end deffn
 
@@ -6441,10 +6461,10 @@ procedure responsible for updating the physical screen.
 @end deffn
 
 
-@deffn Procedure del-panel pan
+@deffn Procedure del-panel! pan
 
-This procedure removes the given panel from the stack and invalidates
-@var{pan}
+This procedure removes the panel property of a window and restores
+it to a standard window.
 
 @end deffn
 
@@ -6482,17 +6502,6 @@ This procedure moves the given panel window so that its upper-left
 corner is at @var{starty}, @var{startx}.  It does not change the
 position of the panel in the stack.  Be sure to use this function, not
 @code{mvwin}, to move a panel window.
-@end deffn
-
-@deffn Procedure replace-panel! pan window
-This procedure replaces the current window of panel with window
-(useful, for example if you want to resize a panel; It does not change
-the position of the panel in the stack.
-@end deffn
-
-
-@deffn Procedure panel-window panel
-Returns the window of a given panel
 @end deffn
 
 @node The curses menu library, The curses form library, The curses panel library, Curses Reference
