@@ -53,7 +53,7 @@
 #endif
 
 static scm_t_bits screen_tag;
-static scm_t_bits window_tag;
+scm_t_bits window_tag;
 
 SCM equalp_window (SCM x1, SCM x2);
 size_t free_window (SCM x);
@@ -845,7 +845,8 @@ gucu_is_mevent_p (SCM x)
 // garbage collected prematurely, we carry references to them along
 // with the SCREEN structure.  They must all exist as a set.
 
-struct screen_and_ports {
+struct screen_and_ports
+{
   SCREEN *screen;               /* the SCREEN* created by ncurses newterm */
   FILE *ifp;                    /* The associated input file stream */
   FILE *ofp;                    /* The associated output file stream */
@@ -874,7 +875,7 @@ _scm_to_screen (SCM x)
 }
 
 void
-_scm_to_screen_and_ports (SCM x, SCREEN **screen, FILE **ofp, FILE **ifp)
+_scm_to_screen_and_ports (SCM x, SCREEN ** screen, FILE ** ofp, FILE ** ifp)
 {
   assert (_scm_is_screen (x));
   assert (screen != NULL);
@@ -887,7 +888,7 @@ _scm_to_screen_and_ports (SCM x, SCREEN **screen, FILE **ofp, FILE **ifp)
 }
 
 SCM
-_scm_from_screen_and_ports (SCREEN * x, FILE *ofp, FILE *ifp)
+_scm_from_screen_and_ports (SCREEN * x, FILE * ofp, FILE * ifp)
 {
   SCM s_screen;
 
@@ -895,7 +896,7 @@ _scm_from_screen_and_ports (SCREEN * x, FILE *ofp, FILE *ifp)
   assert (ofp != NULL);
   assert (ifp != NULL);
 
-  struct screen_and_ports *sp = scm_malloc (sizeof(struct screen_and_ports));
+  struct screen_and_ports *sp = scm_malloc (sizeof (struct screen_and_ports));
   sp->screen = x;
   sp->ofp = ofp;
   sp->ifp = ifp;
@@ -950,7 +951,7 @@ print_screen (SCM x, SCM port, scm_print_state * pstate UNUSED)
 {
   struct screen_and_ports *sp;
   SCREEN *screen;
-  char str[SIZEOF_VOID_P*2+3];
+  char str[SIZEOF_VOID_P * 2 + 3];
 
   /* Don't use _scm_is_screen in this assert, because it says freed screens aren't
      screens.  */
@@ -966,7 +967,7 @@ print_screen (SCM x, SCM port, scm_print_state * pstate UNUSED)
     }
   else
     {
-      if (snprintf (str, sizeof(str), "%p", (void *) screen) < 0)
+      if (snprintf (str, sizeof (str), "%p", (void *) screen) < 0)
         scm_puts ("???", port);
       else
         scm_puts (str, port);
@@ -984,7 +985,7 @@ gucu_is_screen_p (SCM x)
   return scm_from_bool (_scm_is_screen (x));
 }
 
-// window -- in C, a WINDOW *.  In Scheme, a smob that contains the pointer
+// window -- in C, a struct gucu_window *.  In Scheme, a smob that contains the pointer
 
 int
 _scm_is_window (SCM x)
@@ -1004,35 +1005,55 @@ _scm_is_window (SCM x)
 WINDOW *
 _scm_to_window (SCM x)
 {
+  struct gucu_window *wp = NULL;
   assert (_scm_is_window (x));
 
-  return (WINDOW *) SCM_SMOB_DATA (x);
+  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
+  if (wp != (struct gucu_window *) NULL)
+    return wp->window;
+
+  return (WINDOW *) NULL;
 }
 
 SCM
-_scm_from_window (WINDOW * x)
+_scm_from_window_full (SCM parent, SCM name, WINDOW * win)
 {
   SCM s_win;
+  struct gucu_window *wp;
 
-  assert (x != NULL);
+  assert (win != NULL);
+  assert (_scm_is_window (parent) || parent == SCM_BOOL_F);
+  assert (scm_is_string (name) || name == SCM_BOOL_F);
 
-  SCM_NEWSMOB (s_win, window_tag, x);
+  wp = scm_gc_malloc (sizeof (struct gucu_window), "_scm_from_window_full");
 
-  assert (x == (WINDOW *) SCM_SMOB_DATA (s_win));
+  SCM_NEWSMOB (s_win, window_tag, wp);
+
+  wp->parent = parent;
+  wp->name = name;
+  wp->window = win;
+  wp->panel = (PANEL *) NULL;
 
   if (0)
     {
 #ifdef NCURSES_OPAQUE
       fprintf (stderr, "Making smob from window\n");
 #else
-      fprintf (stderr, "Making smob from window at %d, %d\n", x->_begx, x->_begy);
+      fprintf (stderr, "Making smob from window at %d, %d\n", x->_begx,
+               x->_begy);
 #endif
     }
 
   return (s_win);
 }
 
-// Windows are equal if they point to the same C structure
+SCM
+_scm_from_window (WINDOW * x)
+{
+  return _scm_from_window_full (SCM_BOOL_F, SCM_BOOL_F, x);
+}
+
+// Windows are equal if they point to the same C structures
 SCM
 equalp_window (SCM x1, SCM x2)
 {
@@ -1044,8 +1065,8 @@ equalp_window (SCM x1, SCM x2)
   assert (_scm_is_window (x1));
   assert (_scm_is_window (x2));
 
-  win1 = (WINDOW *) SCM_SMOB_DATA (x1);
-  win2 = (WINDOW *) SCM_SMOB_DATA (x2);
+  win1 = _scm_to_window (x1);
+  win2 = _scm_to_window (x2);
 
   if ((win1 == NULL) || (win2 == NULL))
     return SCM_BOOL_F;
@@ -1056,36 +1077,53 @@ equalp_window (SCM x1, SCM x2)
 }
 
 SCM
-mark_window (SCM x UNUSED)
+mark_window (SCM x)
 {
-  // No SCMs in the window type: nothing to do here.
-  return (SCM_BOOL_F);
+  struct gucu_window *wp;
+  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
+  if (wp != (struct gucu_window *) NULL)
+    {
+      scm_gc_mark (wp->parent);
+      scm_gc_mark (wp->name);
+    }
+  return SCM_BOOL_F;
 }
 
 size_t
 free_window (SCM x)
 {
+  struct gucu_window *wp;
   WINDOW *win;
 
   assert (SCM_SMOB_PREDICATE (window_tag, x));
 
-  win = (WINDOW *) SCM_SMOB_DATA (x);
+  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
   /* Windows should already be null if delwin has been called on them */
-  if (win != NULL)
+  if (wp != NULL)
     {
-      if (win == stdscr)
+      wp->parent = SCM_BOOL_F;
+      wp->name = SCM_BOOL_F;
+      if (wp->panel != (PANEL *) NULL)
         {
-          endwin ();
-          fprintf (stderr, "Freeing stdscr #<window %p>", (void *) stdscr);
-          delwin (stdscr);
-          SCM_SET_SMOB_DATA (x, 0);
+          int retval;
+          retval = del_panel (wp->panel);
+          if (retval != OK)
+            {
+              scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                             scm_from_locale_string
+                             ("garbage collection of panel"),
+                             scm_from_locale_string ("bad argument"),
+                             SCM_BOOL_F, SCM_BOOL_F);
+            }
+          wp->panel = (PANEL *) NULL;
         }
-      else
+
+      if (wp->window != stdscr)
         {
-          /* This is going to break something */
-          delwin (win);
-          SCM_SET_SMOB_DATA (x, 0);
+          delwin (wp->window);
+          wp->window = (WINDOW *) NULL;
         }
+      SCM_SET_SMOB_DATA (x, NULL);
     }
 
   return 0;
@@ -1094,31 +1132,46 @@ free_window (SCM x)
 int
 print_window (SCM _win, SCM port, scm_print_state * pstate UNUSED)
 {
-  WINDOW *win = (WINDOW *) SCM_SMOB_DATA (_win);
-  char str[SIZEOF_VOID_P*2+3];
+  struct gucu_window *wp = (struct gucu_window *) SCM_SMOB_DATA (_win);
+  char str[SIZEOF_VOID_P * 2 + 3];
 
   assert (SCM_SMOB_PREDICATE (window_tag, _win));
 
   scm_puts ("#<window ", port);
 
-  if (win == 0)
+  if (wp == (struct gucu_window *) NULL)
     scm_puts ("(freed)", port);
   else
     {
-      int y, x;
-      getmaxyx (win, y, x);
-      snprintf (str, sizeof (str), "%d by %d ", y, x);
-      scm_puts (str, port);
-      if (win == stdscr)
-        scm_puts ("stdscr ", port);
-      else if (win == newscr)
-        scm_puts ("newscr ", port);
-      else if (win == curscr)
-        scm_puts ("curscr ", port);
-      if (snprintf (str, sizeof(str), "%p", (void *) win) < 0)
-        scm_puts ("???", port);
+      if (wp->name != SCM_BOOL_F)
+        {
+          scm_write (wp->name, port);
+          scm_puts (" ", port);
+        }
+
+      if (wp->window == 0)
+        scm_puts ("(windowless)", port);
       else
-        scm_puts (str, port);
+	{
+	  int y, x;
+
+	  if (wp->panel != (PANEL *) NULL)
+	    scm_puts ("panel ", port);
+	  getmaxyx (wp->window, y, x);
+	  snprintf (str, sizeof (str), "%d by %d ", y, x);
+	  scm_puts (str, port);
+	  if (wp->window == stdscr)
+	    scm_puts ("stdscr ", port);
+	  if (wp->window == newscr)
+	    scm_puts ("newscr ", port);
+	  if (wp->window == curscr)
+	    scm_puts ("curscr ", port);
+
+	  if (snprintf (str, sizeof (str), "%p", (void *) wp->window) < 0)
+	    scm_puts ("???", port);
+	  else
+	    scm_puts (str, port);
+	}
     }
   scm_puts (">", port);
 
@@ -1156,15 +1209,15 @@ gucu_init_type ()
       scm_c_define_gsubr ("window?", 1, 0, 0, gucu_is_window_p);
 
       scm_c_define_gsubr ("%scheme-char-to-c-char", 1, 0, 0,
-                          gucu_schar_to_char);
+			  gucu_schar_to_char);
       scm_c_define_gsubr ("%scheme-char-to-c-wchar", 1, 0, 0,
-                          gucu_schar_to_wchar);
+			  gucu_schar_to_wchar);
       scm_c_define_gsubr ("%scheme-char-from-c-char", 1, 0, 0,
-                          gucu_schar_from_char);
+			  gucu_schar_from_char);
       scm_c_define_gsubr ("%scheme-char-from-c-wchar", 1, 0, 0,
-                          gucu_schar_from_wchar);
+			  gucu_schar_from_wchar);
       scm_c_define_gsubr ("%xchar-from-chtype", 1, 0, 0,
-                          gucu_xchar_from_chtype);
+			  gucu_xchar_from_chtype);
       scm_c_define_gsubr ("%xchar-to-chtype", 1, 0, 0, gucu_xchar_to_chtype);
 
       first = 0;

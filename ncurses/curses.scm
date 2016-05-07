@@ -487,6 +487,11 @@
             xchar-attr
             xchar-color
             xchar-chars
+
+            ;; Forward declaration of panel library functions
+            panel?
+            make-panel!
+            del-panel!
             ))
 
 (if (string=? "1.8" (string-take (version) 3)) 
@@ -1575,7 +1580,7 @@ usually not necessary."
   (assert-window win)
   (%delwin win))
 
-(define (derwin origwin nlines ncols begin_y begin_x)
+(define* (derwin origwin nlines ncols begin_y begin_x #:optional panel)
   "Creates and returns a new window with the given number of lines and
 columns.  The window is at position BEGIN_Y, BEGIN_X on the original
 window ORIGWIN.  The window is made in the middle of the window
@@ -1584,7 +1589,10 @@ The subwindow shares memory with the original window."
   (assert-window origwin)
   (for-each (lambda (x) (assert-integer x))
             (list nlines ncols begin_y begin_x))
-  (%derwin origwin nlines ncols begin_y begin_x))
+  (let ((win (%derwin origwin nlines ncols begin_y begin_x)))
+    (if (and win panel)
+        (make-panel! win))
+    win))
 
 (define (doupdate)
   "Copies the virtual screen to the physical screen."
@@ -2181,15 +2189,20 @@ or #f on failure"
      (else
       ret))))
 
-(define (newwin nlines ncols begin_y begin_x)
+(define* (newwin nlines ncols begin_y begin_x #:optional panel)
   "Creates and returns a window with the given number of lines and columns.
 The upper, left-hand corner of the window is at line BEGIN_Y and column
 BEGIN_X.  If either NLINES or NCOLS is zero, the window will extend to the
 bottom, right-hand cornder of the screen.  A new, full-screen window is
-created by calling (newwin 0 0 0 0)."
+created by calling (newwin 0 0 0 0).
+
+If panel is #t, the window is converted to a panel."
   (for-each (lambda (x) (assert-integer x))
             (list nlines ncols begin_y begin_x))
-  (%newwin nlines ncols begin_y begin_x))
+  (let ((win (%newwin nlines ncols begin_y begin_x)))
+    (if (and win panel)
+        (make-panel! win))
+    win))
 
 (define (nl!) 
   "Enables the underlying display device to translate the return key
@@ -2464,18 +2477,23 @@ returns #f on failure or a window structure on success"
   (assert-integer begin_x)
   (%subpad origwin nlines ncols begin_y begin_x))
 
-(define (subwin origwin nlines ncols begin_y begin_x)
+(define* (subwin origwin nlines ncols begin_y begin_x #:optional panel)
   "Creates and returns a new window with the given number of lines and
 columns.  The window is at position BEGIN_Y, BEGIN_X on the screen.
 The window is made in the middle of the window ORIGWIN, so that
 changes made to one window will affect both windows.  The subwindow
-shares memory with the original window."
+shares memory with the original window.
+
+If panel is #t, the window is converted into a panel."
   (assert-window origwin)
   (assert-integer nlines)
   (assert-integer ncols)
   (assert-integer begin_y)
   (assert-integer begin_x)
-  (%subwin origwin nlines ncols begin_y begin_x))
+  (let ((win (%subwin origwin nlines ncols begin_y begin_x)))
+    (if (and win panel)
+        (make-panel! win))
+    win))
 
 (define (syncdown win)
   "Touches all location in children of WIN that are changed in WIN."
@@ -2594,6 +2612,7 @@ by the given window."
   (%wenclose? win y x))
 
 (load-extension "libguile-ncurses" "gucu_init")
+(load-extension "libguile-ncurses" "gucu_panel_init_type")
 
 ;; These functions may not exist depending on the
 ;; compile time options

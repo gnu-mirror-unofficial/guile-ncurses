@@ -32,7 +32,8 @@ GUCU_API void gucu_panel_init (void);
 void
 gucu_panel_init ()
 {
-  gucu_panel_init_type ();
+  // gucu_panel_init_type () is initialized in ncurses.scm
+
   gucu_panel_init_function ();
   gucu_panel_init_special ();
 }

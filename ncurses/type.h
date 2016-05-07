@@ -1,7 +1,7 @@
 /*
   type.h
 
-  Copyright 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -39,6 +39,17 @@
 #else
 #error "No curses.h file included"
 #endif
+
+#if HAVE_CURSES_H
+#include <panel.h>
+#elif HAVE_NCURSES_CURSES_H
+#include <ncurses/panel.h>
+#elif HAVE_NCURSESW_CURSES_H
+#include <ncursesw/panel.h>
+#else
+#error "No panel.h file included"
+#endif
+
 
 #include "visibility.h"
 
@@ -132,9 +143,31 @@ GUCU_LOCAL void _scm_free_screen (SCM x);
 
 GUCU_API SCM gucu_is_screen_p (SCM x);
 
+extern scm_t_bits window_tag;
+
+struct gucu_window
+{
+  /* The parent window of a subwin or derwin, or SCM_BOOL_F if
+     there is no parent. */
+  SCM parent;
+
+  /* The name of the window for debugging purposes, or SCM_BOOL_F
+     if there is no name. */
+  SCM name;
+
+  /* The ncurses window structure for this window, or NULL if the
+     window has been freed. */
+  WINDOW *window;
+
+  /* If this window has been turned into a panel, then its related
+     panel structore, or NULL otherwise. */
+  PANEL *panel;
+};
+
 GUCU_LOCAL int _scm_is_window (SCM x);
 GUCU_LOCAL WINDOW *_scm_to_window (SCM x);
 GUCU_LOCAL SCM _scm_from_window (WINDOW * x);
+GUCU_LOCAL SCM _scm_from_window_full (SCM parent, SCM name, WINDOW *win);
 
 GUCU_API SCM gucu_is_window_p (SCM x);
 

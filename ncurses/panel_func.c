@@ -97,46 +97,6 @@ gucu_hide_panel (SCM p)
   return gucu_xxx_panel (p, hide_panel, "hide-panel");
 }
 
-/* Return the underlying window of the panel */
-SCM
-gucu_panel_window (SCM x)
-{
-  struct gucu_panel *gp;
-
-  scm_assert_smob_type (panel_tag, x);
-
-  gp = (struct gucu_panel *) SCM_SMOB_DATA (x);
-
-  return gp->window;
-}
-
-/* Replaces the current window of a panel with a new window */
-SCM
-gucu_replace_panel (SCM pan, SCM win)
-{
-  struct gucu_panel *gp;
-
-  SCM_ASSERT (_scm_is_panel (pan), pan, SCM_ARG1, "replace-panel!");
-  SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "replace-panel!");
-
-  gp = (struct gucu_panel *) SCM_SMOB_DATA (pan);
-
-  /* Release the guardian on the old window */
-  while (scm_is_true (scm_call_0 (gp->win_guard)))
-    ;
-
-  /* Guard the new window */
-  scm_call_1 (gp->win_guard, win);
-
-  /* Copy the new window into the SMOB */
-  gp->window = win;
-
-  /* Update the curses structure */
-  replace_panel (gp->panel, _scm_to_window (gp->window));
-
-  return SCM_UNSPECIFIED;
-}
-
 SCM
 gucu_move_panel (SCM panel, SCM starty, SCM startx)
 {
@@ -180,9 +140,6 @@ gucu_panel_init_function ()
   scm_c_define_gsubr ("show-panel", 1, 0, 0, gucu_show_panel);
   scm_c_define_gsubr ("update-panels", 0, 0, 0, gucu_update_panels);
   scm_c_define_gsubr ("hide-panel", 1, 0, 0, gucu_hide_panel);
-  scm_c_define_gsubr ("panel-window", 1, 0, 0, gucu_panel_window);
-  scm_c_define_gsubr ("replace-panel!", 2, 0, 0, gucu_replace_panel);
   scm_c_define_gsubr ("move-panel", 3, 0, 0, gucu_move_panel);
   scm_c_define_gsubr ("panel-hidden?", 1, 0, 0, gucu_panel_hidden_p);
-  scm_c_define_gsubr ("del-panel", 1, 0, 0, gucu_del_panel);
 }

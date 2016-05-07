@@ -22,7 +22,12 @@
 
 (define-module (ncurses panel)
   #:export (
-	    new-panel
+	    ;; These were forward declared in (ncurses curses)
+	    ;; panel?
+	    ;; make-panel!
+	    ;; del-panel!
+
+	    ;; These are declared here
 	    bottom-panel
 	    top-panel
 	    show-panel
@@ -32,7 +37,6 @@
 	    replace-panel!
 	    move-panel
 	    panel-hidden?
-	    del-panel
 
 	    ;;panel-above
 	    ;;panel-below

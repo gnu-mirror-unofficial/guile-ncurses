@@ -490,7 +490,7 @@ gucu_derwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
   if (ret == 0)
     return SCM_BOOL_F;
 
-  return _scm_from_window (ret);
+  return _scm_from_window_full (orig, SCM_BOOL_F, ret);
 }
 
 /* Send to the physical terminal all the changes committed by calls to
@@ -1673,7 +1673,7 @@ gucu_subpad (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
   if (ret == NULL)
     return SCM_BOOL_F;
 
-  return _scm_from_window (ret);
+  return _scm_from_window_full (orig, SCM_BOOL_F, ret);
 }
 
 /* Return a pointer to a new window that is within and shares memory with
@@ -1694,7 +1694,7 @@ gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
   if (ret == NULL)
     return SCM_BOOL_F;
 
-  return _scm_from_window (ret);
+  return _scm_from_window_full (orig, SCM_BOOL_F, ret);
 }
 
 /* When called with true, wsyncup is called automatically whenever the
