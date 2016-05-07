@@ -1,7 +1,7 @@
 /*
   curs_func.c
 
-  Copyright 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -2264,7 +2264,7 @@ gucu_wsyncup (SCM win)
 {
   WINDOW *c_win;
 
-  SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "wsyncup");
+  SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "%wsyncup");
 
   c_win = _scm_to_window (win);
 
@@ -2279,7 +2279,7 @@ gucu_wsyncdown (SCM win)
 {
   WINDOW *c_win;
 
-  SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "wsyncdown");
+  SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "%wsyncdown");
 
   c_win = _scm_to_window (win);
 
@@ -2503,8 +2503,8 @@ gucu_init_function ()
   scm_c_define_gsubr ("%winsnstr", 3, 0, 0, gucu_winsnstr);
   scm_c_define_gsubr ("%wmove", 3, 0, 0, gucu_wmove);
   scm_c_define_gsubr ("%wredrawln", 3, 0, 0, gucu_wredrawln);
-  scm_c_define_gsubr ("wsyncup", 1, 0, 0, gucu_wsyncup);
-  scm_c_define_gsubr ("wsyncdown", 1, 0, 0, gucu_wsyncdown);
+  scm_c_define_gsubr ("%wsyncup", 1, 0, 0, gucu_wsyncup);
+  scm_c_define_gsubr ("%wsyncdown", 1, 0, 0, gucu_wsyncdown);
   scm_c_define_gsubr ("%wtouchln", 4, 0, 0, gucu_wtouchln);
   scm_c_define_gsubr ("%wvline", 3, 0, 0, gucu_wvline);
 }

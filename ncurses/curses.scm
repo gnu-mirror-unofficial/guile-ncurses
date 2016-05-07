@@ -2,7 +2,7 @@
 
 ;; curses.scm
 
-;; Copyright 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2011, 2013, 2014, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of GNU Guile-Ncurses.
 
@@ -1504,7 +1504,7 @@ on error."
   "Synchronizes the location of the cursor between WIN and all parents
 of WIN."
   (assert-window win)
-  (%syncup win))
+  (%wcursyncup win))
 
 (define (copywin srcwin destwin sminrow smincol dminrow dmincol
 		 dmaxrow dmaxcol overlay)
@@ -2480,12 +2480,12 @@ shares memory with the original window."
 (define (syncdown win)
   "Touches all location in children of WIN that are changed in WIN."
   (assert-window win)
-  (%syncup win))
+  (%wsyncdown win))
 
 (define (syncup win)
   "Touches all location in ancestors of WIN that are changed in WIN."
   (assert-window win)
-  (%syncup win))
+  (%wsyncup win))
 
 (define (term-attrs)
   "Returns an integer that is a 'logical or' of all the video attributes
