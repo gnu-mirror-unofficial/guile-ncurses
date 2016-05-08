@@ -1,3 +1,275 @@
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Add stress test for derwin panel fault
+    
+    Based on a similar stress test script by John Darrington
+    
+    * test/Makefile.am (STRESS_TESTS): new extra dist category
+    * test/stress_001_derwin_panel.scm: new test script
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Document window? and panel?
+    
+    * doc/guile-ncurses.texi: updated
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Use keyword for panel in newwin, subwin, derwin
+    
+    * ncurses/curses.scm (newwin, subwin, derwin): use #:panel keyword
+    * test/p001_panel.test: fix "new panel windows are panels" test
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    have delwin use free_window primitive. delwin always returns #t now
+    
+    * ncurses/curs_spec.c (gucu_delwin): use free_window primitive
+    * ncurses/type.h (free_window): make public declaration
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Update panel documentation
+    
+    * doc/ex_panel.scm: update example to use make-panel!
+    * doc/guile-ncurses.texi: remove #<panel> doc
+      (Panels Basics): modified
+      (newwin, subwin, derwin): modified
+      (del-panel): renamed to del-panel! and modified
+      (replace-panel!): doc removed
+      (panel-window): doc removed
+
+Merge: 119e283 51c5891
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Merge branch 'master' of git.sv.gnu.org:/srv/git/guile-ncurses
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Add test to ensure that menu items appear in only one menu
+    
+    * test/m001_new_menu.test: new "items can't be used in more than one menu" test
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    fix curses test if ORIGTERM env var is #f
+    
+    * test/curses_000_test_setup.test: modify test
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Modify window type to hold reference to parent, name, and panel
+    
+    * ncurses/type.h (window_tag): make extern
+      (struct gucu_window): new structure type for window
+      (_scm_from_window_full): new function
+    * ncurses/type.c (window_tag): make extern
+      (print_screen): whitespace
+      (_scm_to_window): use new gucu_window struct
+      (_scm_from_window_full): new function
+      (_scm_from_window): update to use _scm_from_window_full
+      (equalp_window): update to use struct gucu_window
+      (mark_window): update to mark SCMs in struct gucu_window
+      (free_window): update to use struct gucu_window and free panel if present
+      (print_window): print new gucu_window information
+    * ncurses/panel_type.h (struct gucu_panel): remove struct and all references
+      (panel_tag): remove
+      (_scm_from_panel, gucu_new_panel, gucu_del_panel): remove declaration
+      (gucu_make_panel_x, gucu_del_panel_x): new declarations
+    * ncurses/panel_type.c (panel_tag): remove
+      (_scm_is_panel): modify to use new window type
+      (_scm_from_panel): modify to use new window type
+      (equalp_panel): modify to use new window type
+      (mark_panel): removed
+      (gc_free_panel): rename to free panel
+      (free_panel): modify to use new window type
+      (gucu_del_panel): renamed to gucu_del_panel_x
+      (gucu_del_panel_x): modify to use new window type
+      (print_panel): removed
+      (gucu_new_panel): renamed to gucu_make_panel_x
+      (gucu_make_panel_x): modified to use new window type
+      (gucu_panel_init_type): removed panel type instantiation
+      (gucu_panel_init_type): rename new-panel to make-panel!
+         rename del-panel to del-panel!
+    * ncurses/panel_main.c (gucu_panel_init): move panel type initization to ncurses.scm
+    * ncurses/panel_func.h (gucu_panel_window, gucu_replace_panel): remove procedures
+    * ncurses/panel_func.c (gucu_panel_window, gucu_replace_panel): remove procedures
+      (gucu_panel_init_function): remove panel-windo, replace-panel! and del-panel
+    * ncurses/panel.scm (new-panel, del-panel): remove declaration
+    * ncurses/curses.scm (panel?, make-panel!, del-panel!): new declarations
+      (derwin, newwin, subwin): add option to create window as panel
+      (load-extension): load panel type initialization function
+    * ncurses/curs_func.c (gucu_derwin, gucu_subpad, gucu_subwin): use new _scm_from_window_full
+    * test/p001_panel.test: add tests for make-panel!, del-panel!
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Prefer misc_error over scm_error_scm in new-field
+    
+    * ncurses/form_type.c (gucu_new_field): use misc_error
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Avoid warnings for redefining _GNU_SOURCE and _LARGEFILE64_SOURCE
+    
+    * ncurses/curs_port.h (_GNU_SOURCE, _LARGEFILE64_SOURCE): don't define if defined
+
+Michael Gran <spk121@yahoo.com>	2016-05-07
+
+    Fix broken cursyncup, syncup and syncdown
+    
+    * ncurses/curs_func.c (gucu_wsyncup, gucu_wsyncdown): improper function names in SCM_ASSERT
+      (gucu_init_function): rename wsyncup to %wsyncup
+      (gucu_init_function): rename wsyncdown to %wsyncdown
+    * ncurses/curses.scm (cursyncup): call correct primitive %wcursyncup
+      (syncdown): call correct primitive %wsyncdown
+      (syncup): call correct primitive %wsyncup
+
+Merge: 4ab7f90 c2732a8
+Mike Gran <spk121@yahoo.com>	2016-05-06
+
+    Merge branch 'master' of ssh://git.sv.gnu.org/srv/git/guile-ncurses
+
+Mike Gran <spk121@yahoo.com>	2016-05-06
+
+    Update copyright year
+
+Michael Gran <spk121@yahoo.com>	2016-05-06
+
+    Avoid SEGV cause by GC marking a deleted panel
+    
+    If a panel has been hard deleted (instead of just GC'd) using
+    del-panel its internals are null.
+    
+    * ncurses/panel_type.c (mark_panel): don't mark NULL panel
+
+Michael Gran <spk121@yahoo.com>	2016-05-06
+
+    Prevent menu items from being assigned to multiple menus
+    
+    * ncurses/menu_type (mark_panel): check that items have no item_index()
+
+Michael Gran <spk121@yahoo.com>	2016-05-04
+
+    Guile errors can't have #f as the key
+    
+    * ncurses/form_type.c (gucu_new_field, gucu_new_form): use 'ncurses' as error key
+    * ncurses/menu_type.c (gucu_new_item, gc_free_menu, gucu_new_menu): use 'ncurses' as error key
+    * ncurses/panel_type.c (gc_free_panel): use 'ncurses' as error key
+
+Michael Gran <spk121@yahoo.com>	2016-05-03
+
+    Disable putwin/getwin tests
+    
+    Putwin is broken in upstream ncurses 6.0 when NCURSES_EXT_PUTWIN
+    is enabled
+    
+    * test/curses_034_util.test (getwin/putwin): disable for some versions
+       of ncurses
+
+Michael Gran <spk121@yahoo.com>	2016-05-03
+
+    null terminate string in port_read
+    
+    This isn't really a bug.  It just makes debugging prettier in GDB
+    
+    * ncurses/curs_port.c (port_read): null-terminate string
+
+Michael Gran <spk121@yahoo.com>	2016-05-02
+
+    Avoid possible exception in getwin test
+    
+    * test/curses_034_util.test (getwin): catch possible exception
+
+Michael Gran <spk121@yahoo.com>	2016-05-01
+
+    check for presence of uniconv.h in autoconfigury
+    
+    * configure.ac: check for uniconv.h in guile-2 builds
+    * aclocal.m4: update
+    * config.h.in: update
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Update README.cygwin
+    
+    etex problems are fixed
+    
+    * README.cygwin: remove discussion of etex problems
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Make mcprint public
+    
+    * ncurses/curs_spec.h (gucu_mcprint): add declaration
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Don't recompute window in gucu_winchnstr
+    
+    * ncurses/curs_spec.c (gucu_winchnstr): avoid recomputing window
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Unused variables in curs_func.c
+    
+    * ncurses/curs_func.c (gucu_delscreen, gucu_unctrl): remove unused
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Avoid variable shadowing in print_window
+    
+    * ncurses/type.c (print_window): rename x to _win
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Unused variable in shell
+    
+    * tools/shell.c (inner_main): unused var
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Make posix-explorer demo work with guile 1.8.8
+    
+    * tools/posix-explorer (PROGRAM_VERSION): bump
+      (mainwin-initialize, get-system-information): remove square brackets,
+        avoid 'when', avoid processor count functions, avoid locale sorting
+
+Michael Gran <spk121@yahoo.com>	2016-04-09
+
+    Remove gettext from shell
+    
+    There are no translations, so may as well get rid of them.
+    
+    * tools/shell.c (open_terminal, inner_main): remove underscore
+      gettext escapes
+
+Merge: f7de482 ab9b907
+Mike Gran <spk121@yahoo.com>	2015-06-26
+
+    Merge branch 'master' of ssh://git.sv.gnu.org/srv/git/guile-ncurses
+
+Mike Gran <spk121@yahoo.com>	2015-06-26
+
+    Incorrect example code in doc
+    
+    'refresh' takes an argument
+    
+    * doc/guile-ncurses.texi: modified
+
+Mike Gran <spk121@yahoo.com>	2014-10-27
+
+    Update README and THANKS for 1.6 release
+    
+    * README: updated
+    * THANKS: updated
+
+Mike Gran <spk121@yahoo.com>	2014-10-27
+
+    Update ChangeLog
+    
+    * ChangeLog: updated
+
 Mike Gran <spk121@yahoo.com>	2014-10-27
 
     finish posix-explorer demo

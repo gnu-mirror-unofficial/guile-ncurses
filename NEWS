@@ -1,10 +1,35 @@
 The NEWS file for GNU Guile-NCurses
 
-  Copyright 2009, 2010, 2011, 2013, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2013, 2014, 2016 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
+
+Release 1.7
+- the previously undocumented (ncurses curses) procedure 'window?' is
+  now public and documented
+- the previously undocumented (ncurses panel) procedure 'panel?' has
+  been moved to (ncurses curses) and had been documented
+- the (ncurses curses) procedure 'delwin' always returns #t now
+- the (ncurses curses) procedures 'cursyncup', 'syncup', and
+  'syncdown' are no longer broken
+- 'posix-explorer' demo program now works on Guile 1.8.8
+- panels are now a sub-class of windows
+  - the #<panel> type is eliminated
+  - the (ncurses panel) procedures 'new-panel' and 'del-panel' are
+    eliminated
+  - new (ncurses curses) procedures 'make-panel!' and 'del-panel!'
+    convert/deconvert a plain window into a panel window
+  - all panel functions now operate on panel window #<window> types
+  - the previously undocumented 'window?' routine now returns #t
+    on plain windows and panel windows
+  - the previously undocumented 'panel?' routing now returns #t
+    on panel windows and #f on plain windows.
+  - the (ncurses curses) procedures 'newwin', 'derwin', and 'subwin'
+    now have a key parameter #:panel that, when #t, creates the
+    windows as panel windows.
+
 
 Release 1.6
 - new procedure 'unctrl'
