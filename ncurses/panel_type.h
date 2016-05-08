@@ -46,6 +46,6 @@ GUCU_API SCM gucu_is_panel_p (SCM x);
 GUCU_API SCM gucu_make_panel_x (SCM arg1);
 GUCU_API SCM gucu_del_panel_x (SCM arg1);
 
-GUCU_LOCAL void gucu_panel_init_type (void);
+GUCU_API void gucu_panel_init_type (void);
 
 #endif
