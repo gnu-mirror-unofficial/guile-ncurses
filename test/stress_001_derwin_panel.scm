@@ -12,10 +12,12 @@
 (define stdscr (initscr))
 
 ;; Setup the colors and color pairs
-(start-color!)
-(for-each (lambda (x)
-	    (init-pair! x (quotient x 8) (remainder x 8)))
-	  (iota 64))
+(if (has-colors?)
+    (begin
+      (start-color!)
+      (for-each (lambda (x)
+		  (init-pair! x (quotient x 8) (remainder x 8)))
+		(iota 64))))
 (define last-color-pair 0)
 
 ;; This procedure will do a GC 1% of the time
@@ -29,10 +31,12 @@
 	 (inner (derwin win (- h 2) (- w 4) 1 2)))
 
     ;; Set colors of windows
-    (color-set! win last-color-pair)
-    (bkgd win (color last-color-pair #\space))
-    (color-set! inner last-color-pair)
-    (set! last-color-pair (remainder (+ 1 last-color-pair) 64))
+    (if (has-colors?)
+	(begin
+	  (color-set! win last-color-pair)
+	  (bkgd win (color last-color-pair #\space))
+	  (color-set! inner last-color-pair)
+	  (set! last-color-pair (remainder (+ 1 last-color-pair) 64))))
 
     ;; Convert windows into panels
     (maybe-gc)
