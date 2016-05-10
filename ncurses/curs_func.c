@@ -673,8 +673,9 @@ gucu_has_key_p (SCM key)
   int c_key;
 
   c_key = scm_to_int (key);
+  int ret = has_key (c_key);
 
-  RETURNTF (has_key (c_key));
+  return (scm_from_bool (ret));
 }
 
 /* Return #t if the mouse driver has been successfully initialized. */
