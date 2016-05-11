@@ -3276,14 +3276,13 @@ according to the current 8-bit locale.
 @findex initscr
 @findex slk-init
 @findex %filter
-@findex ripoffline
 @findex use-env
 @findex newterm
 
 @code{initscr} is normally the first curses routine to call when
 initializing a program.  A few special routines sometimes need to be
 called before it; these are @code{slk-init}, @code{%filter},
-@code{ripoffline}, @code{use-env}.  For multiple-terminal
+@code{use-env}.  For multiple-terminal
 applications, @code{newterm} may be called before @code{initscr}.
 
 @findex initscr
