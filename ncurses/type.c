@@ -792,7 +792,8 @@ _scm_is_mevent (SCM x)
             err++;
         }
     }
-  err++;
+  else
+    err++;
 
   if (err > 0)
     return 0;
