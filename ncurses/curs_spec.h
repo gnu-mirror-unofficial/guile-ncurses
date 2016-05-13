@@ -41,6 +41,7 @@ GUCU_API SCM gucu_mcprint (SCM data);
 GUCU_API SCM gucu_mousemask (SCM x);
 GUCU_API SCM gucu_mvinnwstr (SCM y, SCM x, SCM n);
 GUCU_API SCM gucu_pair_content (SCM s_color);
+GUCU_API SCM gucu_tiget (SCM id);
 GUCU_API SCM gucu_ungetmouse (SCM event);
 GUCU_API SCM gucu_wattr_get (SCM win);
 GUCU_API SCM gucu_wattr_set_x (SCM win, SCM attrs, SCM pair);

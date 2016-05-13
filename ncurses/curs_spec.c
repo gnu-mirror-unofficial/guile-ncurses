@@ -146,7 +146,7 @@ gucu_mcprint (SCM data)
   ret = mcprint (str, len);
   if (ret == ERR)
     return SCM_BOOL_F;
-  
+
   return scm_from_int (ret);
 }
 
@@ -172,25 +172,56 @@ gucu_pair_content (SCM s_pair)
     return SCM_BOOL_F;
 }
 
-#if 0
 SCM
-gucu_tget (SCM id)
+gucu_setupterm (SCM term)
 {
-  SCM_ASSERT (scm_is_string (id), id, SCM_ARG1, "tget");
+  char *c_str = NULL;
+  int ret, errret;
+
+  if (scm_is_string (term))
+    c_str = scm_to_locale_string (term);
+  else if (scm_is_symbol (term))
+    c_str = scm_to_locale_symbol (term);
+
+  ret = setupterm (c_str, 1, &errret);
+  free (c_str);
+
+  if (ret == ERR)
+    {
+      if (errret == 1)
+	return scm_from_locale_symbol ("hardcopy");
+      else
+	return SCM_BOOL_F;
+    }
+
+  return scm_from_locale_symbol ("terminal");
+}
+
+SCM
+gucu_tiget (SCM id)
+{
+  SCM_ASSERT (scm_is_string (id), id, SCM_ARG1, "%tiget");
 
   int ret;
   char *c_str;
 
   c_str = scm_to_locale_string (id);
-  ret = tgetnum (id);
-  if (id != -1)
+
+  char *s = tigetstr (c_str);
+  if (s != (char *) -1 && s != (char *) 0)
+    return scm_from_locale_string (s);
+
+  ret = tigetnum (c_str);
+  if (ret != -1 && ret != -2)
     return scm_from_int (ret);
 
-  ret = tgetflag (id);
-  if (id == 0)
+
+  ret = tigetflag (c_str);
+  if (ret > 0)
     return SCM_BOOL_T;
+
+  return SCM_BOOL_F;
 }
-#endif
 
 
 SCM
@@ -852,12 +883,14 @@ gucu_init_special ()
   scm_c_define_gsubr ("%mcprint", 1, 0, 0, gucu_mcprint);
   scm_c_define_gsubr ("%mousemask", 1, 0, 0, gucu_mousemask);
   scm_c_define_gsubr ("%pair-content", 1, 0, 0, gucu_pair_content);
+  scm_c_define_gsubr ("%tiget", 1, 0, 0, gucu_tiget);
   scm_c_define_gsubr ("ungetmouse", 1, 0, 0, gucu_ungetmouse);
   scm_c_define_gsubr ("%wattr-get", 1, 0, 0, gucu_wattr_get);
   scm_c_define_gsubr ("%wgetnstr", 2, 0, 0, gucu_wgetnstr);
   scm_c_define_gsubr ("%winchnstr", 2, 0, 0, gucu_winchnstr);
   scm_c_define_gsubr ("%winnstr", 2, 0, 0, gucu_winnstr);
   scm_c_define_gsubr ("mouse-trafo", 4, 0, 0, gucu_wmouse_trafo);
+  scm_c_define_gsubr ("%setupterm", 1, 0, 0, gucu_setupterm);
   scm_c_define_gsubr ("%getbegyx", 1, 0, 0, gucu_getbegyx);
   scm_c_define_gsubr ("%getmaxyx", 1, 0, 0, gucu_getmaxyx);
   scm_c_define_gsubr ("%getparyx", 1, 0, 0, gucu_getparyx);

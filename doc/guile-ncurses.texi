@@ -255,6 +255,7 @@ The basic curses library: @code{(ncurses curses)}
 * Miscellaneous utilities::
 * Window creation::
 * Terminal resizing::
+* Querying the terminfo database::
 
 The Coordinate System
 
@@ -3093,6 +3094,7 @@ C-language API.
 * Miscellaneous utilities::
 * Window creation::
 * Terminal resizing::
+* Querying the terminfo database::
 @end menu
 
 @node Overview, Features determined at compile time, The basic curses library, The basic curses library
@@ -5975,8 +5977,8 @@ with wide characters: @code{A_HORIZONTAL}, @code{A_LEFT},
 
 @deffn Procedure termname
 
-The @code{termname} routine returns the terminal name used by
-@code{setupterm}.
+The @code{termname} routine returns the name of the current terminal,
+which was set by either @code{initscr} or @code{setupterm}.
 
 @end deffn
 
@@ -6307,7 +6309,7 @@ of the window.
 The return value is unspecified.
 @end deffn
 
-@node Terminal resizing,  , Window creation, The basic curses library
+@node Terminal resizing, Querying the terminfo database, Window creation, The basic curses library
 @subsection Terminal resizing
 
 @deffn Procedure resizeterm lines columns
@@ -6322,6 +6324,45 @@ are increased in size, the extended areas are blank-filled.
 It returns @code{#t} on success or @code{#f} on failure.  It could fail
 for memory allocation failures or for dimensions that are too small.
 
+@end deffn
+
+@node  Querying the terminfo database,  , Terminal resizing, The basic curses library
+@subsection Querying the terminfo database
+
+The ncurses library relies on the terminfo database to look up
+the special character sequences it needs to output to a terminal.
+The terminfo database is the lower-level library upon which
+ncurses is built.
+
+It is sometimes useful to check the terminfo database to see
+if it has information on a terminal, or to see which escape sequences
+need to be executed to perform these low level operations.  This
+library provides two procedures to query this database.
+
+@deffn Procedure setupterm terminal
+@cindex Terminfo
+Searches the terminfo database for the a terminal with the given name.
+If @var{terminal} is #f, the name of the terminal in the TERM
+environment variable is used.  If the terminal is not found in the
+terminfo database, #f is returned.  If it is found, one of the symbols
+@code{terminal} or @code{hardcopy} is returned.
+
+If the terminal is found, then the 'tiget' procedure can be used
+to query terminfo capabilities for this terminal.
+@end deffn
+
+@deffn Procedure tiget capability
+@cindex Terminfo
+@cindex Terminal capabilities
+This procedure searches the terminfo database for the currently active
+terminal for information on @var{capability}, which is a short string
+that contains a terminfo capability, such as `am' or `blink'.
+
+If a capability by that name is found for the current terminal, an
+integer, string, or boolean will be returned depending on the
+capability.  If a capability by that name is not found, @code{#f} will
+be returned.  It is not possible to distinguish between capabilities
+that are false, and capabilities that are not present.
 @end deffn
 
 @node Function key labels library, The curses panel library, The basic curses library, Curses Reference

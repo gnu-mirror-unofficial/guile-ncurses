@@ -79,6 +79,11 @@
             BUTTON4_PRESSED
             BUTTON4_RELEASED
             BUTTON4_TRIPLE_CLICKED
+            ; BUTTON5_CLICKED
+            ; BUTTON5_DOUBLE_CLICKED
+            ; BUTTON5_PRESSED
+            ; BUTTON5_RELEASED
+            ; BUTTON5_TRIPLE_CLICKED
             BUTTON_ALT
             BUTTON_CTRL
             BUTTON_SHIFT
@@ -388,6 +393,7 @@
             set-term
             setscrreg!
             setsyx
+            setupterm
             standend!
             standout!
             start-color!
@@ -398,6 +404,7 @@
             tabsize
             term-attrs
             termname
+            tiget
             timeout!
             touchline
             touchwin
@@ -2449,6 +2456,17 @@ scroll."
 this?)"
   (%setsyx y x))
 
+(define (setupterm term)
+  "Searches the terminfo database for the a terminal with the given
+name.  If term is #f, the name of the terminal in the TERM environment
+variable is used.  If the terminal is not found in the terminfo database,
+#f is returned.  If it is found, one of the symbols 'terminal or
+'hardcopy is returned.
+
+If the terminal is found, then the 'tiget' procedure can be used
+to query terminfo capabilities for this terminal."
+  (%setupterm term))
+
 (define (standend! win)
   "Turns off all attributes of the given window."
   (assert-window win)
@@ -2522,6 +2540,18 @@ If delay is positive, 'getch' will block for DELAY milliseconds."
   (assert-window win)
   (assert-integer delay)
   (%timeout! win delay))
+
+(define (tiget id)
+  "Searches the terminfo database for the a capability for the current
+terminal. ID is a string containing the abbreviated terminfo ID
+string (such as \"kbs\" for backspace, etc). If a capability by that
+name is found for the current terminal, an integer, string, or flag
+will be returned depending on the capability.  If a capability by that
+name is not found, #f will be returned.  It is not possible to
+distinguish between capabilities that are false, and capabilities that
+are not present."
+  (assert-string id)
+  (%tiget id))
 
 (define (touchwin win)
   (assert-window win)
