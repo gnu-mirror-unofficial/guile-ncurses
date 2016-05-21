@@ -1,6 +1,6 @@
 # Makefile.am for guile-ncurses/test.
 #
-# Copyright 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
+# Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
@@ -16,16 +16,23 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-TESTLIB = lib.scm lib2.scm
+TESTLIB = lib.scm lib2.scm automake-test-lib.scm
 
-TESTS_ENVIRONMENT = ORIGTERM=${TERM} \
-  TERM=xterm \
-  GUILE_AUTO_COMPILE=0
-TEST_EXTENSIONS = .test
+AM_TESTS_ENVIRONMENT = \
+	ORIGTERM=${TERM}; export ORIGTERM; \
+	TERM=xterm; export TERM; \
+	GUILE_AUTO_COMPILE=0; export GUILE_AUTO_COMPILE;
+TEST_EXTENSIONS = .test .scm
 TEST_LOG_COMPILER = ${top_builddir}/libtool \
     -dlopen ${top_builddir}/ncurses/libguile-ncurses.la \
     --mode=execute guile
 AM_TEST_LOG_FLAGS = -L $(abs_top_srcdir) -s
+SCM_LOG_COMPILER = \
+	${top_builddir}/libtool \
+	-dlopen ${top_builddir}/ncurses/libguile-ncurses.la \
+	--mode=execute guile
+AM_SCM_LOG_FLAGS = -L $(abs_top_srcdir) -s
+
 
 NOTERMTESTS = curses_000_test_setup.test \
 curses_001_char_conversion.test
