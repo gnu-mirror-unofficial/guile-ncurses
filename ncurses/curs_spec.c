@@ -180,8 +180,6 @@ gucu_setupterm (SCM term)
 
   if (scm_is_string (term))
     c_str = scm_to_locale_string (term);
-  else if (scm_is_symbol (term))
-    c_str = scm_to_locale_symbol (term);
 
   ret = setupterm (c_str, 1, &errret);
   free (c_str);
