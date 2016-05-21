@@ -417,6 +417,7 @@
             untouchwin
             use-default-colors
             use-env
+            use-extended-names
             vline
             cursyncup
             wenclose?
