@@ -34,8 +34,10 @@ SCM_LOG_COMPILER = \
 AM_SCM_LOG_FLAGS = -L $(abs_top_srcdir) -s
 
 
-NOTERMTESTS = curs_test_setup.scm \
-curses_001_char_conversion.test
+NOTERMTESTS = \
+ curs_test_setup.scm \
+ curs_char_conversion.scm \
+ curs_char_wchar_conversion.scm
 
 NARROWTESTS = curses_002_initscr.test		\
 curses_003_color.test curses_004_characters.test curses_005_addch.test	\

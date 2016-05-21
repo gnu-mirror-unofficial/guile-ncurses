@@ -1,7 +1,4 @@
-;;;; -*- Mode: scheme; -*-
-;;;; c001_char_conversion.test
-
-;; Copyright 2009, 2010 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -18,23 +15,14 @@
 ;; You should have received a copy of the GNU Lesser General Public
 ;; License along with Guile-Ncurses.  If not, see
 ;; <http://www.gnu.org/licenses/>.
-(use-modules (test lib)
-	     (test lib2)
-	     (ncurses curses))
 
-(define test (curses-test-start))
+(use-modules (ncurses curses)
+             (test automake-test-lib))
 
 (setlocale LC_ALL "")
-
-(with-test-prefix
- "conversion"
-
- (pass-if "ascii x to #\\x"
-	  (eqv? (%scheme-char-from-c-char 120)
-		#\x))
-
- (pass-if "wchar x to #\\x"
-	  (eqv? (%scheme-char-from-c-wchar 120)
-		#\x)))
-
-(curses-test-end test "curses_001_char_conversion.test")
+(automake-test
+ ;; wchar x to #\\x
+ (let* ((c-wchar 120)
+        (scm-wchar (%scheme-char-from-c-wchar c-wchar)))
+   (format #t "C wchar ~s --> scheme char ~s~%" c-wchar scm-wchar)
+   (eqv? scm-wchar #\x)))
