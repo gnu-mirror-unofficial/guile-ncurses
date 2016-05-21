@@ -45,7 +45,26 @@ NARROWTESTS = \
  curs_initscr_isendwin_negative_after_refresh.scm \
  curs_initscr_isendwin_negative.scm \
  curs_initscr_isendwin_positive.scm \
-curses_003_color.test curses_004_characters.test curses_005_addch.test	\
+ curs_color_assume_default_colors.scm \
+ curs_color_attr_get_color.scm \
+ curs_color_can_change_color.scm \
+ curs_color_color_content_black.scm \
+ curs_color_color_content_blue.scm \
+ curs_color_color_content_cyan.scm \
+ curs_color_color_content_green.scm \
+ curs_color_color_content_magenta.scm \
+ curs_color_color_content_red.scm \
+ curs_color_color_content_white.scm \
+ curs_color_color_content_yellow.scm \
+ curs_color_color_pairs.scm \
+ curs_color_colors.scm \
+ curs_color_has_colors.scm \
+ curs_color_init_color.scm \
+ curs_color_init_pair.scm \
+ curs_color_pair_number.scm \
+ curs_color_start_color.scm \
+ curs_color_use_default_colors.scm \
+curses_004_characters.test curses_005_addch.test	\
 curses_006_addchstr.test curses_007_addstr.test curses_008_attr.test	\
 curses_009_beep.test curses_010_bkgd.test curses_011_border.test	\
 curses_012_clear.test curses_013_delch.test curses_014_deleteln.test	\
