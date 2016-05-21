@@ -864,11 +864,15 @@ gucu_curscr ()
 SCM
 gucu_getparent (SCM win)
 {
-  WINDOW *parent = wgetparent (_scm_to_window (win));
-  if (parent != (WINDOW *) NULL)
-    return _scm_from_window (parent);
-  else
-    return SCM_BOOL_F;
+  struct gucu_window *wp = NULL;
+  SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "%getparent");
+
+  wp = (struct gucu_window *) SCM_SMOB_DATA (win);
+  if (wp != (struct gucu_window *) NULL)
+    if (wp->parent != NULL)
+      return wp->parent;
+
+  return SCM_BOOL_F;
 }
 
 void
