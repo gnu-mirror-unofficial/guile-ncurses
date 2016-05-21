@@ -64,7 +64,8 @@ NARROWTESTS = \
  curs_color_pair_number.scm \
  curs_color_start_color.scm \
  curs_color_use_default_colors.scm \
-curses_004_characters.test curses_005_addch.test	\
+ curs_addch_acs.scm \
+ curses_005_addch.test	\
 curses_006_addchstr.test curses_007_addstr.test curses_008_attr.test	\
 curses_009_beep.test curses_010_bkgd.test curses_011_border.test	\
 curses_012_clear.test curses_013_delch.test curses_014_deleteln.test	\
