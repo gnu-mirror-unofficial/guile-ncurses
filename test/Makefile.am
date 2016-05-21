@@ -39,7 +39,12 @@ NOTERMTESTS = \
  curs_char_conversion.scm \
  curs_char_wchar_conversion.scm
 
-NARROWTESTS = curses_002_initscr.test		\
+NARROWTESTS = \
+ curs_initscr_endwin.scm \
+ curs_initscr_initscr.scm \
+ curs_initscr_isendwin_negative_after_refresh.scm \
+ curs_initscr_isendwin_negative.scm \
+ curs_initscr_isendwin_positive.scm \
 curses_003_color.test curses_004_characters.test curses_005_addch.test	\
 curses_006_addchstr.test curses_007_addstr.test curses_008_attr.test	\
 curses_009_beep.test curses_010_bkgd.test curses_011_border.test	\
