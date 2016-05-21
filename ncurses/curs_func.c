@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -175,7 +175,7 @@ gucu_bkgdset_x (SCM win, SCM ch)
 
 SCM
 gucu_border (SCM win, SCM left, SCM right, SCM top, SCM bottom,
-	     SCM topleft, SCM topright, SCM bottomleft, SCM bottomright)
+             SCM topleft, SCM topright, SCM bottomleft, SCM bottomright)
 {
   WINDOW *c_win;
   int ret;
@@ -196,7 +196,7 @@ gucu_border (SCM win, SCM left, SCM right, SCM top, SCM bottom,
     c_bottomright = _scm_xchar_to_cchar (bottomright);
 
     ret = wborder_set (c_win, c_left, c_right, c_top, c_bottom,
-		       c_topleft, c_topright, c_bottomleft, c_bottomright);
+                       c_topleft, c_topright, c_bottomleft, c_bottomright);
 
     free (c_left);
     free (c_right);
@@ -222,7 +222,7 @@ gucu_border (SCM win, SCM left, SCM right, SCM top, SCM bottom,
     c_bottomright = _scm_xchar_to_chtype (bottomright);
 
     ret = wborder (c_win, c_left, c_right, c_top, c_bottom,
-		   c_topleft, c_topright, c_bottomleft, c_bottomright);
+                   c_topleft, c_topright, c_bottomleft, c_bottomright);
   }
 #endif
 
@@ -344,7 +344,7 @@ gucu_color_set (SCM win, SCM pair)
 /* Copy part of srcwin onto part of destwin */
 SCM
 gucu_copywin (SCM srcwin, SCM dstwin, SCM sminrow, SCM smincol, SCM dminrow,
-	      SCM dmincol, SCM dmaxrow, SCM dmaxcol, SCM _overlay)
+              SCM dmincol, SCM dmaxrow, SCM dmaxcol, SCM _overlay)
 {
   WINDOW *c_srcwin, *c_dstwin;
   int c_sminrow, c_smincol, c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol;
@@ -361,10 +361,10 @@ gucu_copywin (SCM srcwin, SCM dstwin, SCM sminrow, SCM smincol, SCM dminrow,
 
   if (scm_is_true (_overlay))
     ret = copywin ((const WINDOW *)c_srcwin, c_dstwin, c_sminrow, c_smincol,
-		   c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol, 1);
+                   c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol, 1);
   else
     ret = copywin ((const WINDOW *)c_srcwin, c_dstwin, c_sminrow, c_smincol,
-		   c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol, 0);
+                   c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol, 0);
 
   /* copywin fails if the windows are NULL, the rectangle doesn't fit
      in the source, or it doesn't fit in the destination */
@@ -621,6 +621,16 @@ gucu_getbkgd (SCM win)
     return _scm_xchar_from_chtype (ret);
   }
 #endif
+}
+
+/* Return the delay timeout as set in timeout! */
+SCM
+gucu_getdelay (SCM win)
+{
+  WINDOW *c_win;
+
+  c_win = _scm_to_window (win);
+  return scm_from_int (wgetdelay (c_win));
 }
 
 /* Set halfdelay. */
@@ -1390,7 +1400,7 @@ gucu_pechochar (SCM pad, SCM ch)
 
 SCM
 gucu_pnoutrefresh (SCM win, SCM pminrow, SCM pmincol, SCM sminrow,
-		   SCM smincol, SCM smaxrow, SCM smaxcol)
+                   SCM smincol, SCM smaxrow, SCM smaxcol)
 {
   WINDOW *c_win;
   int c_pminrow, c_pmincol, c_sminrow, c_smincol, c_smaxrow, c_smaxcol, ret;
@@ -1404,13 +1414,13 @@ gucu_pnoutrefresh (SCM win, SCM pminrow, SCM pmincol, SCM sminrow,
   c_smaxcol = scm_to_int (smaxcol);
 
   ret = pnoutrefresh (c_win, c_pminrow, c_pmincol, c_sminrow, c_smincol,
-		      c_smaxrow, c_smaxcol);
+                      c_smaxrow, c_smaxcol);
   RETURNTF (ret);
 }
 
 SCM
 gucu_prefresh (SCM win, SCM pminrow, SCM pmincol, SCM sminrow, SCM smincol,
-	       SCM smaxrow, SCM smaxcol)
+               SCM smaxrow, SCM smaxcol)
 {
   WINDOW *c_win;
   int c_pminrow, c_pmincol, c_sminrow, c_smincol, c_smaxrow, c_smaxcol, ret;
@@ -1424,7 +1434,7 @@ gucu_prefresh (SCM win, SCM pminrow, SCM pmincol, SCM sminrow, SCM smincol,
   c_smaxcol = scm_to_int (smaxcol);
 
   ret = prefresh (c_win, c_pminrow, c_pmincol, c_sminrow, c_smincol,
-		  c_smaxrow, c_smaxcol);
+                  c_smaxrow, c_smaxcol);
   RETURNTF (ret);
 }
 
@@ -1821,12 +1831,12 @@ gucu_ungetch (SCM ch)
   {
     if (SCM_CHARP (ch))
       {
-	wchar_t c_ch = _scm_schar_to_wchar (ch);
-	ret = unget_wch (c_ch);
+        wchar_t c_ch = _scm_schar_to_wchar (ch);
+        ret = unget_wch (c_ch);
       }
     else if (scm_is_integer (ch))
       {
-	ret = 0;
+        ret = 0;
       }
 
   }
@@ -1834,16 +1844,16 @@ gucu_ungetch (SCM ch)
   {
     if (SCM_CHARP (ch))
       {
-	char c_ch = _scm_schar_to_char (ch);
-	ret = ungetch (c_ch);
+        char c_ch = _scm_schar_to_char (ch);
+        ret = ungetch (c_ch);
       }
     else if (scm_is_integer (ch))
       {
-	ret = ungetch (scm_to_uint (ch));
+        ret = ungetch (scm_to_uint (ch));
       }
     else
       {
-	ret = 0;
+        ret = 0;
       }
   }
 #endif
@@ -1881,7 +1891,10 @@ gucu_use_extended_names (SCM bf)
 
   c_bf = scm_to_bool (bf);
 
-  RETURNTF (use_extended_names (c_bf));
+  int ret = use_extended_names (c_bf);
+  if (ret)
+    return SCM_BOOL_T;
+  return SCM_BOOL_F;
 }
 
 /* Put the character ch into the window at its current position, which
@@ -2358,7 +2371,7 @@ void
 gucu_init_function ()
 {
   scm_c_define_gsubr ("assume-default-colors", 2, 0, 0,
-		      gucu_assume_default_colors);
+                      gucu_assume_default_colors);
   scm_c_define_gsubr ("%attr-off!", 2, 0, 0, gucu_attr_off_x);
   scm_c_define_gsubr ("%attr-on!", 2, 0, 0, gucu_attr_on_x);
   scm_c_define_gsubr ("%baudrate", 0, 0, 0, gucu_baudrate);
@@ -2393,6 +2406,7 @@ gucu_init_function ()
   scm_c_define_gsubr ("%flash", 0, 0, 0, gucu_flash);
   scm_c_define_gsubr ("flushinp", 0, 0, 0, gucu_flushinp);
   scm_c_define_gsubr ("%getbkgd", 1, 0, 0, gucu_getbkgd);
+  scm_c_define_gsubr ("%getdelay", 1, 0, 0, gucu_getdelay);
   scm_c_define_gsubr ("%halfdelay!", 1, 0, 0, gucu_halfdelay);
   scm_c_define_gsubr ("%has-colors?", 0, 0, 0, gucu_has_colors_p);
   scm_c_define_gsubr ("%has-ic?", 0, 0, 0, gucu_has_ic_p);

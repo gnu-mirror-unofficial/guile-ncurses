@@ -283,6 +283,7 @@
             getch
             getcurx
             getcury
+            getdelay
             getmaxx
             getmaxy
             getmaxyx
@@ -339,7 +340,7 @@
             leaveok!
             lines
             longname
-	    mcprint
+            mcprint
             meta!
             mevent?
             mouse-trafo
@@ -501,7 +502,7 @@
             del-panel!
             ))
 
-(if (string=? "1.8" (string-take (version) 3)) 
+(if (string=? "1.8" (string-take (version) 3))
     (use-syntax (ice-9 syncase)))
 
 ;;; Exceptions
@@ -746,7 +747,7 @@ name of the character as as string."
     (else
      (error "Invalid input ~s" ,x))))
 
-(define (blink x) 
+(define (blink x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute BLINK.  If the input
@@ -754,7 +755,7 @@ X was a rendered character or a rendered string, the old attributes
 are replaced, but the color pair, if any, is not modified."
   (a-attribute x A_BLINK))
 
-(define (blink-off x) 
+(define (blink-off x)
   "If the input X is a simple character or string, it returns a
 complex character or string has the normal rendering. If the input X
 is a rendered character or a rendered string, it returns a rendered
@@ -770,7 +771,7 @@ character or string with the BLINK attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_BLINK))
 
-(define (bold x) 
+(define (bold x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute BOLD.  If the input
@@ -794,7 +795,7 @@ character or string with the BOLD attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_BOLD))
 
-(define (dim x) 
+(define (dim x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute DIM.  If the input
@@ -802,7 +803,7 @@ X was a rendered character or a rendered string, the old attributes
 are replaced, but the color pair, if any, is not modified."
   (a-attribute x A_DIM))
 
-(define (dim-off x) 
+(define (dim-off x)
   "If the input X is a simple character or string, it returns a
 complex character or string has the normal rendering. If the input X
 is a rendered character or a rendered string, it returns a rendered
@@ -818,7 +819,7 @@ character or string with the DIM attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_DIM))
 
-(define (horizontal x) 
+(define (horizontal x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute HORIZONTAL.  If the
@@ -842,7 +843,7 @@ character or string with the HORIZONTAL attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_HORIZONTAL))
 
-(define (invis x) 
+(define (invis x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute INVIS.  If the
@@ -866,7 +867,7 @@ character or string with the INVIS attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_INVIS))
 
-(define (left x) 
+(define (left x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute LEFT.  If the
@@ -890,7 +891,7 @@ character or string with the LEFT attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_LEFT))
 
-(define (low x) 
+(define (low x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute LOW.  If the
@@ -914,7 +915,7 @@ character or string with the LEFT attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_LOW))
 
-(define (normal x) 
+(define (normal x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the normal, default, rendering.
@@ -925,7 +926,7 @@ attributes are cleared, but the color pair, if any, is not modified."
 (define (normal-off x) (a-attribute-off x A_NORMAL))
 (define (normal-on x) (a-attribute-on x A_NORMAL))
 
-(define (protect x) 
+(define (protect x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute PROTECT.  If the
@@ -949,7 +950,7 @@ character or string with the PROTECT attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_PROTECT))
 
-(define (inverse x) 
+(define (inverse x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the INVERSE (aka REVERSE)
@@ -974,7 +975,7 @@ character or string with the INVERSE (aka REVERSE) attribute enabled,
 but, other attributes are not modified."
   (a-attribute-on x A_REVERSE))
 
-(define (right x) 
+(define (right x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute RIGHT.  If the
@@ -998,7 +999,7 @@ character or string with the RIGHT attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_RIGHT))
 
-(define (standout x) 
+(define (standout x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute STANDOUT.  If the
@@ -1022,7 +1023,7 @@ character or string with the STANDOUT attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_STANDOUT))
 
-(define (top x) 
+(define (top x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute TOP.  If the
@@ -1046,7 +1047,7 @@ character or string with the TOP attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_TOP))
 
-(define (underline x) 
+(define (underline x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute UNDERLINE.  If the
@@ -1070,7 +1071,7 @@ character or string with the UNDERLINE attribute enabled, but, other
 attributes are not modified."
   (a-attribute-on x A_UNDERLINE))
 
-(define (vertical x) 
+(define (vertical x)
   "These procedure takes X, which can be either a simple character,
 a complex character, a simple string, or a complex string, and returns
 a rendered character or string with the attribute VERTICAL.  If the
@@ -1379,21 +1380,21 @@ window."
   (assert-xchar ch)
   (%bkgdset! win (xchar->list ch)))
 
-(define (border win left right top bottom topleft topright bottomleft 
+(define (border win left right top bottom topleft topright bottomleft
                 bottomright)
   "Draws a border on a given window using the given complex characters
 TOP, LEFT, RIGHT, etc.  If the number 0 is used instead of a complex
 character, then the default character will be used for that border
 element."
   (assert-window win)
-  (for-each 
-   (lambda (ch) 
+  (for-each
+   (lambda (ch)
      (if (and (not (xchar? ch)) (not (eq? ch 0)))
          (raise (condition (&curses-wrong-type-arg-error
                             (arg ch)
                             (expected-type 'xchar))))))
    (list left right top bottom topleft topright bottomleft bottomright))
-  
+
   (let ((l (if (equal? left 0)
                (xchar->list (normal (acs-vline)))
                (xchar->list left)))
@@ -1466,7 +1467,7 @@ be cleared completely and repainted at the next window refresh."
         (raise (condition (&curses-bad-state-error))))))
 
 (define (clearok! win bf)
-  "If clearok is called with BF as #t, the next call to 'refresh' with 
+  "If clearok is called with BF as #t, the next call to 'refresh' with
 this window will clear the screen completely and redraw the screen from
 scratch."
   (assert-window win)
@@ -1491,7 +1492,7 @@ containing the red, green, and blue values of the color on a 0 to 1000
 scale.  It can return #f if the color is out of range or colors aren't
 initialized."
   (assert-integer c)
-  (%color-content c))  
+  (%color-content c))
 
 (define (color-set! win pair)
   "Sets the window's color pair to the color pair number PAIR."
@@ -1519,7 +1520,7 @@ of WIN."
   (%wcursyncup win))
 
 (define (copywin srcwin destwin sminrow smincol dminrow dmincol
-		 dmaxrow dmaxcol overlay)
+                 dmaxrow dmaxcol overlay)
   "This routine copies text from SRCWIN to DESTWIN.  A rectangle is
 specified in the destination window DMINROW DMINCOL to DMAXROW
 DMAXCOL, and the upper-left-corner of the source window is specified
@@ -1532,10 +1533,10 @@ your coordinates."
   (for-each (lambda (x) (assert-integer x))
             (list sminrow smincol dminrow dmincol dmaxrow dmaxcol))
   (%copywin srcwin destwin sminrow smincol dminrow dmincol dmaxrow dmaxcol
-	    overlay))
+            overlay))
 
 (define (curses-version)
-  "Returns, as a string, the version number and patch level of the 
+  "Returns, as a string, the version number and patch level of the
 underlying ncurses library."
   (%curses-version))
 
@@ -1610,8 +1611,8 @@ The subwindow shares memory with the original window."
   (assert-window win)
   (let ((ret (%dupwin win)))
     (if (not ret)
-	(raise (condition (&curses-bad-state-error)))
-	ret)))
+        (raise (condition (&curses-bad-state-error)))
+        ret)))
 
 (define (echo!)
   "Enable echoing of typed characters."
@@ -1696,6 +1697,11 @@ location X, Y, if given."
   (assert-window win)
   (car (getyx win)))
 
+(define (getdelay win)
+  "Returns the wait time for a character in milliseconds."
+  (assert-window win)
+  (%getdelay win))
+
 (define (getmaxx win)
   "Returns the window's size in the X direction ."
   (assert-window win)
@@ -1737,7 +1743,7 @@ position before receiving characters."
        (%wgetnstr win n)))
 
 (define (getparent win)
-  "Returns the parent window of WIN, if any.  If WIN is a root window, 
+  "Returns the parent window of WIN, if any.  If WIN is a root window,
 it returns #f."
   (assert-window win)
   (%getparent win))
@@ -1778,7 +1784,7 @@ two-element list (y x)."
   (%getyx win))
 
 (define (halfdelay! tenths)
-  "Disable line buffering and erase/kill character processing, but, 
+  "Disable line buffering and erase/kill character processing, but,
 only wait TENTHS tenths of seconds for a keypress"
   (assert-integer tenths)
   (if (or (< tenths 1) (> tenths 255))
@@ -2089,7 +2095,7 @@ programs that don't use the cursor."
   (%longname))
 
 (define (mcprint str)
-  "If the terminal has a printer attached and had the capability to 
+  "If the terminal has a printer attached and had the capability to
 send data to it, this procedure will send STR to the printer.  It
 returns #f on error or otherwise the number of characters sent."
   (%mcprint str))
@@ -2158,7 +2164,7 @@ upper-left corner is at Y, X."
   (%napms ms))
 
 (define (newpad nlines ncols)
-  "Creates and returns a pointer to a new pad data structure with the 
+  "Creates and returns a pointer to a new pad data structure with the
 given number of lines and columns.  A pad is like a window, except it is
 not restricted by screen size.  It returns a window structure on success
 or #f on failure"
@@ -2211,7 +2217,7 @@ If the optional keyword argument #:panel is #t, the window is converted to a pan
         (make-panel! win))
     win))
 
-(define (nl!) 
+(define (nl!)
   "Enables the underlying display device to translate the return key
 into newline on input and to translate newline into return and
 line-feed on output."
@@ -2221,7 +2227,7 @@ line-feed on output."
   "Enable line buffering and and erase/kill character processing."
   (%nocbreak!))
 
-(define (nodelay! win bf)  
+(define (nodelay! win bf)
   "If BF is true, 'getch' will be a non-blocking call. If BF is #f, 'getch'
 will wait for input."
   (assert-window win)
@@ -2234,14 +2240,14 @@ will wait for input."
   "Disable echoing of typed characters."
   (%noecho!))
 
-(define (nonl!) 
+(define (nonl!)
   "Prevents the underlying display device from translating the return
 key into newline on input and translating newline into return and
 line-feed on output."
   (%nonl!))
 
 (define (notimeout! win bf)
-  "If BF is false, 'getch' sets a timer for how long it will wait for the 
+  "If BF is false, 'getch' sets a timer for how long it will wait for the
 bytes that make up an escape sequence.  If it is true, it does not set
 a timer and will likely not interpret function keys correctly."
   (assert-window win)
@@ -2301,7 +2307,7 @@ list containing the foreground color number and the background color
 number.  It can return #f if the color pair number is out of range or
 colors aren't initialized."
   (assert-integer pair)
-  (%pair-content pair))  
+  (%pair-content pair))
 
 (define* (pechochar win ch #:key y x)
   "Add character ch to the pad WIN, and then refresh the pad."
@@ -2404,7 +2410,7 @@ FILENAME."
   (%scr-dump filename))
 
 (define (scr-restore filename)
-  "Reads the file FILENAME generated by a call to 'scr-dump' and copies the 
+  "Reads the file FILENAME generated by a call to 'scr-dump' and copies the
 contents to the virtual screen.  A call to 'doupdate' will make it visible."
   (assert-string filename)
   (%scr-restore filename))
@@ -2629,7 +2635,7 @@ If X and Y are given, the cursor is first moved to that location."
   (and (if (and y x)
            (%wmove win y x)
            #t)
-       (or 
+       (or
         (%wvline win (xchar->list ch) n)
         (raise (condition (&curses-bad-state-error))))))
 

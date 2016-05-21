@@ -1,7 +1,7 @@
 /*
   curs_func.h
 
-  Copyright 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -34,7 +34,7 @@ GUCU_API SCM gucu_beep (void);
 GUCU_API SCM gucu_bkgd (SCM win, SCM ch);
 GUCU_API SCM gucu_bkgdset_x (SCM win, SCM ch);
 GUCU_API SCM gucu_border (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5,
-			  SCM arg6, SCM arg7, SCM arg8, SCM arg9);
+                          SCM arg6, SCM arg7, SCM arg8, SCM arg9);
 GUCU_API SCM gucu_can_change_color_p (void);
 GUCU_API SCM gucu_cbreak (void);
 GUCU_API SCM gucu_clear (SCM arg1);
@@ -44,7 +44,7 @@ GUCU_API SCM gucu_clrtoeol (SCM arg1);
 GUCU_API SCM gucu_COLOR_PAIR (SCM arg1);
 GUCU_API SCM gucu_color_set (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_copywin (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5,
-			   SCM arg6, SCM arg7, SCM arg8, SCM arg9);
+                           SCM arg6, SCM arg7, SCM arg8, SCM arg9);
 GUCU_API SCM gucu_curs_set (SCM arg1);
 GUCU_API SCM gucu_curses_version (void);
 GUCU_API SCM gucu_def_prog_mode (void);
@@ -63,6 +63,7 @@ GUCU_API SCM gucu_filter (void);
 GUCU_API SCM gucu_flash (void);
 GUCU_API SCM gucu_flushinp (void);
 GUCU_API SCM gucu_getbkgd (SCM arg1);
+GUCU_API SCM gucu_getdelay (SCM win);
 GUCU_API SCM gucu_halfdelay (SCM arg1);
 GUCU_API SCM gucu_has_colors_p (void);
 GUCU_API SCM gucu_has_ic_p (void);
@@ -124,9 +125,9 @@ GUCU_API SCM gucu_overwrite (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_PAIR_NUMBER (SCM arg1);
 GUCU_API SCM gucu_pechochar (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_pnoutrefresh (SCM arg1, SCM arg2, SCM arg3, SCM arg4,
-				SCM arg5, SCM arg6, SCM arg7);
+                                SCM arg5, SCM arg6, SCM arg7);
 GUCU_API SCM gucu_prefresh (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5,
-			    SCM arg6, SCM arg7);
+                            SCM arg6, SCM arg7);
 GUCU_API SCM gucu_qiflush (void);
 GUCU_API SCM gucu_raw (void);
 GUCU_API SCM gucu_redrawwin (SCM arg1);

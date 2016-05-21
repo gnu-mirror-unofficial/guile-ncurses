@@ -5082,6 +5082,16 @@ milliseconds (where @var{delay} is positive).
 
 @end deffn
 
+@deffn Procedure getdelay win
+@cindex Blocking
+@cindex Input, blocking
+@cindex timeout!
+
+The @code{getdelay} procedure returns the timeout delay as set by
+@code{timeout!}.
+
+@end deffn
+
 
 @deffn Procedure typeahead! fd
 
@@ -5546,7 +5556,7 @@ disable them using @code{nonl!}, curses will be able to make better use
 of the line-feed capability, resulting in faster cursor motion.  Also,
 curses will then be able to detect the return key.
 
-The return values are unspecified;
+The return values are unspecified.
 
 @end deffn
 
@@ -6153,7 +6163,7 @@ Note that panel windows also return @code{#t}.
 
 @end deffn
 
-@deffn Procedure newwin nlines ncols begin-y begin-x #:key panel 
+@deffn Procedure newwin nlines ncols begin-y begin-x #:key panel
 @cindex Windows, creation
 
 Calling @code{newwin} creates and returns a pointer to a new window
@@ -6193,7 +6203,7 @@ The return value is unspecified;
 @end deffn
 
 
-@deffn Procedure subwin orig nlines ncols begin-y begin-x #:key panel 
+@deffn Procedure subwin orig nlines ncols begin-y begin-x #:key panel
 @cindex Windows, derived
 @cindex Subwindows
 
