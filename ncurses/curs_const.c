@@ -188,6 +188,14 @@ SCM gucu_BUTTON4_RELEASED;
 SCM gucu_BUTTON4_CLICKED;
 SCM gucu_BUTTON4_DOUBLE_CLICKED;
 SCM gucu_BUTTON4_TRIPLE_CLICKED;
+#if 0
+// These could be added back in someday
+SCM gucu_BUTTON5_PRESSED;
+SCM gucu_BUTTON5_RELEASED;
+SCM gucu_BUTTON5_CLICKED;
+SCM gucu_BUTTON5_DOUBLE_CLICKED;
+SCM gucu_BUTTON5_TRIPLE_CLICKED;
+#endif
 SCM gucu_BUTTON_SHIFT;
 SCM gucu_BUTTON_CTRL;
 SCM gucu_BUTTON_ALT;
@@ -605,6 +613,28 @@ gucu_init_constant ()
     scm_permanent_object (scm_c_define
 			  ("BUTTON4_TRIPLE_CLICKED",
 			   scm_from_uint (BUTTON4_TRIPLE_CLICKED)));
+#if 0
+  gucu_BUTTON5_PRESSED =
+    scm_permanent_object (scm_c_define
+			  ("BUTTON5_PRESSED",
+			   scm_from_uint (BUTTON5_PRESSED)));
+  gucu_BUTTON5_RELEASED =
+    scm_permanent_object (scm_c_define
+			  ("BUTTON5_RELEASED",
+			   scm_from_uint (BUTTON5_RELEASED)));
+  gucu_BUTTON5_CLICKED =
+    scm_permanent_object (scm_c_define
+			  ("BUTTON5_CLICKED",
+			   scm_from_uint (BUTTON5_CLICKED)));
+  gucu_BUTTON5_DOUBLE_CLICKED =
+    scm_permanent_object (scm_c_define
+			  ("BUTTON5_DOUBLE_CLICKED",
+			   scm_from_uint (BUTTON5_DOUBLE_CLICKED)));
+  gucu_BUTTON5_TRIPLE_CLICKED =
+    scm_permanent_object (scm_c_define
+			  ("BUTTON5_TRIPLE_CLICKED",
+			   scm_from_uint (BUTTON5_TRIPLE_CLICKED)));
+#endif
   gucu_BUTTON_SHIFT =
     scm_permanent_object (scm_c_define
 			  ("BUTTON_SHIFT", scm_from_uint (BUTTON_SHIFT)));
