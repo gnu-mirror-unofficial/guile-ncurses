@@ -2456,12 +2456,12 @@ scroll."
 this?)"
   (%setsyx y x))
 
-(define (setupterm term)
+(define* (setupterm #:optional (term #f))
   "Searches the terminfo database for the a terminal with the given
-name.  If term is #f, the name of the terminal in the TERM environment
-variable is used.  If the terminal is not found in the terminfo database,
-#f is returned.  If it is found, one of the symbols 'terminal or
-'hardcopy is returned.
+name.  If the optional argument term is not given or is #f, the name of
+the terminal in the TERM environment variable is used.  If the
+terminal is not found in the terminfo database, #f is returned.  If it
+is found, one of the symbols 'terminal or 'hardcopy is returned.
 
 If the terminal is found, then the 'tiget' procedure can be used
 to query terminfo capabilities for this terminal."

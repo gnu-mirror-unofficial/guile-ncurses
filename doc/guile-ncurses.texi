@@ -6339,15 +6339,17 @@ if it has information on a terminal, or to see which escape sequences
 need to be executed to perform these low level operations.  This
 library provides two procedures to query this database.
 
-@deffn Procedure setupterm terminal
+@deffn Procedure setupterm #:optional terminal
 @cindex Terminfo
-Searches the terminfo database for the a terminal with the given name.
-If @var{terminal} is #f, the name of the terminal in the TERM
-environment variable is used.  If the terminal is not found in the
-terminfo database, #f is returned.  If it is found, one of the symbols
-@code{terminal} or @code{hardcopy} is returned.
+When called with one string argument -- a string with the name of a
+terminal as it would appear in the terminfo database --
+@code{setupterm} the terminfo database for the terminal with the given
+name.  When called with zero arguments, the name of terminal in the
+TERM environment variable is used.  If it is found, one of the symbols
+@code{terminal} or @code{hardcopy} is returned.  If the terminal is
+not found in the terminfo database, #f is returned.
 
-If the terminal is found, then the 'tiget' procedure can be used
+If the terminal is found, then the @code{tiget} procedure can be used
 to query terminfo capabilities for this terminal.
 @end deffn
 
