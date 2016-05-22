@@ -1,4 +1,4 @@
-;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2011, 2013, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -20,24 +20,20 @@
              (ncurses curses)
              (srfi srfi-1))
 
-(setlocale LC_ALL "")
-
 (automake-test
- (let ((win (initscr)))
-   (clear win)
+ (let* ((win (initscr)))
    (refresh win)
-   (addstr win "xxx" #:y 0 #:x 0)
-   ;; Only insert the 1st of these letters 'z'
-   (insstr win "zzz" #:y 0 #:x 0 #:n 1)
-   (refresh win)
-   (let ((x1 (inch win #:y 0 #:x 0))
-	 (x2 (inch win #:y 0 #:x 1)))
+
+   ;; Curs-set should not return #f if this terminal has the capability
+   ;; to set the visiblity of the cursor.  Not all terminals have this
+   ;; capability.
+   (let* ((x1 (curs-set 0))
+	  (x2 (curs-set 1))
+	  (x3 (curs-set 2)))
+     ;; This restores the cursor to the original setting.
+     (if x1 (curs-set x1))
      (endwin)
      (newline)
-     (write x1)
-     (newline)
-     (write x2)
-     (newline)
-     (and
-      (xchar-equal? x1 (normal #\z))
-      (xchar-equal? x2 (normal #\x))))))
+     (format #t "curs-set ~s ~s ~s ~%" x1 x2 x3)
+     ;; This is not false if the cursor could be set.
+     (and x1 x2 x3))))

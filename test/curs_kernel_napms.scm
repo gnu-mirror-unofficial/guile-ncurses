@@ -1,8 +1,4 @@
-;;;; -*- Mode: scheme; -*-
-;;;; curses_025_move.test --- test suite for curses's move functions
-
-
-;; Copyright 2009, 2010 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2011, 2013, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -20,25 +16,17 @@
 ;; License along with Guile-Ncurses.  If not, see
 ;; <http://www.gnu.org/licenses/>.
 
-(use-modules (test lib)
-             (test lib2)
+(use-modules (test automake-test-lib)
              (ncurses curses)
              (srfi srfi-1))
 
-(define test (curses-test-start))
+;; Hrm. How to test sleep?
 
-(define win (initscr))
-
-;; Should be able to move the cursor
-(with-test-prefix
- "move"
-
- (pass-if "move"
-          (clear win)
-          (move win 1 1)
-          (refresh win)
-          (lset= eqv? '(1 1) (getyx win))))
-
-(endwin)
-
-(curses-test-end test "curses_025_move.out")
+(automake-test
+ (let ((win (initscr)))
+   (clear win)
+   (refresh win)
+   (napms 1)
+   (endwin)
+   (newline)
+   'skipped))

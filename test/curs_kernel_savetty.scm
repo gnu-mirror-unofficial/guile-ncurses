@@ -1,4 +1,4 @@
-;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2011, 2013, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -20,24 +20,16 @@
              (ncurses curses)
              (srfi srfi-1))
 
-(setlocale LC_ALL "")
+;; If we are detached from a terminal (such as when being
+;; called in nohup) this can return #f.
 
 (automake-test
- (let ((win (initscr)))
-   (clear win)
+ (let* ((win (initscr)))
    (refresh win)
-   (addstr win "xxx" #:y 0 #:x 0)
-   ;; Only insert the 1st of these letters 'z'
-   (insstr win "zzz" #:y 0 #:x 0 #:n 1)
-   (refresh win)
-   (let ((x1 (inch win #:y 0 #:x 0))
-	 (x2 (inch win #:y 0 #:x 1)))
+   (let ((ret1 (savetty))
+	 (ret2 (resetty)))
      (endwin)
      (newline)
-     (write x1)
-     (newline)
-     (write x2)
-     (newline)
-     (and
-      (xchar-equal? x1 (normal #\z))
-      (xchar-equal? x2 (normal #\x))))))
+     (format #t "savetty: ~s~%" ret1)
+     (format #t "resetty: ~s~%" ret2)
+     'skipped)))

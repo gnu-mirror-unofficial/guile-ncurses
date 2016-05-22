@@ -146,7 +146,14 @@ NARROWTESTS = \
  curs_instr_instr.scm \
  curs_instr_instr_n.scm \
  curs_instr_instr_yxn.scm \
-curses_024_kernel.test curses_025_move.test curses_026_outputs.test	\
+ curs_kernel_curs_set.scm \
+ curs_kernel_def_prog_mode.scm \
+ curs_kernel_def_shell_mode.scm \
+ curs_kernel_getsyx.scm \
+ curs_kernel_napms.scm \
+ curs_kernel_savetty.scm \
+ curs_move.scm \
+curses_025_move.test curses_026_outputs.test	\
 curses_027_overlay.test curses_028_pad.test curses_029_refresh.test	\
 curses_030_scr_dump.test curses_031_scroll.test			        \
 curses_032_termattrs.test curses_033_touch.test curses_034_util.test	\
