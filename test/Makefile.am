@@ -92,7 +92,9 @@ NARROWTESTS = \
  curs_attr_standout.scm \
  curs_beep.scm \
  curs_beep_flash.scm \
- curses_010_bkgd.test curses_011_border.test	\
+ curs_bkgd_bkgd.scm \
+ curs_bkgd_bkgdset.scm \
+ curses_011_border.test	\
 curses_012_clear.test curses_013_delch.test curses_014_deleteln.test	\
 curses_015_getch.test curses_016_getstr.test curses_017_getyx.test	\
 curses_018_inch.test curses_019_inchstr.test curses_020_inopts.test	\
