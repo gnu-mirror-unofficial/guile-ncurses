@@ -124,7 +124,20 @@ NARROWTESTS = \
  curs_getyx_getyx.scm \
  curs_inch.scm \
  curs_inchstr_inchnstr.scm \
- curses_020_inopts.test	\
+ curs_inopts_cbreak.scm \
+ curs_inopts_echo.scm \
+ curs_inopts_halfdelay.scm \
+ curs_inopts_intrflush_false.scm \
+ curs_inopts_intrflush.scm \
+ curs_inopts_meta_false.scm \
+ curs_inopts_meta.scm \
+ curs_inopts_nocbreak.scm \
+ curs_inopts_noecho.scm \
+ curs_inopts_noqiflush.scm \
+ curs_inopts_notimeout.scm \
+ curs_inopts_qiflush.scm \
+ curs_inopts_timeout.scm \
+ curs_inopts_typeahead.scm \
 curses_021_insch.test curses_022_insstr.test curses_023_instr.test	\
 curses_024_kernel.test curses_025_move.test curses_026_outputs.test	\
 curses_027_overlay.test curses_028_pad.test curses_029_refresh.test	\
