@@ -158,7 +158,10 @@ NARROWTESTS = \
  curs_overlay_copywin.scm \
  curs_overlay_overlay.scm \
  curs_overlay_overwrite.scm \
- curses_028_pad.test curses_029_refresh.test	\
+ curs_pad_newpad_prefresh.scm \
+ curs_pad_pechochar.scm \
+ curs_pad_subpad_pnoutrefresh.scm \
+ curs_refresh_redrawwin.scm \
 curses_030_scr_dump.test curses_031_scroll.test			        \
 curses_032_termattrs.test curses_033_touch.test curses_034_util.test	\
 curses_035_attributes.test curses_036_ports.test curses_037_mouse.test	\
