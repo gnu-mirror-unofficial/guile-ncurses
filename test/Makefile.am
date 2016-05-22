@@ -118,7 +118,10 @@ NARROWTESTS = \
  curs_getch_ungetch.scm \
  curs_getstr_getnstr.scm \
  curs_getstr_getnstr_yx.scm \
- curses_017_getyx.test	\
+ curs_getyx_getbegyx.scm \
+ curs_getyx_getmaxyx.scm \
+ curs_getyx_getparyx.scm \
+ curs_getyx_getyx.scm \
 curses_018_inch.test curses_019_inchstr.test curses_020_inopts.test	\
 curses_021_insch.test curses_022_insstr.test curses_023_instr.test	\
 curses_024_kernel.test curses_025_move.test curses_026_outputs.test	\
