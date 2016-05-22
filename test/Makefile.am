@@ -94,7 +94,12 @@ NARROWTESTS = \
  curs_beep_flash.scm \
  curs_bkgd_bkgd.scm \
  curs_bkgd_bkgdset.scm \
- curses_011_border.test	\
+ curs_border_custom.scm \
+ curs_border_default.scm \
+ curs_border_hline.scm \
+ curs_border_hline_yx.scm \
+ curs_border_vline.scm \
+ curs_border_vline_yx.scm \
 curses_012_clear.test curses_013_delch.test curses_014_deleteln.test	\
 curses_015_getch.test curses_016_getstr.test curses_017_getyx.test	\
 curses_018_inch.test curses_019_inchstr.test curses_020_inopts.test	\
