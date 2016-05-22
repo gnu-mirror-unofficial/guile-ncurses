@@ -162,7 +162,10 @@ NARROWTESTS = \
  curs_pad_pechochar.scm \
  curs_pad_subpad_pnoutrefresh.scm \
  curs_refresh_redrawwin.scm \
-curses_030_scr_dump.test curses_031_scroll.test			        \
+ curs_scr_dump.scm \
+ curs_scroll_scrl_positive.scm \
+ curs_scroll_scrl.scm \
+ curs_scroll_scroll.scm \
 curses_032_termattrs.test curses_033_touch.test curses_034_util.test	\
 curses_035_attributes.test curses_036_ports.test curses_037_mouse.test	\
 curses_038_properties.test curses_039_resizeterm.test                   \
