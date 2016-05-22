@@ -138,7 +138,14 @@ NARROWTESTS = \
  curs_inopts_qiflush.scm \
  curs_inopts_timeout.scm \
  curs_inopts_typeahead.scm \
-curses_021_insch.test curses_022_insstr.test curses_023_instr.test	\
+ curs_insch_insch.scm \
+ curs_insch_insch_yx.scm \
+ curs_insstr_insstr.scm \
+ curs_insstr_insstr_yx.scm \
+ curs_insstr_insstr_n.scm \
+ curs_instr_instr.scm \
+ curs_instr_instr_n.scm \
+ curs_instr_instr_yxn.scm \
 curses_024_kernel.test curses_025_move.test curses_026_outputs.test	\
 curses_027_overlay.test curses_028_pad.test curses_029_refresh.test	\
 curses_030_scr_dump.test curses_031_scroll.test			        \

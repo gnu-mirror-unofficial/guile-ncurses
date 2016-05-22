@@ -1,0 +1,25 @@
+(use-modules (test automake-test-lib)
+             (ncurses curses)
+             (srfi srfi-1))
+
+(setlocale LC_ALL "")
+
+(automake-test
+ (let ((win (initscr)))
+   (clear win)
+   (refresh win)
+   (addstr win "xxx" #:y 0 #:x 0)
+   (move win 0 0)
+   (insstr win "zzz")
+   (refresh win)
+   (let ((x1 (inch win #:y 0 #:x 2))
+	 (x2 (inch win #:y 0 #:x 3)))
+     (endwin)
+     (newline)
+     (write x1)
+     (newline)
+     (write x2)
+     (newline)
+     (and
+      (xchar-equal? x1 (normal #\z))
+      (xchar-equal? x2 (normal #\x))))))
