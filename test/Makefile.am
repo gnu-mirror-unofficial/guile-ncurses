@@ -153,8 +153,12 @@ NARROWTESTS = \
  curs_kernel_napms.scm \
  curs_kernel_savetty.scm \
  curs_move.scm \
-curses_025_move.test curses_026_outputs.test	\
-curses_027_overlay.test curses_028_pad.test curses_029_refresh.test	\
+ curs_outopts_clearok.scm \
+ curs_outopts_setscrreg.scm \
+ curs_overlay_copywin.scm \
+ curs_overlay_overlay.scm \
+ curs_overlay_overwrite.scm \
+ curses_028_pad.test curses_029_refresh.test	\
 curses_030_scr_dump.test curses_031_scroll.test			        \
 curses_032_termattrs.test curses_033_touch.test curses_034_util.test	\
 curses_035_attributes.test curses_036_ports.test curses_037_mouse.test	\
