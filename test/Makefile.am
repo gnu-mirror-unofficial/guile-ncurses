@@ -106,7 +106,10 @@ NARROWTESTS = \
  curs_clear_erase.scm \
  curs_delch_delch.scm \
  curs_delch_delch_yx.scm \
-curses_014_deleteln.test	\
+ curs_deleteln_deleteln.scm \
+ curs_deleteln_insdelln_negative.scm \
+ curs_deleteln_insdelln_positive.scm \
+ curs_deleteln_insertln.scm \
 curses_015_getch.test curses_016_getstr.test curses_017_getyx.test	\
 curses_018_inch.test curses_019_inchstr.test curses_020_inopts.test	\
 curses_021_insch.test curses_022_insstr.test curses_023_instr.test	\
