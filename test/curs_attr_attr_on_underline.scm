@@ -1,7 +1,4 @@
-;;;; -*- Mode: scheme; -*-
-;;;; curses_009_beep.test --- test suite for curses's beep!
-
-;; Copyright 2009, 2010, 2011 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2011, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -19,35 +16,23 @@
 ;; License along with Guile-Ncurses.  If not, see
 ;; <http://www.gnu.org/licenses/>.
 
-
-(use-modules (test lib)
-             (test lib2)
+(use-modules (test automake-test-lib)
              (srfi srfi-1)
+             (ice-9 format)
              (ncurses curses))
 
-
-(define test (curses-test-start))
-
-;; Requires a terminal that can beep and flash
-
-(define win (initscr))
-
-;; Should be able to beep and flash
-(with-test-prefix
- "beep"
-
- (pass-if "beep"
-          (begin
-            (clear win)
-            (refresh win)
-            (and (beep) (beep) (beep))))
-
- (pass-if "flash"
-          (begin
-            (clear win)
-            (refresh win)
-            (and (flash) (flash) (flash)))))
-
-(endwin)
-
-(curses-test-end test "curses_009_beep.out")
+(automake-test
+ (let ((win (initscr)))
+   (start-color!)
+   (clear win)
+   (standend! win)
+   (attr-on! win A_UNDERLINE)
+   (addstr win "x" #:y 0 #:x 0)
+   (refresh win)
+   (let ((x2 (inch win #:y 0 #:x 0)))
+     (endwin)
+     (newline)
+     (format #t "inch: ~s~%" x2)
+     (format #t "A_UNDERLINE: ~s~%" A_UNDERLINE)
+     (format #t "xchar-attr: ~s~%" (xchar-attr x2))
+     (equal? A_UNDERLINE (xchar-attr x2)))))

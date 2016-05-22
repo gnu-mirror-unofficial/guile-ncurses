@@ -70,8 +70,29 @@ NARROWTESTS = \
  curs_addchstr_n.scm \
  curs_addchstr_yx.scm \
  curs_addchstr_yxn.scm \
- curses_007_addstr.test curses_008_attr.test	\
-curses_009_beep.test curses_010_bkgd.test curses_011_border.test	\
+ curs_addstr.scm \
+ curs_addstr_yx.scm \
+ curs_addstr_yxn.scm \
+ curs_attr_attr_get.scm \
+ curs_attr_attr_off_underline.scm \
+ curs_attr_attr_on_blink.scm \
+ curs_attr_attr_on_bold.scm \
+ curs_attr_attr_on_dim.scm \
+ curs_attr_attr_on_invis.scm \
+ curs_attr_attr_on_protect.scm \
+ curs_attr_attr_on_reverse.scm \
+ curs_attr_attr_on_standout.scm \
+ curs_attr_attr_on_underline.scm \
+ curs_attr_attr_set_normal.scm \
+ curs_attr_attr_set.scm \
+ curs_attr_chgat.scm \
+ curs_attr_chgat_yx.scm \
+ curs_attr_color_set.scm \
+ curs_attr_standend.scm \
+ curs_attr_standout.scm \
+ curs_beep.scm \
+ curs_beep_flash.scm \
+ curses_010_bkgd.test curses_011_border.test	\
 curses_012_clear.test curses_013_delch.test curses_014_deleteln.test	\
 curses_015_getch.test curses_016_getstr.test curses_017_getyx.test	\
 curses_018_inch.test curses_019_inchstr.test curses_020_inopts.test	\
