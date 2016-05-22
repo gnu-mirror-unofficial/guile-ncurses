@@ -110,7 +110,13 @@ NARROWTESTS = \
  curs_deleteln_insdelln_negative.scm \
  curs_deleteln_insdelln_positive.scm \
  curs_deleteln_insertln.scm \
-curses_015_getch.test curses_016_getstr.test curses_017_getyx.test	\
+ curs_getch_getch.scm \
+ curs_getch_getch_yx.scm \
+ curs_getch_haskey_invalid.scm \
+ curs_getch_haskey.scm \
+ curs_getch_key_defined.scm \
+ curs_getch_ungetch.scm \
+ curses_016_getstr.test curses_017_getyx.test	\
 curses_018_inch.test curses_019_inchstr.test curses_020_inopts.test	\
 curses_021_insch.test curses_022_insstr.test curses_023_instr.test	\
 curses_024_kernel.test curses_025_move.test curses_026_outputs.test	\
