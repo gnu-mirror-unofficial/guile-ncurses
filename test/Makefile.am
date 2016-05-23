@@ -188,7 +188,9 @@ NARROWTESTS = \
  curs_util_unctrl_1.scm \
  curs_util_unctrl_2.scm \
  curs_util_unctrl_3.scm \
-curses_035_attributes.test curses_036_ports.test curses_037_mouse.test	\
+ curs_attributes.scm \
+ curs_attributes_strings.scm \
+ curses_036_ports.test curses_037_mouse.test	\
 curses_038_properties.test curses_039_resizeterm.test                   \
 p001_panel.test f001_new_form.test f002_data.test			\
 f003_field_attributes.test f004_form_field.test f005_form_page.test	\
