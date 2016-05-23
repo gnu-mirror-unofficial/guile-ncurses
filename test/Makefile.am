@@ -166,7 +166,28 @@ NARROWTESTS = \
  curs_scroll_scrl_positive.scm \
  curs_scroll_scrl.scm \
  curs_scroll_scroll.scm \
-curses_032_termattrs.test curses_033_touch.test curses_034_util.test	\
+ curs_termattrs_baudrate.scm \
+ curs_termattrs_erasechar.scm \
+ curs_termattrs_has_ic.scm \
+ curs_termattrs_has_il.scm \
+ curs_termattrs_killchar.scm \
+ curs_termattrs_longname.scm \
+ curs_termattrs_term_attrs.scm \
+ curs_termattrs_termname.scm \
+ curs_touch_touchline.scm \
+ curs_touch_untouchline.scm \
+ curs_touch_untouchwin.scm \
+ curs_extend_curses_version.scm \
+ curs_extend_use_extended_names.scm \
+ curs_util_delay_output.scm \
+ curs_util_keyname_1.scm \
+ curs_util_keyname_2.scm \
+ curs_util_keyname_3.scm \
+ curs_util_putwin_getwin.scm \
+ curs_util_putwin.scm \
+ curs_util_unctrl_1.scm \
+ curs_util_unctrl_2.scm \
+ curs_util_unctrl_3.scm \
 curses_035_attributes.test curses_036_ports.test curses_037_mouse.test	\
 curses_038_properties.test curses_039_resizeterm.test                   \
 p001_panel.test f001_new_form.test f002_data.test			\
