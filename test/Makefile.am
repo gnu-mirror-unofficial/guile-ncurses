@@ -45,6 +45,9 @@ NARROWTESTS = \
  curs_initscr_isendwin_negative_after_refresh.scm \
  curs_initscr_isendwin_negative.scm \
  curs_initscr_isendwin_positive.scm \
+ curs_initscr_newterm_screen.scm \
+ curs_initscr_newterm_multiple_screens.scm \
+ curs_initscr_newterm_stdscr.scm \
  curs_color_assume_default_colors.scm \
  curs_color_attr_get_color.scm \
  curs_color_can_change_color.scm \
