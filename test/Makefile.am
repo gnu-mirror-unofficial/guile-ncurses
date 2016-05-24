@@ -232,8 +232,12 @@ NARROWTESTS = \
  curs_opaque_is_subwin.scm \
  curs_opaque_is_syncok_false.scm \
  curs_opaque_is_syncok.scm \
- curses_039_resizeterm.test                   \
-p001_panel.test f001_new_form.test f002_data.test			\
+ panel_p_del_panel.scm \
+ panel_p_make_panel.scm \
+ panel_p_panel.scm \
+ panel_p_window.scm \
+ panel_update_demo.scm \
+ f001_new_form.test f002_data.test			\
 f003_field_attributes.test f004_form_field.test f005_form_page.test	\
 f006_form_field_just.test f007_form_field_opts.test			\
 f008_form_field_buffer.test m001_new_menu.test m002_mitem_current.test	\
