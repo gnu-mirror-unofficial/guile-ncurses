@@ -193,8 +193,46 @@ NARROWTESTS = \
  curs_util_unctrl_3.scm \
  curs_attributes.scm \
  curs_attributes_strings.scm \
- curses_036_ports.test curses_037_mouse.test	\
-curses_038_properties.test curses_039_resizeterm.test                   \
+ curs_mouse_getmouse.scm \
+ curs_mouse_has_mouse.scm \
+ curs_mouse_mouseinterval_default.scm \
+ curs_mouse_mouseinterval_set.scm \
+ curs_mouse_mousemask.scm \
+ curs_mouse_mouse_trafo_from.scm \
+ curs_mouse_mouse_trafo_out.scm \
+ curs_mouse_mouse_trafo.scm \
+ curs_mouse_wenclose_false.scm \
+ curs_mouse_wenclose.scm \
+ curs_opaque_getdelay.scm \
+ curs_opaque_getparent_false.scm \
+ curs_opaque_getparent.scm \
+ curs_opaque_getscrreg.scm \
+ curs_opaque_is_cleared_false.scm \
+ curs_opaque_is_cleared.scm \
+ curs_opaque_is_idcok_false.scm \
+ curs_opaque_is_idcok.scm \
+ curs_opaque_is_idlok_false.scm \
+ curs_opaque_is_idlok.scm \
+ curs_opaque_is_immedok_false.scm \
+ curs_opaque_is_immedok.scm \
+ curs_opaque_is_keypad_false.scm \
+ curs_opaque_is_keypad.scm \
+ curs_opaque_is_leaveok_false.scm \
+ curs_opaque_is_leaveok.scm \
+ curs_opaque_is_nodelay_false.scm \
+ curs_opaque_is_nodelay.scm \
+ curs_opaque_is_notimeout_false.scm \
+ curs_opaque_is_notimeout.scm \
+ curs_opaque_is_pad_false.scm \
+ curs_opaque_is_pad.scm \
+ curs_opaque_is_scrollok_false.scm \
+ curs_opaque_is_scrollok.scm \
+ curs_opaque_is_subwin_false.scm \
+ curs_opaque_is_subwin_pad.scm \
+ curs_opaque_is_subwin.scm \
+ curs_opaque_is_syncok_false.scm \
+ curs_opaque_is_syncok.scm \
+ curses_039_resizeterm.test                   \
 p001_panel.test f001_new_form.test f002_data.test			\
 f003_field_attributes.test f004_form_field.test f005_form_page.test	\
 f006_form_field_just.test f007_form_field_opts.test			\
