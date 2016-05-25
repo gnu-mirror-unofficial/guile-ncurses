@@ -1,0 +1,30 @@
+(use-modules (test automake-test-lib)
+	     (ncurses curses)
+	     (ncurses menu))
+
+(automake-test
+ (let* ((mainwin (initscr))
+	(item (new-item "item1" "description1"))
+	(rc1 (%item-refcount item))
+	(m (new-menu (list item))))
+   (post-menu m)
+   (set-current-item! m item)
+   (refresh mainwin)
+   (maybe-sleep 2)
+   (current-item m)
+   (current-item m)
+   (current-item m)
+   (current-item m)
+   (current-item m)
+   (gc)
+   (let* ((rc2 (%item-refcount item)))
+     (unpost-menu m)
+     (endwin)
+     (newline)
+     (format #t "recount item #1 before menu: ~s~%" rc1)
+     (format #t "refcount item #1 after freeing get-current-item: ~s~%" rc2)
+     (and
+      (= rc1 1)
+      (= rc2 2)))))
+
+   

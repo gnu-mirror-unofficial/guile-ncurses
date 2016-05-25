@@ -243,7 +243,11 @@ NARROWTESTS = \
  form_data_behind.scm \
 f003_field_attributes.test f004_form_field.test f005_form_page.test	\
 f006_form_field_just.test f007_form_field_opts.test			\
-f008_form_field_buffer.test m001_new_menu.test m002_mitem_current.test	\
+f008_form_field_buffer.test \
+ menu_gc_refcount.scm \
+ menu_gc_refcount_2.scm \
+ menu_gc_refcount_3.scm \
+m001_new_menu.test m002_mitem_current.test	\
 m003_mitem_name.test m004_mitem_opts.test m005_mitem_value.test	\
 m006_mitem_visible.test m007_menu_attributes.test			\
 m008_menu_cursor.test m009_menu_format.test m010_menu_mark.test	\
