@@ -362,6 +362,8 @@ gc_free_menu (SCM x)
       // is successful, ncurses will modify this menu's items to no
       // longer be connected to the menu, but, it won't free them.
 
+      int free_attempts = 0;
+    freemenu:
       retval = free_menu (gm->menu);
 
       if (retval == E_BAD_ARGUMENT)
@@ -376,8 +378,21 @@ gc_free_menu (SCM x)
 	}
       else if (retval == E_POSTED)
 	{
+	  // If we get the E_POSTED error, this menu is being garbage
+	  // collected without someone having properly called
+	  // unpost_menu() first.  We'll try to recover from that
+	  // mistake here.
+	  if (free_attempts == 0)
+	    {
+	      unpost_menu (gm->menu);
+	      free_attempts ++;
+	      goto freemenu;
+	    }
+	  else
+	    {
 	      free (pitem_store);
 	      scm_misc_error ("garbage collection of menu", "posted", SCM_EOL);
+	    }
 	}
 
       // If we get this far, the menu is now detached from the menu items.
