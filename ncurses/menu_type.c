@@ -1,7 +1,7 @@
 /*
   menu_type.c
 
-  Copyright 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -57,6 +57,39 @@ int print_menu (SCM x, SCM port, scm_print_state * pstate);
 
 /* item -- in C, an ITEM *.  In Scheme, a smob that contains the
  * pointer */
+
+void
+item_init_refcount (ITEM *item)
+{
+  set_item_userptr (item, (void *) 1);
+}
+
+bool
+item_increase_refcount (ITEM *item)
+{
+  void *ptr = item_userptr (item);
+  if (ptr >= (void *) INT_MAX)
+    return FALSE;
+
+  set_item_userptr (item, ptr + 1);
+  return TRUE;
+}
+
+bool
+item_decrease_refcount (ITEM *item)
+{
+  void *ptr = item_userptr (item);
+  if (ptr == (void *) 0)
+    return FALSE;
+  set_item_userptr (item, ptr + 1);
+  return TRUE;
+}
+
+int
+item_get_refcount (ITEM *item)
+{
+  return (int) item_userptr (item);
+}
 
 SCM
 gucu_new_item (SCM name, SCM description)
@@ -136,6 +169,7 @@ _scm_from_item (ITEM * x)
   return (s_item);
 }
 
+
 // Items are equal if they point to the same C structure
 SCM
 equalp_item (SCM x1, SCM x2)
@@ -158,17 +192,31 @@ mark_item (SCM x UNUSED)
   return (SCM_BOOL_F);
 }
 
-/* The name is free_item. */
 size_t
 gc_free_item (SCM item)
 {
   SCM_ASSERT (_scm_is_item (item), item, SCM_ARG1, "free-item");
 
   ITEM *m = _scm_to_item (item);
-
-  assert (m != NULL);
-
-  free_item (m);
+  if (m != NULL)
+    {
+      item_decrease_refcount (m);
+      if (item_get_refcount (m) == 0)
+	{
+	  // Since no other #<menu> or #<item> is using the underlying
+	  // ITEM *, we can free it.
+	  free (item_name (m));
+	  free (item_description (m));
+	  free_item (m);
+	  SCM_SET_SMOB_DATA (item, 0);
+	}
+      else
+	{
+	  // Since some other #<menu> or #<item> has a reference to
+	  // this ITEM *, we just detach it.
+	  SCM_SET_SMOB_DATA (item, 0);
+	}
+    }
 
   return 0;
 }
@@ -210,7 +258,14 @@ gucu_is_item_p (SCM x)
   return scm_from_bool (_scm_is_item (x));
 }
 
+SCM
+gucu_item_refcount (SCM x)
+{
+  SCM_ASSERT (_scm_is_item (x), x, SCM_ARG1, "%item-refcount");
 
+  ITEM *m = _scm_to_item (x);
+  return scm_from_int (item_get_refcount (m));
+}
 
 // menu -- in C, a MENU *.  In Scheme, a smob that contains the pointer
 // to a form along with a list that contains the SCM of the fields
@@ -288,33 +343,37 @@ gc_free_menu (SCM x)
   scm_assert_smob_type (menu_tag, x);
 
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
-
-  assert (gm != NULL);
-
-  retval = free_menu (gm->menu);
-
-  if (retval == E_BAD_ARGUMENT)
+  if (gm != NULL && gm->menu != NULL)
     {
-      scm_error_scm (scm_from_locale_symbol ("ncurses"),
-                     scm_from_locale_string ("garbage collection of menu"),
-                     scm_from_locale_string ("bad argument"),
-                     SCM_BOOL_F, SCM_BOOL_F);
-    }
-  else if (retval == E_POSTED)
-    {
-      scm_error_scm (scm_from_locale_symbol ("ncurses"),
-                     scm_from_locale_string ("garbage collection of menu"),
-                     scm_from_locale_string ("posted"),
-                     SCM_BOOL_F, SCM_BOOL_F);
-    }
-  else if (retval == E_SYSTEM_ERROR)
-    {
-      scm_error_scm (scm_from_locale_symbol ("ncurses"),
-                     scm_from_locale_string ("garbage collection of menu"),
-                     scm_from_locale_string ("system error"),
-                     SCM_BOOL_F, SCM_BOOL_F);
-    }
+      // Drop references on all the items in the menu
+      int len = item_count (gm->menu);
+      ITEM **pitem = menu_items (gm->menu);
+      for (int i = 0; i < len; i ++)
+	{
+	  if (!item_decrease_refcount (pitem[i]))
+	    {
+	      // Supposed to be impossible to hit this error
+	      scm_misc_error ("garbage collection of menu",
+			      "refcount underflow", SCM_EOL);
+	    }
+	  if (item_get_refcount (pitem[i]) == 0)
+	    {
+	      free (item_name (pitem[i]));
+	      free (item_description (pitem[i]));
+	      free_item (pitem[i]);
+	    }
+	}
+      retval = free_menu (gm->menu);
 
+      if (retval == E_BAD_ARGUMENT)
+	scm_misc_error ("garbage collection of menu", "bad argument", SCM_EOL);
+      else if (retval == E_POSTED)
+	scm_misc_error ("garbage collection of menu", "posted", SCM_EOL);
+      else if (retval == E_SYSTEM_ERROR)
+	scm_misc_error ("garbage collection of menu", "system error", SCM_EOL);
+
+      gm->menu = NULL;
+    }
   /* Release scheme objects from the guardians */
   while (scm_is_true (scm_call_0 (gm->items_guard)))
     ;
@@ -407,6 +466,14 @@ gucu_new_menu (SCM items)
     {
       entry = scm_list_ref (items, scm_from_int (i));
       c_items[i] = _scm_to_item (entry);
+      if (!item_increase_refcount (c_items[i]))
+	{
+	  // Zero out this array so that it can be garbage collected.
+	  memset (c_items, 0, (len + 1) * sizeof (ITEM *));
+	  
+	  scm_misc_error ("new-menu", "too many references on item ~s",
+			  scm_list_1 (entry));
+	}
     }
 
   /* This is a null-terminated array */
@@ -459,6 +526,7 @@ gucu_menu_init_type ()
   scm_set_smob_equalp (item_tag, equalp_item);
   scm_c_define_gsubr ("item?", 1, 0, 0, gucu_is_item_p);
   scm_c_define_gsubr ("new-item", 2, 0, 0, gucu_new_item);
+  scm_c_define_gsubr ("%item-refcount", 1, 0, 0, gucu_item_refcount);
 
   menu_tag = scm_make_smob_type ("menu", sizeof (struct menu *));
   scm_set_smob_mark (menu_tag, mark_menu);

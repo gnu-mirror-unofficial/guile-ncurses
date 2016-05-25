@@ -1,7 +1,7 @@
 /*
   menu_func.c
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -587,6 +587,9 @@ gucu_current_item (SCM arg1)
   MENU *c_arg1 = _scm_to_menu (arg1);
 
   ITEM *ret = current_item (c_arg1);
+  if (ret != (ITEM *) 0)
+    if (!item_increase_refcount (ret))
+      scm_misc_error ("gucu-current-item", "too many references to item", NULL);
   SCM s_ret = _scm_from_item (ret);
 
   return s_ret;

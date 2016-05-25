@@ -1,7 +1,7 @@
 /*
   menu_type.h
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -39,6 +39,10 @@
 GUCU_LOCAL int _scm_is_item (SCM x);
 GUCU_LOCAL ITEM *_scm_to_item (SCM x);
 GUCU_LOCAL SCM _scm_from_item (ITEM * x);
+GUCU_LOCAL void item_init_refcount (ITEM *item);
+GUCU_LOCAL bool item_increase_refcount (ITEM *item);
+GUCU_LOCAL bool item_decrease_refcount (ITEM *item);
+GUCU_LOCAL int item_get_refcount (ITEM *item);
 
 GUCU_API SCM gucu_is_item_p (SCM x);
 GUCU_API SCM gucu_new_item (SCM x, SCM y);
