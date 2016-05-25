@@ -328,7 +328,6 @@ mark_menu (SCM x)
   scm_assert_smob_type (menu_tag, x);
 
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
-  scm_gc_mark (gm->items_guard);
   scm_gc_mark (gm->win_guard);
 
   return (gm->subwin_guard);
@@ -377,8 +376,6 @@ gc_free_menu (SCM x)
       gm->menu = NULL;
     }
   /* Release scheme objects from the guardians */
-  while (scm_is_true (scm_call_0 (gm->items_guard)))
-    ;
   while (scm_is_true (scm_call_0 (gm->win_guard)))
     ;
   while (scm_is_true (scm_call_0 (gm->subwin_guard)))
@@ -506,18 +503,14 @@ gucu_new_menu (SCM items)
   scm_remember_upto_here_1 (items);
 
 #ifndef GUILE_1_POINT_6
-  gm->items_guard = scm_make_guardian ();
   gm->win_guard = scm_make_guardian ();
   gm->subwin_guard = scm_make_guardian ();
 #else
-  gm->items_guard = scm_make_guardian (SCM_BOOL_F);
   gm->win_guard = scm_make_guardian (SCM_BOOL_F);
   gm->subwin_guard = scm_make_guardian (SCM_BOOL_F);
 #endif
 
   /* Guard the items list */
-  scm_call_1 (gm->items_guard, items);
-
   return smob;
 }
 
