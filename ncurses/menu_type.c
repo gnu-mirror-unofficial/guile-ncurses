@@ -88,6 +88,9 @@ gucu_new_item (SCM name, SCM description)
         abort ();
     }
 
+  /* This is a new item, so its refcount should be one. */
+  item_init_refcount (c_item);
+  
   SCM ret = _scm_from_item (c_item);
 
   return ret;
@@ -97,7 +100,15 @@ gucu_new_item (SCM name, SCM description)
 int
 _scm_is_item (SCM x)
 {
-  return SCM_SMOB_PREDICATE (item_tag, x);
+  if (SCM_SMOB_PREDICATE (item_tag, x))
+    {
+      if (SCM_SMOB_DATA (x) == 0)
+        return 0;
+      else
+        return 1;
+    }
+  else
+    return 0;
 }
 
 ITEM *
