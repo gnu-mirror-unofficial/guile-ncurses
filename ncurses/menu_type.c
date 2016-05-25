@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -71,21 +71,21 @@ gucu_new_item (SCM name, SCM description)
   if (c_item == NULL)
     {
       if (errno == E_BAD_ARGUMENT)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-item"),
-			 scm_from_locale_string ("bad argument"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("new-item"),
+                         scm_from_locale_string ("bad argument"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
       else if (errno == E_SYSTEM_ERROR)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-item"),
-			 scm_from_locale_string ("system error"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("new-item"),
+                         scm_from_locale_string ("system error"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
       else
-	abort ();
+        abort ();
     }
 
   SCM ret = _scm_from_item (c_item);
@@ -165,18 +165,28 @@ gc_free_item (SCM item)
 int
 print_item (SCM x, SCM port, scm_print_state * pstate UNUSED)
 {
-  ITEM *frm = (ITEM *) SCM_SMOB_DATA (x);
+  ITEM *item = (ITEM *) SCM_SMOB_DATA (x);
   char str[SIZEOF_VOID_P*2+3];
 
-  assert (frm != NULL);
+  assert (item != NULL);
 
   scm_puts ("#<item ", port);
 
-  if (snprintf (str, sizeof(str), "%p", (void *) frm) < 0)
-    scm_puts ("???", port);
+  if (item == (ITEM *) NULL)
+    scm_puts ("(freed)", port);
   else
-    scm_puts (str, port);
+    {
+      if (item_name (item) != NULL)
+        {
+          scm_puts (item_name (item), port);
+          scm_puts (" ", port);
+        }
 
+      if (snprintf (str, sizeof(str), "%p", (void *) item) < 0)
+        scm_puts ("???", port);
+      else
+        scm_puts (str, port);
+    }
   scm_puts (">", port);
 
   // non-zero means success
@@ -203,9 +213,9 @@ _scm_is_menu (SCM x)
   if (SCM_SMOB_PREDICATE (menu_tag, x))
     {
       if (SCM_SMOB_DATA (x) == 0)
-	return 0;
+        return 0;
       else
-	return 1;
+        return 1;
     }
   else
     return 0;
@@ -275,23 +285,23 @@ gc_free_menu (SCM x)
   if (retval == E_BAD_ARGUMENT)
     {
       scm_error_scm (scm_from_locale_symbol ("ncurses"),
-		     scm_from_locale_string ("garbage collection of menu"),
-		     scm_from_locale_string ("bad argument"),
-		     SCM_BOOL_F, SCM_BOOL_F);
+                     scm_from_locale_string ("garbage collection of menu"),
+                     scm_from_locale_string ("bad argument"),
+                     SCM_BOOL_F, SCM_BOOL_F);
     }
   else if (retval == E_POSTED)
     {
       scm_error_scm (scm_from_locale_symbol ("ncurses"),
-		     scm_from_locale_string ("garbage collection of menu"),
-		     scm_from_locale_string ("posted"),
-		     SCM_BOOL_F, SCM_BOOL_F);
+                     scm_from_locale_string ("garbage collection of menu"),
+                     scm_from_locale_string ("posted"),
+                     SCM_BOOL_F, SCM_BOOL_F);
     }
   else if (retval == E_SYSTEM_ERROR)
     {
       scm_error_scm (scm_from_locale_symbol ("ncurses"),
-		     scm_from_locale_string ("garbage collection of menu"),
-		     scm_from_locale_string ("system error"),
-		     SCM_BOOL_F, SCM_BOOL_F);
+                     scm_from_locale_string ("garbage collection of menu"),
+                     scm_from_locale_string ("system error"),
+                     SCM_BOOL_F, SCM_BOOL_F);
     }
 
   /* Release scheme objects from the guardians */
@@ -357,18 +367,18 @@ gucu_new_menu (SCM items)
     {
       entry = scm_list_ref (items, scm_from_int (i));
       if (!_scm_is_item (entry))
-	scm_wrong_type_arg ("new-menu", SCM_ARG1, items);
+        scm_wrong_type_arg ("new-menu", SCM_ARG1, items);
     }
   for (i = 0; i < len; i++)
     {
       entry = scm_list_ref (items, scm_from_int (i));
       ITEM *it = _scm_to_item (entry);
       if (item_index (it) != ERR)
-	scm_error_scm (scm_from_locale_symbol ("ncurses"),
-		       scm_from_locale_string ("new-menu"),
-		       scm_from_locale_string ("~A is already assigned to a menu"),
-		       scm_list_1 (entry),
-		       SCM_BOOL_F);
+        scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                       scm_from_locale_string ("new-menu"),
+                       scm_from_locale_string ("~A is already assigned to a menu"),
+                       scm_list_1 (entry),
+                       SCM_BOOL_F);
     }
 
   // Step 1: allocate memory
@@ -397,18 +407,18 @@ gucu_new_menu (SCM items)
     {
       free (c_items);
       if (errno == E_NOT_CONNECTED)
-	{
-	  scm_misc_error ("new-menu", "menu has no items", SCM_BOOL_F);
-	}
+        {
+          scm_misc_error ("new-menu", "menu has no items", SCM_BOOL_F);
+        }
       else if (errno == E_SYSTEM_ERROR)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-menu"),
-			 scm_from_locale_string ("system error"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("new-menu"),
+                         scm_from_locale_string ("system error"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
       else
-	abort ();
+        abort ();
     }
   scm_remember_upto_here_1 (items);
 
