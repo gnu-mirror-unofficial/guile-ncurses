@@ -52,7 +52,7 @@ struct gucu_menu
   // Pointer to the menu
   MENU *menu;
 
-  /* Guardians to hold the window, and subwindow SCM objects */
+  /* References to hold the window, and subwindow SCM objects */
   SCM win_guard;
   SCM subwin_guard;
 };

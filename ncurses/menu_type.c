@@ -123,7 +123,7 @@ gucu_new_item (SCM name, SCM description)
 
   /* This is a new item, so its refcount should be one. */
   item_init_refcount (c_item);
-  
+
   SCM ret = _scm_from_item (c_item);
 
   return ret;
@@ -328,9 +328,12 @@ mark_menu (SCM x)
   scm_assert_smob_type (menu_tag, x);
 
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
-  scm_gc_mark (gm->win_guard);
-
-  return (gm->subwin_guard);
+  if (gm != NULL)
+    {
+      scm_gc_mark (gm->win_guard);
+      scm_gc_mark (gm->subwin_guard);
+    }
+  return SCM_BOOL_F;
 }
 
 /* The name is gc_free_menu because the curses primitive that frees
@@ -376,10 +379,8 @@ gc_free_menu (SCM x)
       gm->menu = NULL;
     }
   /* Release scheme objects from the guardians */
-  while (scm_is_true (scm_call_0 (gm->win_guard)))
-    ;
-  while (scm_is_true (scm_call_0 (gm->subwin_guard)))
-    ;
+  gm->win_guard = SCM_BOOL_F;
+  gm->subwin_guard = SCM_BOOL_F;
 
   SCM_SET_SMOB_DATA (x, NULL);
 
@@ -472,7 +473,7 @@ gucu_new_menu (SCM items)
 	{
 	  // Zero out this array so that it can be garbage collected.
 	  memset (c_items, 0, (len + 1) * sizeof (ITEM *));
-	  
+
 	  scm_misc_error ("new-menu", "too many references on item ~s",
 			  scm_list_1 (entry));
 	}
@@ -502,13 +503,8 @@ gucu_new_menu (SCM items)
     }
   scm_remember_upto_here_1 (items);
 
-#ifndef GUILE_1_POINT_6
-  gm->win_guard = scm_make_guardian ();
-  gm->subwin_guard = scm_make_guardian ();
-#else
-  gm->win_guard = scm_make_guardian (SCM_BOOL_F);
-  gm->subwin_guard = scm_make_guardian (SCM_BOOL_F);
-#endif
+  gm->win_guard = SCM_BOOL_F;
+  gm->subwin_guard = SCM_BOOL_F;
 
   /* Guard the items list */
   return smob;

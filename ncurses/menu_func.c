@@ -507,7 +507,7 @@ gucu_set_menu_win (SCM menu, SCM win)
 
   /* Protect the window from GC */
   gm = (struct gucu_menu *) SCM_SMOB_DATA (menu);
-  scm_call_1 (gm->win_guard, win);
+  gm->win_guard = win;
 
   return SCM_UNSPECIFIED;
 }
@@ -533,7 +533,7 @@ gucu_set_menu_sub (SCM menu, SCM win)
 
   /* Protect the window from GC */
   gm = (struct gucu_menu *) SCM_SMOB_DATA (menu);
-  scm_call_1 (gm->subwin_guard, win);
+  gm->subwin_guard = win;
 
   return SCM_UNSPECIFIED;
 }
