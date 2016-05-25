@@ -642,14 +642,10 @@ gucu_item_index (SCM arg1)
 SCM
 gucu_item_name (SCM item)
 {
-
   SCM_ASSERT (_scm_is_item (item), item, SCM_ARG1, "item-name");
+  const ITEM *c_item = _scm_to_item (item);
 
-  {
-    const ITEM *c_item = _scm_to_item (item);
-
-    return scm_from_locale_string (item_name (c_item));
-  }
+  return scm_from_locale_string (item_name (c_item));
 }
 
 /* Return the description part of a given item */
@@ -657,12 +653,9 @@ SCM
 gucu_item_description (SCM item)
 {
   SCM_ASSERT (_scm_is_item (item), item, SCM_ARG1, "item-description");
+  const ITEM *c_item = _scm_to_item (item);
 
-  {
-    const ITEM *c_item = _scm_to_item (item);
-
-    return scm_from_locale_string (item_description (c_item));
-  }
+  return scm_from_locale_string (item_description (c_item));
 }
 
 SCM
