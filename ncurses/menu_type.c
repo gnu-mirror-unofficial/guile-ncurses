@@ -349,38 +349,67 @@ gc_free_menu (SCM x)
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
   if (gm != NULL && gm->menu != NULL)
     {
-      // Drop references on all the items in the menu
+      // First, we need make our own store the ITEM *.  If free_menu
+      // succeeds, the list of ITEM * provided by menu_items will no
+      // longer be valid.
       int len = item_count (gm->menu);
       ITEM **pitem = menu_items (gm->menu);
+      ITEM **pitem_store = scm_malloc (sizeof (ITEM *) * len);
+      for (int i = 0; i < len; i ++)
+	pitem_store[i] = pitem[i];
+
+      // Next, we try to free the menu.  Note that if the menu freeing
+      // is successful, ncurses will modify this menu's items to no
+      // longer be connected to the menu, but, it won't free them.
+
+      retval = free_menu (gm->menu);
+
+      if (retval == E_BAD_ARGUMENT)
+	{
+	  free (pitem_store);
+	  scm_misc_error ("garbage collection of menu", "bad argument", SCM_EOL);
+	}
+      else if (retval == E_SYSTEM_ERROR)
+	{
+	  free (pitem_store);
+	  scm_misc_error ("garbage collection of menu", "system error", SCM_EOL);
+	}
+      else if (retval == E_POSTED)
+	{
+	      free (pitem_store);
+	      scm_misc_error ("garbage collection of menu", "posted", SCM_EOL);
+	}
+
+      // If we get this far, the menu is now detached from the menu items.
+      // Decrease the refcount on these items, and maybe free them.
       for (int i = 0; i < len; i ++)
 	{
-	  if (!item_decrease_refcount (pitem[i]))
+	  if (!item_decrease_refcount (pitem_store[i]))
 	    {
 	      // Supposed to be impossible to hit this error
 	      scm_misc_error ("garbage collection of menu",
 			      "refcount underflow", SCM_EOL);
 	    }
-	  if (item_get_refcount (pitem[i]) == 0)
+	  if (item_get_refcount (pitem_store[i]) == 0)
 	    {
-	      free (item_name (pitem[i]));
-	      free (item_description (pitem[i]));
-	      free_item (pitem[i]);
+	      free (item_name (pitem_store[i]));
+	      free (item_description (pitem_store[i]));
+	      free_item (pitem_store[i]);
 	    }
 	}
-      retval = free_menu (gm->menu);
 
-      if (retval == E_BAD_ARGUMENT)
-	scm_misc_error ("garbage collection of menu", "bad argument", SCM_EOL);
-      else if (retval == E_POSTED)
-	scm_misc_error ("garbage collection of menu", "posted", SCM_EOL);
-      else if (retval == E_SYSTEM_ERROR)
-	scm_misc_error ("garbage collection of menu", "system error", SCM_EOL);
+      // Free our storage of the ITEM *
+      free (pitem_store);
 
       gm->menu = NULL;
     }
-  /* Release scheme objects from the guardians */
-  gm->win_guard = SCM_BOOL_F;
-  gm->subwin_guard = SCM_BOOL_F;
+
+  /* Release the references holding the windows. */
+  if (gm != NULL)
+    {
+      gm->win_guard = SCM_BOOL_F;
+      gm->subwin_guard = SCM_BOOL_F;
+    }
 
   SCM_SET_SMOB_DATA (x, NULL);
 
