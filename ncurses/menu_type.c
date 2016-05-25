@@ -81,7 +81,7 @@ item_decrease_refcount (ITEM *item)
   void *ptr = item_userptr (item);
   if (ptr == (void *) 0)
     return FALSE;
-  set_item_userptr (item, ptr + 1);
+  set_item_userptr (item, ptr - 1);
   return TRUE;
 }
 
