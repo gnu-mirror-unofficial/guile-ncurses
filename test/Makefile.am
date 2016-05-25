@@ -177,6 +177,12 @@ NARROWTESTS = \
  curs_termattrs_longname.scm \
  curs_termattrs_term_attrs.scm \
  curs_termattrs_termname.scm \
+ curs_terminfo_setupterm.scm \
+ curs_terminfo_setupterm_bad.scm \
+ curs_terminfo_tiget_bool.scm \
+ curs_terminfo_tiget_num.scm \
+ curs_terminfo_tiget_string.scm \
+ curs_terminfo_tiget_unknown.scm \
  curs_touch_touchline.scm \
  curs_touch_untouchline.scm \
  curs_touch_untouchwin.scm \
