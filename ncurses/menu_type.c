@@ -295,8 +295,10 @@ _scm_to_menu (SCM x)
   scm_assert_smob_type (menu_tag, x);
 
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
+  if (gm == NULL)
+    return NULL;
 
-  return (MENU *) gm->menu;
+  return gm->menu;
 }
 
 // There is no _scm_from_menu since we need its items as a list to do
@@ -393,15 +395,18 @@ print_menu (SCM x, SCM port, scm_print_state * pstate UNUSED)
   MENU *menu = _scm_to_menu (x);
   char str[SIZEOF_VOID_P*2+3];
 
-  assert (menu != NULL);
-
   scm_puts ("#<menu ", port);
-
-  if (snprintf (str, sizeof(str), "%p", (void *) menu) < 0)
-    scm_puts ("???", port);
+  if (menu == NULL)
+    {
+      scm_puts ("(freed) ", port);
+    }
   else
-    scm_puts (str, port);
-
+    {
+      if (snprintf (str, sizeof(str), "%p", (void *) menu) < 0)
+	scm_puts ("???", port);
+      else
+	scm_puts (str, port);
+    }
   scm_puts (">", port);
 
   // non-zero means success
