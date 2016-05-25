@@ -550,7 +550,6 @@ gucu_new_menu (SCM items)
   gm->win_guard = SCM_BOOL_F;
   gm->subwin_guard = SCM_BOOL_F;
 
-  /* Guard the items list */
   return smob;
 }
 

@@ -543,12 +543,12 @@ gucu_menu_win (SCM arg1)
 {
   SCM_ASSERT (_scm_is_menu (arg1), arg1, SCM_ARG1, "menu-win");
 
-  MENU *c_arg1 = _scm_to_menu (arg1);
+  struct gucu_menu *gm = (struct gucu_menu *) SCM_SMOB_DATA (arg1);
 
-  WINDOW *ret = menu_win (c_arg1);
-  SCM s_ret = _scm_from_window (ret);
+  if (gm == NULL)
+    return SCM_BOOL_F;
 
-  return s_ret;
+  return gm->win_guard;
 }
 
 SCM
@@ -556,12 +556,12 @@ gucu_menu_sub (SCM arg1)
 {
   SCM_ASSERT (_scm_is_menu (arg1), arg1, SCM_ARG1, "menu-sub");
 
-  MENU *c_arg1 = _scm_to_menu (arg1);
+  struct gucu_menu *gm = (struct gucu_menu *) SCM_SMOB_DATA (arg1);
 
-  WINDOW *ret = menu_sub (c_arg1);
-  SCM s_ret = _scm_from_window (ret);
+  if (gm == NULL)
+    return SCM_BOOL_F;
 
-  return s_ret;
+  return gm->subwin_guard;
 }
 
 SCM
