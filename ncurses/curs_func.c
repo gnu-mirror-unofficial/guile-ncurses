@@ -751,7 +751,9 @@ gucu_initscr ()
   if (ret == NULL)
     return SCM_BOOL_F;
 
-  return _scm_from_window (ret);
+  return _scm_from_window_full (SCM_BOOL_F,
+				scm_from_locale_string ("initscr"),
+				ret);
 }
 
 /* Initialize COLOR as an RGB triple. */
@@ -1214,7 +1216,7 @@ gucu_newpad (SCM nlines, SCM ncols)
 
 /* Creates and returns a pointer to a new window */
 SCM
-gucu_newwin (SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
+gucu_newwin (SCM nlines, SCM ncols, SCM begin_y, SCM begin_x, SCM name)
 {
   int c_nlines, c_ncols, c_begin_y, c_begin_x;
   WINDOW *c_win;
@@ -1228,7 +1230,10 @@ gucu_newwin (SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
   if (c_win == NULL)
     return SCM_BOOL_F;
 
-  return _scm_from_window (c_win);
+  if (SCM_UNBNDP (name))
+    return _scm_from_window (c_win);
+
+  return _scm_from_window_full (SCM_BOOL_F, name, c_win);
 }
 
 /* Translate return to newline on input */
@@ -1690,7 +1695,7 @@ gucu_subpad (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
 /* Return a pointer to a new window that is within and shares memory with
    and enclosing window */
 SCM
-gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
+gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x, SCM name)
 {
   int c_nlines, c_ncols, c_begin_y, c_begin_x;
   WINDOW *c_orig, *ret;
@@ -1704,8 +1709,11 @@ gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
   ret = subwin (c_orig, c_nlines, c_ncols, c_begin_y, c_begin_x);
   if (ret == NULL)
     return SCM_BOOL_F;
+  
+  if (SCM_UNBNDP (name))
+    return _scm_from_window_full (orig, SCM_BOOL_F, ret);
 
-  return _scm_from_window_full (orig, SCM_BOOL_F, ret);
+  return _scm_from_window_full (orig, name, ret);
 }
 
 /* When called with true, wsyncup is called automatically whenever the
@@ -2455,7 +2463,7 @@ gucu_init_function ()
   scm_c_define_gsubr ("%mvwin", 3, 0, 0, gucu_mvwin);
   scm_c_define_gsubr ("%napms", 1, 0, 0, gucu_napms);
   scm_c_define_gsubr ("%newpad", 2, 0, 0, gucu_newpad);
-  scm_c_define_gsubr ("%newwin", 4, 0, 0, gucu_newwin);
+  scm_c_define_gsubr ("%newwin", 4, 1, 0, gucu_newwin);
   scm_c_define_gsubr ("%nl!", 0, 0, 0, gucu_nl);
   scm_c_define_gsubr ("%nocbreak!", 0, 0, 0, gucu_nocbreak);
   scm_c_define_gsubr ("%nodelay!", 2, 0, 0, gucu_nodelay_x);
@@ -2491,7 +2499,7 @@ gucu_init_function ()
   scm_c_define_gsubr ("%setsyx", 2, 0, 0, gucu_setsyx);
   scm_c_define_gsubr ("%start-color!", 0, 0, 0, gucu_start_color);
   scm_c_define_gsubr ("%subpad", 5, 0, 0, gucu_subpad);
-  scm_c_define_gsubr ("%subwin", 5, 0, 0, gucu_subwin);
+  scm_c_define_gsubr ("%subwin", 5, 1, 0, gucu_subwin);
   scm_c_define_gsubr ("syncok!", 2, 0, 0, gucu_syncok_x);
   scm_c_define_gsubr ("%term-attrs", 0, 0, 0, gucu_term_attrs);
   scm_c_define_gsubr ("%termname", 0, 0, 0, gucu_termname);

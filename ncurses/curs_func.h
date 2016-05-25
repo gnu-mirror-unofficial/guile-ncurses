@@ -110,7 +110,7 @@ GUCU_API SCM gucu_mvderwin (SCM arg1, SCM arg2, SCM arg3);
 GUCU_API SCM gucu_mvwin (SCM arg1, SCM arg2, SCM arg3);
 GUCU_API SCM gucu_napms (SCM arg1);
 GUCU_API SCM gucu_newpad (SCM arg1, SCM arg2);
-GUCU_API SCM gucu_newwin (SCM arg1, SCM arg2, SCM arg3, SCM arg4);
+GUCU_API SCM gucu_newwin (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM name);
 GUCU_API SCM gucu_nl (void);
 GUCU_API SCM gucu_nocbreak (void);
 GUCU_API SCM gucu_nodelay_x (SCM arg1, SCM arg2);
@@ -150,7 +150,8 @@ GUCU_API SCM gucu_standend_x (SCM arg1);
 GUCU_API SCM gucu_standout_x (SCM arg1);
 GUCU_API SCM gucu_start_color (void);
 GUCU_API SCM gucu_subpad (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5);
-GUCU_API SCM gucu_subwin (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5);
+GUCU_API SCM gucu_subwin (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5,
+			  SCM name);
 GUCU_API SCM gucu_syncok_x (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_term_attrs (void);
 GUCU_API SCM gucu_termname (void);

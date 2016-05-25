@@ -2203,7 +2203,7 @@ or #f on failure"
      (else
       ret))))
 
-(define* (newwin nlines ncols begin_y begin_x #:key (panel #f))
+(define* (newwin nlines ncols begin_y begin_x #:key (panel #f) (name #f))
   "Creates and returns a window with the given number of lines and columns.
 The upper, left-hand corner of the window is at line BEGIN_Y and column
 BEGIN_X.  If either NLINES or NCOLS is zero, the window will extend to the
@@ -2213,7 +2213,7 @@ created by calling (newwin 0 0 0 0).
 If the optional keyword argument #:panel is #t, the window is converted to a panel."
   (for-each (lambda (x) (assert-integer x))
             (list nlines ncols begin_y begin_x))
-  (let ((win (%newwin nlines ncols begin_y begin_x)))
+  (let ((win (%newwin nlines ncols begin_y begin_x name)))
     (if (and win panel)
         (make-panel! win))
     win))
@@ -2502,7 +2502,7 @@ returns #f on failure or a window structure on success"
   (assert-integer begin_x)
   (%subpad origwin nlines ncols begin_y begin_x))
 
-(define* (subwin origwin nlines ncols begin_y begin_x #:key (panel #f))
+(define* (subwin origwin nlines ncols begin_y begin_x #:key (panel #f) (name #f))
   "Creates and returns a new window with the given number of lines and
 columns.  The window is at position BEGIN_Y, BEGIN_X on the screen.
 The window is made in the middle of the window ORIGWIN, so that
@@ -2515,7 +2515,7 @@ If optional keyword argument #:panel is #t, the window is converted into a panel
   (assert-integer ncols)
   (assert-integer begin_y)
   (assert-integer begin_x)
-  (let ((win (%subwin origwin nlines ncols begin_y begin_x)))
+  (let ((win (%subwin origwin nlines ncols begin_y begin_x name)))
     (if (and win panel)
         (make-panel! win))
     win))
