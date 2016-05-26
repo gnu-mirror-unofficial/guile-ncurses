@@ -164,6 +164,7 @@ NARROWTESTS = \
  curs_pad_newpad_prefresh.scm \
  curs_pad_pechochar.scm \
  curs_pad_subpad_pnoutrefresh.scm \
+ curs_print_mcprint.scm \
  curs_refresh_redrawwin.scm \
  curs_scr_dump.scm \
  curs_scroll_scrl_positive.scm \

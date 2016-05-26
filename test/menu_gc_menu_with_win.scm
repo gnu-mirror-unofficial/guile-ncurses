@@ -57,4 +57,4 @@
      (format #t "subsize: ~s~%" sizsub)
      (and
       (list= = '(10 40) siz)
-      (list= = '(8 38) subsiz)))))
+      (list= = '(8 38) sizsub)))))
