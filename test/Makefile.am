@@ -260,7 +260,10 @@ f008_form_field_buffer.test \
  menu_gc_menu_still_posted.scm \
  menu_gc_menu_with_win.scm \
  menu_gc_menu_with_win_2.scm \
-m001_new_menu.test m002_mitem_current.test	\
+ menu_new_zero_items.scm \
+ menu_new_one_item.scm \
+ menu_new_item_in_two_menus.scm \
+ m002_mitem_current.test	\
 m003_mitem_name.test m004_mitem_opts.test m005_mitem_value.test	\
 m006_mitem_visible.test m007_menu_attributes.test			\
 m008_menu_cursor.test m009_menu_format.test m010_menu_mark.test	\
