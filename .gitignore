@@ -12,7 +12,6 @@
 *.ky
 *.la
 *.lo
-*.log
 *.o
 *.out
 *.pdf
@@ -21,15 +20,27 @@
 *.rn
 *.rns
 *.stackdump
-*.tar.gz
+*.gz
+*.tar.gz.*
 *.toc
 *.tp
 *.tps
-*.trs
 *.vr
 *.vrs
 *~
 .#*
+gucu-[0-9]*
+guile-ncurses-shell
+guile-ncurses-shell.exe
+gendocs*
+ftp-upload*
+gnuload
+CVS
+guile-ncurses.txt
+
+# autotools
+aclocal.m4
+config.h.in
 .deps
 .dirstamp
 .libs
@@ -50,9 +61,6 @@ config.status
 config.sub
 configure
 depcomp
-gucu-[0-9]*
-gucushell
-gucushell.exe
 install-sh
 libtool
 libtool.m4
@@ -66,3 +74,7 @@ test-driver
 texinfo.tex
 uninstalled-env
 version.texi
+
+# from automake tests
+*.trs
+*.log
