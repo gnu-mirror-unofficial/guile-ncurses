@@ -343,6 +343,7 @@ gc_free_menu (SCM x)
 {
   struct gucu_menu *gm;
   int retval;
+  int i;
 
   scm_assert_smob_type (menu_tag, x);
 
@@ -355,7 +356,7 @@ gc_free_menu (SCM x)
       int len = item_count (gm->menu);
       ITEM **pitem = menu_items (gm->menu);
       ITEM **pitem_store = scm_malloc (sizeof (ITEM *) * len);
-      for (int i = 0; i < len; i ++)
+      for (i = 0; i < len; i ++)
 	pitem_store[i] = pitem[i];
 
       // Next, we try to free the menu.  Note that if the menu freeing
@@ -397,7 +398,7 @@ gc_free_menu (SCM x)
 
       // If we get this far, the menu is now detached from the menu items.
       // Decrease the refcount on these items, and maybe free them.
-      for (int i = 0; i < len; i ++)
+      for (i = 0; i < len; i ++)
 	{
 	  if (!item_decrease_refcount (pitem_store[i]))
 	    {
