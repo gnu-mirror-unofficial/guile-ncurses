@@ -23,24 +23,31 @@
 (setlocale LC_ALL "")
 
 ;; This test shows that 8-bit characters are not
- ;; truncated when meta is true.
+;; truncated when meta is true.
 
- ;; Also, prior to 20091010, unget_wch had a sign
- ;; bug.  Calling unget_wch with a wchar value above
- ;; 128 made garbage, so this test shouldn't be runn
- ;; in the wide ncurses case.
+;; Also, prior to 20091010, unget_wch had a sign
+;; bug.  Calling unget_wch with a wchar value above
+;; 128 made garbage, so this test shouldn't be runn
+;; in the wide ncurses case.
 
 (automake-test
- (let ((win (initscr)))
-   (clear win)
-   (refresh win)
-   (nodelay! win #t)
-   (meta! #t)
-   (ungetch (integer->char (+ 128 64)))
-   (let* ((c (getch win))
-	  (pass (equal? (integer->char (+ 128 64)) c)))
-     (endwin)
-     (newline)
-     (format #t "getch: ~S~%" c)
-     (format #t "pass: ~S~%" pass)
-     pass)))
+ (with-latin1-locale*
+  (lambda ()
+    (let* ((win (initscr))
+	   (TEST_CHAR_VAL (+ 128 64))
+	   (TEST_CHAR (integer->char TEST_CHAR_VAL)))
+      (clear win)
+      (refresh win)
+      (nodelay! win #t)
+      (meta! #t)
+      (ungetch TEST_CHAR_VAL)
+      (let ((c (getch win)))
+	(endwin)
+	(newline)
+	(format #t "wide-ncurses? ~s~%" %wide-ncurses)
+	(format #t "locale: ~s~%" (setlocale LC_ALL))
+	(format #t "TEST_CHAR: ~s~%" TEST_CHAR)
+	(format #t "TEST_CHAR_VAL: ~s~%" TEST_CHAR_VAL)
+	(format #t "getch: ~S~%" c)
+	(format #t "getch as val: ~s~%" (char->integer c))
+	(char=? TEST_CHAR c))))))
