@@ -1864,7 +1864,7 @@ gucu_ungetch (SCM ch)
       }
     else
       {
-        ret = 0;
+        ret = ERR;
       }
   }
 #endif
