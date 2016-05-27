@@ -267,7 +267,11 @@ f008_form_field_buffer.test \
  mitem_current_set_current_item.scm \
  mitem_current_set_top_row.scm \
  mitem_current_top_row.scm \
-m003_mitem_name.test m004_mitem_opts.test m005_mitem_value.test	\
+ mitem_item_item_name.scm \
+ mitem_opts_item_opts_on.scm \
+ mitem_opts_item_opts_off.scm \
+ mitem_opts_set_item_opts.scm \
+ m005_mitem_value.test	\
 m006_mitem_visible.test m007_menu_attributes.test			\
 m008_menu_cursor.test m009_menu_format.test m010_menu_mark.test	\
 m011_menu_options.test slk_001_init.test slk_002_init.test		\
