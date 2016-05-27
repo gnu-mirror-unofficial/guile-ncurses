@@ -17,12 +17,14 @@
 ;; <http://www.gnu.org/licenses/>.
 
 (define-module (test automake-test-lib)
+  #:use-module (srfi srfi-1)
   #:export (EXIT_SUCCESS
 	    EXIT_FAILURE
 	    EXIT_SKIPPED
 	    EXIT_HARD_ERROR
 	    automake-test
-	    maybe-sleep))
+	    maybe-sleep
+	    with-latin1-locale*))
 
 (define EXIT_SUCCESS 0)
 (define EXIT_FAILURE 1)
@@ -68,3 +70,40 @@
       (exit EXIT_FAILURE))
      ((eqv? ret 'skipped)
       (exit EXIT_SKIPPED)))))
+
+;;; Call THUNK with a given locale
+(define (with-locale* nloc thunk)
+  (let ((loc #f))
+    (dynamic-wind
+	(lambda ()
+          (if (defined? 'setlocale)
+              (begin
+                (set! loc (false-if-exception (setlocale LC_ALL)))
+                (if (or (not loc)
+                        (not (false-if-exception (setlocale LC_ALL nloc))))
+                    (throw 'unresolved)))
+              (throw 'unresolved)))
+	thunk
+	(lambda ()
+          (if (and (defined? 'setlocale) loc)
+              (setlocale LC_ALL loc))))))
+
+;;; Try out several ISO-8859-1 locales and run THUNK under the one that works
+;;; (if any).
+(define (with-latin1-locale* thunk)
+  (define %locales
+    (append-map (lambda (name)
+                  (list (string-append name ".ISO-8859-1")
+                        (string-append name ".iso88591")
+                        (string-append name ".ISO8859-1")))
+                '("ca_ES" "da_DK" "de_DE" "es_ES" "es_MX" "en_GB" "en_US"
+                  "fr_FR" "pt_PT" "nl_NL" "sv_SE")))
+
+  (let loop ((locales %locales))
+    (if (null? locales)
+        (throw 'skipped)
+        (catch 'unresolved
+          (lambda ()
+            (with-locale* (car locales) thunk))
+          (lambda (key . args)
+            (loop (cdr locales)))))))
