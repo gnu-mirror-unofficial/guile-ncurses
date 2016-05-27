@@ -263,7 +263,10 @@ f008_form_field_buffer.test \
  menu_new_zero_items.scm \
  menu_new_one_item.scm \
  menu_new_item_in_two_menus.scm \
- m002_mitem_current.test	\
+ mitem_current_item_index.scm \
+ mitem_current_set_current_item.scm \
+ mitem_current_set_top_row.scm \
+ mitem_current_top_row.scm \
 m003_mitem_name.test m004_mitem_opts.test m005_mitem_value.test	\
 m006_mitem_visible.test m007_menu_attributes.test			\
 m008_menu_cursor.test m009_menu_format.test m010_menu_mark.test	\
