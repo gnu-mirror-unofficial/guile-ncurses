@@ -1844,9 +1844,12 @@ gucu_ungetch (SCM ch)
       }
     else if (scm_is_integer (ch))
       {
-        ret = 0;
+        ret = unget_wch (scm_to_uint (ch));
       }
-
+    else
+      {
+        ret = ERR;
+      }
   }
 #else
   {
