@@ -271,10 +271,17 @@ f008_form_field_buffer.test \
  mitem_opts_item_opts_on.scm \
  mitem_opts_item_opts_off.scm \
  mitem_opts_set_item_opts.scm \
+ menu_attributes_set.scm \
+ menu_attributes_defaults.scm \
+ menu_cursor.scm \
+ menu_format.scm \
+ menu_mark_default.scm \
+ menu_mark_set.scm \
+ menu_options_default.scm \
+ menu_options_set.scm \
  m005_mitem_value.test	\
-m006_mitem_visible.test m007_menu_attributes.test			\
-m008_menu_cursor.test m009_menu_format.test m010_menu_mark.test	\
-m011_menu_options.test slk_001_init.test slk_002_init.test		\
+m006_mitem_visible.test \
+ slk_001_init.test slk_002_init.test		\
 slk_003_init.test slk_004_init.test slk_005_demo.test			\
 slk_006_attributes.test
 
