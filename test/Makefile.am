@@ -279,8 +279,8 @@ f008_form_field_buffer.test \
  menu_mark_set.scm \
  menu_options_default.scm \
  menu_options_set.scm \
- m005_mitem_value.test	\
-m006_mitem_visible.test \
+ mitem_value_item_value.scm \
+ mitem_visible_item_visible.scm \
  slk_001_init.test slk_002_init.test		\
 slk_003_init.test slk_004_init.test slk_005_demo.test			\
 slk_006_attributes.test
