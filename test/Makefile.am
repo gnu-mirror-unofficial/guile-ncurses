@@ -259,8 +259,14 @@ NARROWTESTS = \
  form_field_set_form_fields.scm \
  form_page_field_index.scm \
  form_page_set_new_page.scm \
-f006_form_field_just.test f007_form_field_opts.test			\
-f008_form_field_buffer.test \
+ form_field_just.scm \
+ form_field_opts_default.scm \
+ form_field_opts_set.scm \
+ form_field_opts_on.scm \
+ form_field_opts_off.scm \
+ form_field_buffer_set_field_buffer.scm \
+ form_field_buffer_set_field_status.scm \
+ form_field_buffer_set_field_status_2.scm \
  menu_gc_refcount.scm \
  menu_gc_refcount_2.scm \
  menu_gc_refcount_3.scm \
