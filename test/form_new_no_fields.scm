@@ -1,8 +1,4 @@
-;;;; -*- Mode: scheme; -*-
-;;;; f001_new_form.test --- test suite for curses's form functions
-
-
-;; Copyright 2009, 2010 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -20,28 +16,15 @@
 ;; License along with Guile-Ncurses.  If not, see
 ;; <http://www.gnu.org/licenses/>.
 
-(use-modules (test lib)
-             (test lib2)
+(use-modules (test automake-test-lib)
              (srfi srfi-1)
              (ncurses curses)
              (ncurses form))
 
-(define test (curses-test-start))
-
-(define stdscr (initscr))
-
-;; Should be able to make a form
-(with-test-prefix "form: new-form"
-
-                  (pass-if-exception "no fields" exception:wrong-type-arg
-                                     (let ((f (new-form '())))
-                                       (form? f)))
-
-                  (pass-if "one field"
-                           (let* ((field (new-field 5 5 0 0 0 0))
-                                  (f (new-form (list field))))
-                             (form? f))))
-
-(endwin)
-
-(curses-test-end test "f001_new_form.out")
+(automake-test
+ (let* ((stdscr (initscr))
+	(f (false-if-exception (new-form '()))))
+   (endwin)
+   (newline)
+   (format #t "new-form: ~s~%" f)
+   (not (form? f))))

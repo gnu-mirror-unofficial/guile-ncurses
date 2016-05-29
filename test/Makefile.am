@@ -247,6 +247,8 @@ NARROWTESTS = \
  panel_p_panel.scm \
  panel_p_window.scm \
  panel_update_demo.scm \
+ form_new_no_fields.scm \
+ form_new_one_field.scm \
  form_data_ahead.scm \
  form_data_behind.scm \
 f003_field_attributes.test f004_form_field.test f005_form_page.test	\
