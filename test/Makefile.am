@@ -296,9 +296,10 @@ NARROWTESTS = \
  menu_options_set.scm \
  mitem_value_item_value.scm \
  mitem_visible_item_visible.scm \
- slk_001_init.test slk_002_init.test		\
-slk_003_init.test slk_004_init.test slk_005_demo.test			\
-slk_006_attributes.test
+ slk_323_format.scm \
+ slk_44_format.scm \
+ slk_444_format.scm \
+ slk_attributes_bold.scm
 
 WIDETESTS = r037_border_set.test r038_get_wch.test r039_get_wstr.test	\
 r040_term_attrs.test f009_form_wide.test
@@ -314,7 +315,7 @@ endif
 endif
 endif
 
-STRESS_TESTS = stress_001_derwin_panel.scm
+STRESS_TESTS = stress_001_derwin_panel.scm slk_demo.scm
 
 EXTRA_DIST = $(TESTLIB) $(NOTERMTESTS) $(NARROWTESTS) $(WIDETESTS) $(STRESS_TESTS)
 

@@ -1,8 +1,4 @@
-;;;; -*- Mode: scheme; -*-
-
-;;;; slk_005_demo.test --- demo the slk functions
-
-;; Copyright 2009, 2010 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -20,14 +16,8 @@
 ;; License along with Guile-Ncurses.  If not, see
 ;; <http://www.gnu.org/licenses/>.
 
-(use-modules (test lib)
-	     (test lib2)
-	     (ncurses curses)
+(use-modules (ncurses curses)
 	     (ncurses slk))
-
-(define test (curses-test-start))
-
-(set! *sleep* #f)
 
 (slk-init 1)
 (define win (initscr))
@@ -44,7 +34,7 @@
 (slk-set 7 "seven" 1)
 (slk-set 8 "eight" 1)
 (slk-refresh)
-(maybe-sleep 2)
+(sleep 2)
 
 (move win 0 0)
 (clrtoeol win)
@@ -52,7 +42,7 @@
 (refresh win)
 
 (slk-clear)
-(maybe-sleep 2)
+(sleep 2)
 
 (move win 0 0)
 (clrtoeol win)
@@ -60,7 +50,7 @@
 (refresh win)
 
 (slk-restore)
-(maybe-sleep 2)
+(sleep 2)
 
 (move win 0 0)
 (clrtoeol win)
@@ -69,7 +59,7 @@
 	       #:y c #:x 0))
      (list 1 2 3 4 5 6 7 8))
 (refresh win)
-(maybe-sleep 3)
+(sleep 3)
 
 (start-color!)
 (init-pair! 1 COLOR_BLUE COLOR_BLACK)
@@ -91,74 +81,74 @@
 (addchstr win (color 7 "color pair seven") #:y 7 #:x 0)
 (addchstr win (color 8 "color pair eight") #:y 8 #:x 0)
 (refresh win)
-(maybe-sleep 3)
+(sleep 3)
 
 (slk-color! 1)
 (slk-set 1 "one" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 2)
 (slk-set 2 "two" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 3)
 (slk-set 3 "three" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 4)
 (slk-set 4 "four" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 5)
 (slk-set 5 "five" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 6)
 (slk-set 6 "six" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 7)
 (slk-set 7 "seven" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-color! 8)
 (slk-set 8 "eight" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-refresh)
-(maybe-sleep 3)
+(sleep 3)
 
 (slk-attr-set! A_NORMAL 0)
 (slk-set 1 "normal" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_STANDOUT 0)
 (slk-set 2 "standout" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_UNDERLINE 0)
 (slk-set 3 "underline" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_REVERSE 0)
 (slk-set 4 "reverse" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_BLINK 0)
 (slk-set 5 "blink" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_DIM 0)
 (slk-set 6 "dim" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_BOLD 0)
 (slk-set 7 "bold" 1)
 (slk-refresh)
-(maybe-sleep 1)
+(sleep 1)
 (slk-attr-set! A_PROTECT 0)
 (slk-set 8 "protect" 1)
 (slk-refresh)
-(maybe-sleep 3)
+(sleep 3)
 
 (endwin)
