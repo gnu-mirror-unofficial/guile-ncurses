@@ -30,4 +30,5 @@
        (newline)
        (format #t "White: ~s" white)
        (newline)
-       (list= equal? '(680 680 680) white)))))
+       (and (list? white)
+	    (list= equal? '(680 680 680) white))))))

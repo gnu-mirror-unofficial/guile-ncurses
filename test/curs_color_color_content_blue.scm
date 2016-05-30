@@ -32,4 +32,5 @@
        (newline)
        (format #t "blue: ~s" blue)
        (newline)
-       (list= equal? '(0 0 680) blue)))))
+       (and (list? blue)
+	    (list= equal? '(0 0 680) blue))))))

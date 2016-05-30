@@ -33,4 +33,5 @@
        (newline)
        (format #t "pair-content: ~s" content)
        (newline)
-       (list= equal? (list COLOR_BLACK COLOR_RED) content)))))
+       (and (list? content)
+	    (list= equal? (list COLOR_BLACK COLOR_RED) content))))))

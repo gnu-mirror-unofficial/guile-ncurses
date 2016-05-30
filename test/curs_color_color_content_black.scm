@@ -30,4 +30,6 @@
        (newline)
        (format #t "black: ~s" black)
        (newline)
-       (list= equal? '(0 0 0) black)))))
+       (and
+	(list? black)
+	(list= equal? '(0 0 0) black))))))

@@ -35,5 +35,6 @@
        (newline)
        (format #t "color-content: ~s" content)
        (newline)
-       (list= equal? '(200 200 200) content)
+       (and (list? content)
+	    (list= equal? '(200 200 200) content))
        'skipped))))
