@@ -301,8 +301,13 @@ NARROWTESTS = \
  slk_444_format.scm \
  slk_attributes_bold.scm
 
-WIDETESTS = r037_border_set.test r038_get_wch.test r039_get_wstr.test	\
-r040_term_attrs.test f009_form_wide.test
+WIDETESTS = \
+ curs_border_border_unicode.scm \
+ curs_border_hline_unicode.scm \
+ curs_border_vline_unicode.scm \
+ curs_getch_getch_unicode.scm \
+ curs_getstr_getnstr_unicode.scm \
+ form_new_unicode.scm
 
 TESTS = $(NOTERMTESTS)
 
