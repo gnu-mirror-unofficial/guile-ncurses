@@ -207,7 +207,7 @@ mark_field (SCM x UNUSED)
 size_t
 gc_free_field (SCM field)
 {
-  SCM_ASSERT (_scm_is_field (field), field, SCM_ARG1, "free-field");
+  scm_assert_smob_type (field_tag, field);
 
   FIELD *f = _scm_to_field (field);
 
@@ -336,26 +336,6 @@ _scm_to_form (SCM x)
   return (FORM *) gf->form;
 }
 
-#if 0
-SCM
-_scm_from_form (FORM * x)
-{
-  SCM s_form;
-
-  assert (x != NULL);
-
-  SCM_NEWSMOB (s_form, form_tag, x);
-
-  assert (x == (FORM *) SCM_SMOB_DATA (s_form));
-
-  if (0)
-    {
-      fprintf (stderr, "Making smob from form based on WINDOW * %p\n", x->win);
-    }
-
-  return (s_form);
-}
-#endif
 
 // Forms are equal if they point to the same C structure
 SCM
