@@ -16,23 +16,18 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-TESTLIB = lib.scm lib2.scm automake-test-lib.scm
+TESTLIB = automake-test-lib.scm
 
 AM_TESTS_ENVIRONMENT = \
 	ORIGTERM=${TERM}; export ORIGTERM; \
 	TERM=xterm; export TERM; \
 	GUILE_AUTO_COMPILE=0; export GUILE_AUTO_COMPILE;
-TEST_EXTENSIONS = .test .scm
-TEST_LOG_COMPILER = ${top_builddir}/libtool \
-    -dlopen ${top_builddir}/ncurses/libguile-ncurses.la \
-    --mode=execute guile
-AM_TEST_LOG_FLAGS = -L $(abs_top_srcdir) -s
+TEST_EXTENSIONS = .scm
 SCM_LOG_COMPILER = \
 	${top_builddir}/libtool \
 	-dlopen ${top_builddir}/ncurses/libguile-ncurses.la \
 	--mode=execute guile
 AM_SCM_LOG_FLAGS = -L $(abs_top_srcdir) -s
-
 
 NOTERMTESTS = \
  curs_test_setup.scm \
