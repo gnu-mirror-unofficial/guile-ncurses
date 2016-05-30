@@ -198,36 +198,6 @@ gucu_field_type (SCM field)
     abort ();
 }
 
-// Create a copy of FIELD with a different TOPROW and LEFTCOL
-SCM
-gucu_link_field (SCM field, SCM toprow, SCM leftcol)
-{
-  SCM_ASSERT (_scm_is_field (field), field, SCM_ARG1, "link-field");
-  SCM_ASSERT (scm_is_integer (toprow), toprow, SCM_ARG2, "link-field");
-  SCM_ASSERT (scm_is_integer (leftcol), leftcol, SCM_ARG3, "link-field");
-
-  int c_toprow;
-  int c_leftcol;
-  FIELD *c_field;
-  FIELD *c_link;
-
-  c_toprow = scm_to_int (toprow);
-  c_leftcol = scm_to_int (leftcol);
-  c_field = _scm_to_field (field);
-  c_link = link_field (c_field, c_toprow, c_leftcol);
-
-  if (c_link == (FIELD *) NULL)
-    {
-      if (errno == E_BAD_ARGUMENT)
-	scm_out_of_range ("link-field", scm_list_2 (toprow, leftcol));
-      else if (errno == E_SYSTEM_ERROR)
-	scm_syserror ("link-field");
-      else
-	abort ();
-    }
-
-  return _scm_from_field (c_link);
-}
 
 // Returns the rows, columns and max size of FIELD
 SCM
@@ -372,7 +342,6 @@ gucu_form_init_special ()
   scm_c_define_gsubr ("field-buffer", 1, 1, 0, gucu_field_buffer);
   scm_c_define_gsubr ("field-info", 1, 0, 0, gucu_field_info);
   scm_c_define_gsubr ("field-type", 1, 0, 0, gucu_field_type);
-  scm_c_define_gsubr ("link-field", 3, 0, 0, gucu_dup_field);
   scm_c_define_gsubr ("scale-form", 1, 0, 0, gucu_scale_form);
   scm_c_define_gsubr ("set-field-type!", 2, 3, 0, gucu_set_field_type_x);
 }

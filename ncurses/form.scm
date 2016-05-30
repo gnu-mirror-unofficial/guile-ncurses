@@ -1,8 +1,6 @@
-;; -*- Mode: scheme; -*-
-
 ;; form.scm
 
-;; Copyright 2009, 2010, 2013, 2014 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2013, 2014, 2016 Free Software Foundation, Inc.
 
 ;; This file is part of GNU Guile-Ncurses.
 
@@ -146,7 +144,6 @@
             field-info
             field-type
             form-fields
-            link-field
             scale-form
             set-field-type              ; misnamed in 0.6
             set-field-type!             ; the correct name for set-field-type

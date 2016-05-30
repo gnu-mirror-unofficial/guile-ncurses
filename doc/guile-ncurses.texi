@@ -7527,11 +7527,6 @@ character, options, and user pointer) are copied.  Field status and
 the field page bit are not copied.
 @end deffn
 
-@deffn Procedure link-field field toprow leftcol
-This is like @code{dup-field} except that the new field shares buffers
-with its parent.  Attribute data is separate.
-@end deffn
-
 @deffn Procedure free-field field
 This explicitly releases the buffer in field, instead of waiting for
 the garbage collector to take care of it.
