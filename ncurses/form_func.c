@@ -435,7 +435,7 @@ gucu_form_sub (SCM form)
   gf = (struct gucu_form *) SCM_SMOB_DATA (form);
 
   /* Return the subwindow, if one has already been assigned */
-  if (gf->sub_guard)
+  if (scm_is_true (gf->sub_guard))
     return gf->sub_guard;
 
   /* Otherwise, the subwindow is stdscr */
@@ -453,7 +453,7 @@ gucu_form_win (SCM form)
   gf = (struct gucu_form *) SCM_SMOB_DATA (form);
 
   /* Return the window, if one has already been assigned */
-  if (gf->win_guard)
+  if (scm_is_true (gf->win_guard))
     return gf->win_guard;
 
   /* Otherwise, the subwindow is stdscr */
@@ -464,45 +464,14 @@ gucu_form_win (SCM form)
 SCM
 gucu_free_field (SCM fld)
 {
-  SCM_ASSERT (_scm_is_field (fld), fld, SCM_ARG1, "free-field");
-
-  FIELD *c_fld = _scm_to_field (fld);
-
-  int ret = free_field (c_fld);
-  SCM s_ret = scm_from_int (ret);
-
-  return s_ret;
+  return gc_free_field (fld);
 }
 
 /* Manually free the memory associated with the form */
 SCM
 gucu_free_form (SCM frm)
 {
-  struct gucu_form *gf;
-
-  scm_assert_smob_type (form_tag, frm);
-
-  gf = (struct gucu_form *) SCM_SMOB_DATA (frm);
-
-  int ret = free_form (gf->form);
-  if (ret == E_POSTED)
-    form_posted_error ("free-form");
-  else if (ret == E_BAD_ARGUMENT)
-    scm_out_of_range ("free-form", frm);
-
-  gf->form = NULL;
-
-  /* Detach the fields */
-  if (gf->fields)
-    {
-      while (scm_is_true (scm_call_0 (gf->fields_guard)))
-	;
-      gf->fields = NULL;
-    }
-  gf->win_guard = SCM_BOOL_F;
-  gf->sub_guard = SCM_BOOL_F;
-
-  return SCM_UNSPECIFIED;
+  return gc_free_form (frm);
 }
 
 /* Moves a disconnected field to a new location */
