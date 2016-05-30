@@ -63,9 +63,42 @@ int print_form (SCM x, SCM port, scm_print_state * pstate);
 
 // field -- in C, a FIELD.  In Scheme, a smob that contains the pointer
 
+void
+field_init_refcount (FIELD *field)
+{
+  set_field_userptr (field, (void *) 1);
+}
+
+bool
+field_increase_refcount (FIELD *field)
+{
+  void *ptr = field_userptr (field);
+  if (ptr >= (void *) INT_MAX)
+    return FALSE;
+
+  set_field_userptr (field, ptr + 1);
+  return TRUE;
+}
+
+bool
+field_decrease_refcount (FIELD *field)
+{
+  void *ptr = field_userptr (field);
+  if (ptr == (void *) 0)
+    return FALSE;
+  set_field_userptr (field, ptr - 1);
+  return TRUE;
+}
+
+int
+field_get_refcount (FIELD *field)
+{
+  return (int) field_userptr (field);
+}
+
 SCM
 gucu_new_field (SCM height, SCM width, SCM top, SCM left, SCM offscreen,
-		SCM nbuffers)
+                SCM nbuffers)
 {
   SCM_ASSERT (scm_is_integer (height), height, SCM_ARG1, "new-field");
   SCM_ASSERT (scm_is_integer (width), width, SCM_ARG2, "new-field");
@@ -86,16 +119,19 @@ gucu_new_field (SCM height, SCM width, SCM top, SCM left, SCM offscreen,
   if (f == NULL)
     {
       if (errno == E_BAD_ARGUMENT)
-	{
-	  scm_misc_error ("new-field", "bad argument", SCM_EOL);
-	}
+        {
+          scm_misc_error ("new-field", "bad argument", SCM_EOL);
+        }
       else if (errno == E_SYSTEM_ERROR)
-	{
-	  scm_misc_error ("new-field", "system error", SCM_EOL);
-	}
+        {
+          scm_misc_error ("new-field", "system error", SCM_EOL);
+        }
       else
-	abort ();
+        abort ();
     }
+
+  /* This is a new field, so its refcount should be one. */
+  field_init_refcount (f);
 
   SCM ret = _scm_from_field (f);
 
@@ -108,9 +144,9 @@ _scm_is_field (SCM x)
   if (SCM_SMOB_PREDICATE (field_tag, x))
     {
       if (SCM_SMOB_DATA (x) != 0)
-	return 1;
+        return 1;
       else
-	return 0;
+        return 0;
     }
   else
     return 0;
@@ -175,11 +211,12 @@ gc_free_field (SCM field)
 
   if (f != NULL)
     {
+      field_decrease_refcount (f);
       int ret = free_field (f);
       if (ret != E_OK)
-	{
-	  /* ??? --- what should happen when free fails? */
-	}
+        {
+          /* ??? --- what should happen when free fails? */
+        }
       SCM_SET_SMOB_DATA (field, NULL);
     }
 
@@ -199,9 +236,9 @@ print_field (SCM x, SCM port, scm_print_state * pstate UNUSED)
   else
     {
       if (snprintf (str, sizeof(str), "%p", (void *) fld) < 0)
-	scm_puts ("???", port);
+        scm_puts ("???", port);
       else
-	scm_puts (str, port);
+        scm_puts (str, port);
     }
 
   scm_puts (">", port);
@@ -215,6 +252,16 @@ gucu_is_field_p (SCM x)
 {
   return scm_from_bool (_scm_is_field (x));
 }
+
+SCM
+gucu_field_refcount (SCM x)
+{
+  SCM_ASSERT (_scm_is_field (x), x, SCM_ARG1, "%field-refcount");
+
+  FIELD *m = _scm_to_field (x);
+  return scm_from_int (field_get_refcount (m));
+}
+
 
 // form -- in C, a FORM *.  In Scheme, a smob that contains the pointer
 // to a form along with a list that contains the SCM of the fields
@@ -292,7 +339,7 @@ mark_form (SCM x)
       size_t i;
       size_t len = scm_to_size_t (scm_length (gf->fields));
       for (i = 0; i < len; i ++)
-	scm_gc_mark (scm_list_ref (gf->fields, scm_from_int (i)));
+        scm_gc_mark (scm_list_ref (gf->fields, scm_from_int (i)));
     }
 
   return SCM_BOOL_F;
@@ -312,31 +359,37 @@ gc_free_form (SCM x)
 
   if (form != NULL && form->form != NULL)
     {
+      FIELD **pfields = form_fields (form->form);
+      while (*pfields != NULL)
+	{
+	  field_decrease_refcount (*pfields);
+	  pfields ++;
+	}
       retval = free_form (form->form);
       form->form = (FORM *) NULL;
       if (retval == E_BAD_ARGUMENT)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("garbage collection of form"),
-			 scm_from_locale_string ("bad argument"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("garbage collection of form"),
+                         scm_from_locale_string ("bad argument"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
       else if (retval == E_POSTED)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("garbage collection of form"),
-			 scm_from_locale_string ("posted"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("garbage collection of form"),
+                         scm_from_locale_string ("posted"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
 
       /* Release scheme objects from the guardians */
       /* Detach the fields */
       if (form->fields)
-	{
-	  while (scm_is_true (scm_call_0 (form->fields_guard)))
-	    ;
-	  form->fields = NULL;
-	}
+        {
+          while (scm_is_true (scm_call_0 (form->fields_guard)))
+            ;
+          form->fields = NULL;
+        }
       form->win_guard = SCM_BOOL_F;
       form->sub_guard = SCM_BOOL_F;
     }
@@ -378,7 +431,7 @@ SCM
 gucu_new_form (SCM fields)
 {
   SCM_ASSERT (scm_is_true (scm_list_p (fields)), fields, SCM_ARG1,
-	      "new-form");
+              "new-form");
 
   struct gucu_form *gf;
   size_t len;
@@ -410,6 +463,7 @@ gucu_new_form (SCM fields)
     {
       entry = scm_list_ref (fields, scm_from_int (i));
       c_fields[i] = _scm_to_field (entry);
+      field_increase_refcount (c_fields[i]);
     }
 
   c_fields[len] = (FIELD *) NULL;
@@ -422,28 +476,28 @@ gucu_new_form (SCM fields)
     {
       free (c_fields);
       if (errno == E_BAD_ARGUMENT)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-form"),
-			 scm_from_locale_string ("bad argument"),
-			 fields, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("new-form"),
+                         scm_from_locale_string ("bad argument"),
+                         fields, SCM_BOOL_F);
+        }
       else if (errno == E_CONNECTED)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-form"),
-			 scm_from_locale_string ("connected"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("new-form"),
+                         scm_from_locale_string ("connected"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
       else if (errno == E_SYSTEM_ERROR)
-	{
-	  scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			 scm_from_locale_string ("new-form"),
-			 scm_from_locale_string ("system error"),
-			 SCM_BOOL_F, SCM_BOOL_F);
-	}
+        {
+          scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                         scm_from_locale_string ("new-form"),
+                         scm_from_locale_string ("system error"),
+                         SCM_BOOL_F, SCM_BOOL_F);
+        }
       else
-	abort ();
+        abort ();
     }
 
   gf->fields = fields;
@@ -486,7 +540,7 @@ gucu_set_form_fields_x (SCM form, SCM fields)
   SCM_ASSERT (_scm_is_form (form), form, SCM_ARG1, "set-form-fields!");
   /* FIXME: This isn't a complete type check */
   SCM_ASSERT (scm_is_true (scm_list_p (fields)), fields, SCM_ARG2,
-	      "set-form-fields");
+              "set-form-fields");
 
   struct gucu_form *gf;
   size_t len;
@@ -501,7 +555,7 @@ gucu_set_form_fields_x (SCM form, SCM fields)
   if (gf->fields)
     {
       while (scm_is_true (scm_call_0 (gf->fields_guard)))
-	;
+        ;
       gf->fields = NULL;
     }
 
@@ -541,6 +595,8 @@ gucu_form_init_type ()
   scm_set_smob_print (field_tag, print_field);
   scm_set_smob_equalp (field_tag, equalp_field);
   scm_c_define_gsubr ("field?", 1, 0, 0, gucu_is_field_p);
+  scm_c_define_gsubr ("%field-refcount", 1, 0, 0, gucu_field_refcount);
+
 
   form_tag = scm_make_smob_type ("form", sizeof (FORM *));
   scm_set_smob_mark (form_tag, mark_form);

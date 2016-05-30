@@ -152,6 +152,7 @@
             new-form
             form?
             field?
+            %field-refcount
             TYPE_ALNUM
             TYPE_ALPHA
             TYPE_ENUM
