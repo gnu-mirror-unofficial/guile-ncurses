@@ -337,18 +337,8 @@ gc_free_form (SCM x)
 	    ;
 	  form->fields = NULL;
 	}
-      if (form->win != NULL)
-	{
-	  while (scm_is_true (scm_call_0 (form->win_guard)))
-	    ;
-	  form->win = NULL;
-	}
-      if (form->sub != NULL)
-	{
-	  while (scm_is_true (scm_call_0 (form->sub_guard)))
-	    ;
-	  form->sub = NULL;
-	}
+      form->win_guard = SCM_BOOL_F;
+      form->sub_guard = SCM_BOOL_F;
     }
   scm_gc_free (form->c_fields, sizeof (FORM *) * (form->n_fields + 1), "form");
   SCM_SET_SMOB_DATA (x, NULL);
@@ -457,17 +447,13 @@ gucu_new_form (SCM fields)
     }
 
   gf->fields = fields;
-  gf->win = SCM_BOOL_F;
-  gf->sub = SCM_BOOL_F;
+  gf->win_guard = SCM_BOOL_F;
+  gf->sub_guard = SCM_BOOL_F;
 
 #ifndef GUILE_1_POINT_6
   gf->fields_guard = scm_make_guardian ();
-  gf->win_guard = scm_make_guardian ();
-  gf->sub_guard = scm_make_guardian ();
 #else
   gf->fields_guard = scm_make_guardian (SCM_BOOL_F);
-  gf->win_guard = scm_make_guardian (SCM_BOOL_F);
-  gf->sub_guard = scm_make_guardian (SCM_BOOL_F);
 #endif
 
   // Guard each of the fields from being freed

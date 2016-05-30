@@ -1,7 +1,7 @@
 /*
   form_type.h
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -44,10 +44,8 @@ struct gucu_form
   size_t n_fields;
   SCM fields;
   SCM fields_guard;
-  // The windows
-  SCM win;
-  SCM sub;
-  // Guardians for the windows
+
+  // Storage to hold references to the main and sub windows
   SCM win_guard;
   SCM sub_guard;
 };

@@ -1,7 +1,7 @@
 /*
   form_func.c
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -435,8 +435,8 @@ gucu_form_sub (SCM form)
   gf = (struct gucu_form *) SCM_SMOB_DATA (form);
 
   /* Return the subwindow, if one has already been assigned */
-  if (gf->sub)
-    return gf->sub;
+  if (gf->sub_guard)
+    return gf->sub_guard;
 
   /* Otherwise, the subwindow is stdscr */
   return SCM_BOOL_F;
@@ -453,8 +453,8 @@ gucu_form_win (SCM form)
   gf = (struct gucu_form *) SCM_SMOB_DATA (form);
 
   /* Return the window, if one has already been assigned */
-  if (gf->win)
-    return gf->win;
+  if (gf->win_guard)
+    return gf->win_guard;
 
   /* Otherwise, the subwindow is stdscr */
   return SCM_BOOL_F;
@@ -499,18 +499,8 @@ gucu_free_form (SCM frm)
 	;
       gf->fields = NULL;
     }
-  if (gf->win != NULL)
-    {
-      while (scm_is_true (scm_call_0 (gf->win_guard)))
-	;
-      gf->win = NULL;
-    }
-  if (gf->sub != NULL)
-    {
-      while (scm_is_true (scm_call_0 (gf->sub_guard)))
-	;
-      gf->sub = NULL;
-    }
+  gf->win_guard = SCM_BOOL_F;
+  gf->sub_guard = SCM_BOOL_F;
 
   return SCM_UNSPECIFIED;
 }
@@ -838,20 +828,11 @@ gucu_set_form_sub_x (SCM form, SCM win)
   else if (ret == E_SYSTEM_ERROR)
     scm_syserror ("set-form-sub!");
 
-  /* Release whatever subwindow is current */
-  if (gf->sub != NULL)
-    {
-      while (scm_is_true (scm_call_0 (gf->sub_guard)))
-	;
-      gf->sub = NULL;
-    }
-
   /* If this is stdscr, we shouldn't store it as SUB, because it could
      be returned by form_sub and then possibly freed */
   if (c_win != stdscr)
     {
-      gf->sub = win;
-      scm_call_1 (gf->sub_guard, win);
+      gf->sub_guard = win;
     }
 
   return SCM_UNSPECIFIED;
@@ -882,20 +863,11 @@ gucu_set_form_win_x (SCM form, SCM win)
   else if (ret == E_SYSTEM_ERROR)
     scm_syserror ("set-form-win!");
 
-  /* Release whatever window is current */
-  if (gf->win != NULL)
-    {
-      while (scm_is_true (scm_call_0 (gf->win_guard)))
-	;
-      gf->win = NULL;
-    }
-
   /* If this is stdscr, we shouldn't store it as WIN, because it could
      be returned by form_win and then possibly freed */
   if (c_win != stdscr)
     {
-      gf->win = win;
-      scm_call_1 (gf->win_guard, win);
+      gf->win_guard = win;
     }
 
   return SCM_UNSPECIFIED;
