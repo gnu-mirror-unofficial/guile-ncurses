@@ -72,7 +72,7 @@ gucu_dup_field (SCM field, SCM toprow, SCM leftcol)
     }
 
   /* This is a new field, so its refcount should be one. */
-  init_field_refcount (c_dup);
+  field_init_refcount (c_dup);
 
   return _scm_from_field (c_dup);
 }

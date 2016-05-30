@@ -39,11 +39,6 @@ struct gucu_form
 {
   // Pointer to the FORM structure
   FORM *form;
-  // A scheme list containing FIELD SCMs
-  FIELD **c_fields;
-  size_t n_fields;
-  SCM fields;
-  SCM fields_guard;
 
   // Storage to hold references to the main and sub windows
   SCM win_guard;
@@ -58,6 +53,8 @@ GUCU_LOCAL void field_init_refcount (FIELD *item);
 GUCU_LOCAL bool field_increase_refcount (FIELD *item);
 GUCU_LOCAL bool field_decrease_refcount (FIELD *item);
 GUCU_LOCAL int field_get_refcount (FIELD *item);
+GUCU_LOCAL int _scm_is_list_of_fields (SCM fields);
+GUCU_LOCAL int _scm_is_list_of_unattached_fields (SCM fields);
 
 GUCU_LOCAL int _scm_is_form (SCM x);
 GUCU_LOCAL FORM *_scm_to_form (SCM x);

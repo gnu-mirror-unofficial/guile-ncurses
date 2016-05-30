@@ -96,47 +96,6 @@ field_get_refcount (FIELD *field)
   return (int) field_userptr (field);
 }
 
-SCM
-gucu_new_field (SCM height, SCM width, SCM top, SCM left, SCM offscreen,
-                SCM nbuffers)
-{
-  SCM_ASSERT (scm_is_integer (height), height, SCM_ARG1, "new-field");
-  SCM_ASSERT (scm_is_integer (width), width, SCM_ARG2, "new-field");
-  SCM_ASSERT (scm_is_integer (top), top, SCM_ARG3, "new-field");
-  SCM_ASSERT (scm_is_integer (left), left, SCM_ARG4, "new-field");
-  SCM_ASSERT (scm_is_integer (offscreen), offscreen, SCM_ARG5, "new-field");
-  SCM_ASSERT (scm_is_integer (nbuffers), nbuffers, SCM_ARG6, "new-field");
-
-  int c_height = scm_to_int (height);
-  int c_width = scm_to_int (width);
-  int c_top = scm_to_int (top);
-  int c_left = scm_to_int (left);
-  int c_offscreen = scm_to_int (offscreen);
-  int c_nbuffers = scm_to_int (nbuffers);
-
-  FIELD *f =
-    new_field (c_height, c_width, c_top, c_left, c_offscreen, c_nbuffers);
-  if (f == NULL)
-    {
-      if (errno == E_BAD_ARGUMENT)
-        {
-          scm_misc_error ("new-field", "bad argument", SCM_EOL);
-        }
-      else if (errno == E_SYSTEM_ERROR)
-        {
-          scm_misc_error ("new-field", "system error", SCM_EOL);
-        }
-      else
-        abort ();
-    }
-
-  /* This is a new field, so its refcount should be one. */
-  field_init_refcount (f);
-
-  SCM ret = _scm_from_field (f);
-
-  return ret;
-}
 
 int
 _scm_is_field (SCM x)
@@ -193,6 +152,49 @@ equalp_field (SCM x1, SCM x2)
 }
 
 SCM
+gucu_new_field (SCM height, SCM width, SCM top, SCM left, SCM offscreen,
+                SCM nbuffers)
+{
+  SCM_ASSERT (scm_is_integer (height), height, SCM_ARG1, "new-field");
+  SCM_ASSERT (scm_is_integer (width), width, SCM_ARG2, "new-field");
+  SCM_ASSERT (scm_is_integer (top), top, SCM_ARG3, "new-field");
+  SCM_ASSERT (scm_is_integer (left), left, SCM_ARG4, "new-field");
+  SCM_ASSERT (scm_is_integer (offscreen), offscreen, SCM_ARG5, "new-field");
+  SCM_ASSERT (scm_is_integer (nbuffers), nbuffers, SCM_ARG6, "new-field");
+
+  int c_height = scm_to_int (height);
+  int c_width = scm_to_int (width);
+  int c_top = scm_to_int (top);
+  int c_left = scm_to_int (left);
+  int c_offscreen = scm_to_int (offscreen);
+  int c_nbuffers = scm_to_int (nbuffers);
+
+  FIELD *f =
+    new_field (c_height, c_width, c_top, c_left, c_offscreen, c_nbuffers);
+  if (f == NULL)
+    {
+      if (errno == E_BAD_ARGUMENT)
+        {
+          scm_misc_error ("new-field", "bad argument", SCM_EOL);
+        }
+      else if (errno == E_SYSTEM_ERROR)
+        {
+          scm_misc_error ("new-field", "system error", SCM_EOL);
+        }
+      else
+        abort ();
+    }
+
+  /* This is a new field, so its refcount should be one. */
+  field_init_refcount (f);
+
+  SCM ret = _scm_from_field (f);
+
+  return ret;
+}
+
+
+SCM
 mark_field (SCM x UNUSED)
 {
   // No SCMs in the field type: nothing to do here.
@@ -212,11 +214,17 @@ gc_free_field (SCM field)
   if (f != NULL)
     {
       field_decrease_refcount (f);
-      int ret = free_field (f);
-      if (ret != E_OK)
-        {
-          /* ??? --- what should happen when free fails? */
-        }
+      if (field_get_refcount (f) == 0)
+	{
+	  /* No other #<field> or #<form> is using this field, so we
+	     can free its data.  */
+	  int ret = free_field (f);
+	  if (ret != E_OK)
+	    {
+	      /* ??? --- what should happen when free fails? */
+	    }
+	}
+      /* Detach the field's data from the field.  */
       SCM_SET_SMOB_DATA (field, NULL);
     }
 
@@ -262,6 +270,47 @@ gucu_field_refcount (SCM x)
   return scm_from_int (field_get_refcount (m));
 }
 
+int
+_scm_is_list_of_fields (SCM fields)
+{
+  int i, len;
+
+  if (!scm_is_true (scm_list_p (fields)))
+    return 0;
+  len = scm_to_size_t (scm_length (fields));
+  if (len == 0)
+    return 0;
+  for (i = 0; i < len; i ++)
+    {
+      SCM entry;
+      entry = scm_list_ref (fields, scm_from_int (i));
+      if (!_scm_is_field (entry))
+	return 0;
+    }
+  return 1;
+}
+
+int
+_scm_is_list_of_unattached_fields (SCM fields)
+{
+  int i, len;
+
+  if (!scm_is_true (scm_list_p (fields)))
+    return 0;
+  len = scm_to_size_t (scm_length (fields));
+  if (len == 0)
+    return 0;
+  for (i = 0; i < len; i ++)
+    {
+      SCM entry;
+      entry = scm_list_ref (fields, scm_from_int (i));
+      if (!_scm_is_field (entry))
+	return 0;
+      if (field_index (_scm_to_field (entry)) != ERR)
+	return 0;
+    }
+  return 1;
+}
 
 // form -- in C, a FORM *.  In Scheme, a smob that contains the pointer
 // to a form along with a list that contains the SCM of the fields
@@ -331,15 +380,10 @@ mark_form (SCM x)
   scm_assert_smob_type (form_tag, x);
 
   gf = (struct gucu_form *) SCM_SMOB_DATA (x);
-
-  if (gf != (struct  gucu_form *) NULL
-      && gf->fields != NULL)
+  if (gf != NULL)
     {
-      // Mark each one of the fields in the form
-      size_t i;
-      size_t len = scm_to_size_t (scm_length (gf->fields));
-      for (i = 0; i < len; i ++)
-        scm_gc_mark (scm_list_ref (gf->fields, scm_from_int (i)));
+      scm_gc_mark (gf->win_guard);
+      scm_gc_mark (gf->sub_guard);
     }
 
   return SCM_BOOL_F;
@@ -355,16 +399,10 @@ gc_free_form (SCM x)
 
   form = (struct gucu_form *) SCM_SMOB_DATA (x);
 
-  //assert (form != NULL);
-
   if (form != NULL && form->form != NULL)
     {
       FIELD **pfields = form_fields (form->form);
-      while (*pfields != NULL)
-	{
-	  field_decrease_refcount (*pfields);
-	  pfields ++;
-	}
+
       retval = free_form (form->form);
       form->form = (FORM *) NULL;
       if (retval == E_BAD_ARGUMENT)
@@ -382,18 +420,19 @@ gc_free_form (SCM x)
                          SCM_BOOL_F, SCM_BOOL_F);
         }
 
-      /* Release scheme objects from the guardians */
-      /* Detach the fields */
-      if (form->fields)
-        {
-          while (scm_is_true (scm_call_0 (form->fields_guard)))
-            ;
-          form->fields = NULL;
-        }
+      /* Decrease the refcount and maybe free the fields.  */
+      while (*pfields != NULL)
+	{
+	  field_decrease_refcount (*pfields);
+	  if (field_get_refcount (*pfields) == 0)
+	    free_field (*pfields);
+	  pfields ++;
+	}
+
+      /* Release the hold on any windows.  */
       form->win_guard = SCM_BOOL_F;
       form->sub_guard = SCM_BOOL_F;
     }
-  scm_gc_free (form->c_fields, sizeof (FORM *) * (form->n_fields + 1), "form");
   SCM_SET_SMOB_DATA (x, NULL);
 
   return 0;
@@ -430,9 +469,6 @@ gucu_is_form_p (SCM x)
 SCM
 gucu_new_form (SCM fields)
 {
-  SCM_ASSERT (scm_is_true (scm_list_p (fields)), fields, SCM_ARG1,
-              "new-form");
-
   struct gucu_form *gf;
   size_t len;
   FIELD **c_fields;
@@ -440,20 +476,23 @@ gucu_new_form (SCM fields)
   SCM entry;
   size_t i;
 
+  // Step 0: check the inputs
+  if (!_scm_is_list_of_fields (fields))
+    scm_wrong_type_arg_msg ("new-form", SCM_ARG1, fields, "list of #<field>");
+  if (!_scm_is_list_of_unattached_fields (fields))
+    scm_misc_error ("new-form",
+		    "fields may not be attached to more than one form: ~s",
+		    scm_list_1 (fields));
+
   // Step 1: allocate memory
-  gf = scm_gc_malloc (sizeof (struct gucu_form), "gucu_form");
-
   len = scm_to_size_t (scm_length (fields));
-  if (len == 0)
-    {
-      scm_wrong_type_arg ("new-form", SCM_ARG1, fields);
-
-      // Shouldn't get here
-      return SCM_UNSPECIFIED;
-    }
+  gf = scm_gc_malloc (sizeof (struct gucu_form), "gucu_form");
   c_fields = scm_gc_malloc (sizeof (FIELD *) * (len + 1), "gucu_form");
 
   // Step 2: initialize it with C code
+  gf->form = 0;
+  gf->win_guard = SCM_BOOL_F;
+  gf->sub_guard = SCM_BOOL_F;
 
   // Step 3: Create the smob
   SCM_NEWSMOB (smob, form_tag, gf);
@@ -463,14 +502,10 @@ gucu_new_form (SCM fields)
     {
       entry = scm_list_ref (fields, scm_from_int (i));
       c_fields[i] = _scm_to_field (entry);
-      field_increase_refcount (c_fields[i]);
     }
-
   c_fields[len] = (FIELD *) NULL;
 
   gf->form = new_form (c_fields);
-  gf->c_fields = c_fields;
-  gf->n_fields = len;
 
   if (gf->form == NULL)
     {
@@ -500,19 +535,11 @@ gucu_new_form (SCM fields)
         abort ();
     }
 
-  gf->fields = fields;
-  gf->win_guard = SCM_BOOL_F;
-  gf->sub_guard = SCM_BOOL_F;
-
-#ifndef GUILE_1_POINT_6
-  gf->fields_guard = scm_make_guardian ();
-#else
-  gf->fields_guard = scm_make_guardian (SCM_BOOL_F);
-#endif
-
-  // Guard each of the fields from being freed
-  for (i = 0; i < len; i ++)
-    scm_call_1 (gf->fields_guard, scm_list_ref (fields, scm_from_int (i)));
+  for (i = 0; i < len; i++)
+    {
+      entry = scm_list_ref (fields, scm_from_int (i));
+      field_increase_refcount (c_fields[i]);
+    }
 
   return smob;
 }
@@ -522,65 +549,107 @@ SCM
 gucu_form_fields (SCM form)
 {
   struct gucu_form *gf;
+  int i;
 
   scm_assert_smob_type (form_tag, form);
 
   gf = (struct gucu_form *) SCM_SMOB_DATA (form);
-
-  // NOTE: the FIELDS is a list of FIELD smobs that were used to
-  // initialize the form.  They are held here so that they are not
-  // GC'd.
-
-  return gf->fields;
+  if (gf == NULL || gf->form == NULL)
+    return SCM_EOL;
+  else
+    {
+      int len = field_count (gf->form);
+      if (len == ERR || len == 0)
+	return SCM_EOL;
+      else
+	{
+	  FIELD **pfields;
+	  pfields = form_fields (gf->form);
+	  SCM list = SCM_EOL;
+	  if (pfields == NULL)
+	    return SCM_EOL;
+	  else
+	    {
+	      for (i = 0; i < len; i ++)
+		{
+		  SCM entry;
+		  field_increase_refcount (pfields[i]);
+		  entry = _scm_from_field (pfields[i]);
+		  list = scm_append (scm_list_2 (list, scm_list_1 (entry)));
+		}
+	      return list;
+	    }
+	}
+    }
+  return SCM_EOL;
 }
 
+// Detach the current fields from the form and replace them with
+// a new list of fields.
 SCM
 gucu_set_form_fields_x (SCM form, SCM fields)
 {
   SCM_ASSERT (_scm_is_form (form), form, SCM_ARG1, "set-form-fields!");
-  /* FIXME: This isn't a complete type check */
-  SCM_ASSERT (scm_is_true (scm_list_p (fields)), fields, SCM_ARG2,
-              "set-form-fields");
 
   struct gucu_form *gf;
-  size_t len;
   FIELD **c_fields;
   SCM entry;
   size_t i;
   int ret;
 
+  if (!_scm_is_list_of_fields (fields))
+    scm_wrong_type_arg_msg ("set-form-field!", SCM_ARG2, fields, "list of #<field>");
+
+  /* FIXME: Check that all of the fields are either unattached or are attached to this
+     form.  Is there a way to do that check?  */
+
   gf = (struct gucu_form *) SCM_SMOB_DATA (form);
-
-  /* Release the current fields, if any */
-  if (gf->fields)
+  if (gf != NULL && gf->form != NULL)
     {
-      while (scm_is_true (scm_call_0 (gf->fields_guard)))
-        ;
-      gf->fields = NULL;
+      FIELD **pfield_prev = NULL;
+      int len_prev;
+      int len_cur;
+
+      /* Hold on to the old fields list.  */
+      len_prev = field_count (gf->form);
+      pfield_prev = form_fields (gf->form);
+
+      /* Make a new fields list.  */
+      len_cur = scm_to_int (scm_length (fields));
+      c_fields = scm_gc_malloc (sizeof (FIELD *) * (len_cur + 1), "set-form-fields!");
+      for (i = 0; i < len_cur; i++)
+	{
+	  entry = scm_list_ref (fields, scm_from_int (i));
+	  c_fields[i] = _scm_to_field (entry);
+	}
+      c_fields[len_cur] = (FIELD *) NULL;
+
+      /* Attach the new fields to the form.  */
+      ret = set_form_fields (gf->form, c_fields);
+      if (ret == E_BAD_ARGUMENT)
+	scm_out_of_range ("set-form-fields!", fields);
+      else if (ret == E_CONNECTED)
+	form_connected_error ("set-form-fields!");
+      else if (ret == E_POSTED)
+	form_posted_error ("set-form-fields!");
+      else if (ret == E_SYSTEM_ERROR)
+	scm_syserror ("set-form-fields!");
+
+      /* Increase the refcount on the new fields.  */
+      for (i = 0; i < len_cur; i++)
+	field_increase_refcount (c_fields[i]);
+
+      /* Decrease the refcount on the old fields, and maybe free. */
+      if (len_prev > 0 && pfield_prev != NULL)
+	{
+	  for (i = 0; i < len_prev; i ++)
+	    {
+	      field_decrease_refcount (pfield_prev[i]);
+	      if (field_get_refcount (pfield_prev[i]) == 0)
+		free_field (pfield_prev[i]);
+	    }
+	}
     }
-
-  len = scm_to_size_t (scm_length (fields));
-  c_fields = scm_gc_malloc (sizeof (FIELD *) * (len + 1), "set-form-fields");
-
-  for (i = 0; i < len; i++)
-    {
-      entry = scm_list_ref (fields, scm_from_int (i));
-      c_fields[i] = _scm_to_field (entry);
-    }
-  c_fields[len] = (FIELD *) NULL;
-
-  ret = set_form_fields (gf->form, c_fields);
-  if (ret == E_BAD_ARGUMENT)
-    scm_out_of_range ("set-form-fields!", fields);
-  else if (ret == E_CONNECTED)
-    form_connected_error ("set-form-fields!");
-  else if (ret == E_POSTED)
-    form_posted_error ("set-form-fields!");
-  else if (ret == E_SYSTEM_ERROR)
-    scm_syserror ("set-form-fields!");
-
-  gf->fields = fields;
-  scm_call_1 (gf->fields_guard, fields);
 
   return SCM_UNSPECIFIED;
 }
