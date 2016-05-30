@@ -464,14 +464,16 @@ gucu_form_win (SCM form)
 SCM
 gucu_free_field (SCM fld)
 {
-  return gc_free_field (fld);
+  gc_free_field (fld);
+  return SCM_UNSPECIFIED;
 }
 
 /* Manually free the memory associated with the form */
 SCM
 gucu_free_form (SCM frm)
 {
-  return gc_free_form (frm);
+  gc_free_form (frm);
+  return SCM_UNSPECIFIED;
 }
 
 /* Moves a disconnected field to a new location */
