@@ -577,6 +577,47 @@ gucu_strwidth (SCM str)
 #endif
 }
 
+SCM
+gucu_string_split_at_line_endings (SCM str)
+{
+  SCM res = SCM_EOL;
+
+  SCM_ASSERT (scm_is_string (str), str, SCM_ARG1, "string-split-at-line-endings");
+  
+  long idx, last_idx;
+
+  idx = scm_c_string_length (str);
+  while (idx >= 0)
+    {
+      last_idx = idx;
+
+      do
+	{
+	  int c = scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 1)));
+	  if ((c == 0xD) | (c == 0xA) || (c == 0x85) || (c == 0x2028) || (c == 2029))
+	    break;
+	  idx --;
+	}
+      while (idx > 0);
+      if ((idx >= 2)
+	  && (scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 1))) == 0xA)
+	  && (scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 2))) == 0xD))
+	{
+	  res = scm_cons (scm_c_substring_copy (str, idx, last_idx), res);
+	  idx -= 2;
+	}
+      else if (idx >= 0)
+	{
+	  res = scm_cons (scm_c_substring_copy (str, idx, last_idx), res);
+	  idx--;
+	}
+    }
+
+  scm_remember_upto_here_1 (str);
+  return res;
+}
+
+
 void
 gucu_extra_init_function ()
 {
@@ -624,5 +665,9 @@ gucu_extra_init_function ()
 
 #if defined(GUILE_CHARS_ARE_UCS4) || defined(HAVE_WCWIDTH)
   scm_c_define_gsubr ("%strwidth", 1, 0, 0, gucu_strwidth);
+#endif
+
+#ifdef GUILE_CHARS_ARE_UCS4
+  scm_c_define_gsubr ("string-split-at-line-endings", 1, 0, 0, gucu_string_split_at_line_endings);
 #endif
 }

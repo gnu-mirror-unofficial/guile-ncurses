@@ -64,6 +64,7 @@ GUCU_API SCM gucu_unlockpt (SCM fd);
 #endif /* ENABLE_TERMIOS */
 
 GUCU_API SCM gucu_strwidth (SCM x);
+GUCU_API SCM gucu_string_split_at_line_endings (SCM str);
 
 GUCU_LOCAL void gucu_extra_init_function (void);
 #endif

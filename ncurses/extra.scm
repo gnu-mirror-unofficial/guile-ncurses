@@ -170,6 +170,7 @@
             termios-cc-set!
 
             %termios-debug
+	    string-split-at-line-endings
             ))
 
 ;; Return the number of character cells that C takes
