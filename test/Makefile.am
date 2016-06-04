@@ -25,9 +25,9 @@ AM_TESTS_ENVIRONMENT = \
 TEST_EXTENSIONS = .scm
 SCM_LOG_COMPILER = \
 	${top_builddir}/libtool \
-	-dlopen ${top_builddir}/ncurses/libguile-ncurses.la \
+	-dlopen ${top_builddir}/src/ncurses/libguile-ncurses.la \
 	--mode=execute guile
-AM_SCM_LOG_FLAGS = -L $(abs_top_srcdir) -s
+AM_SCM_LOG_FLAGS = -L $(abs_top_srcdir)/src -L $(abs_top_srcdir) -s
 
 NOTERMTESTS = \
  curs_test_setup.scm \

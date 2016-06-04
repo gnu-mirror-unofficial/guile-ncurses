@@ -317,7 +317,7 @@ if test "x$guilesitedir" = "x"; then
 fi
 AC_SUBST([guilesitedir])
 
-AC_CONFIG_FILES([Makefile ncurses/Makefile doc/Makefile m4/Makefile])
+AC_CONFIG_FILES([Makefile src/ncurses/Makefile doc/Makefile m4/Makefile])
 AC_CONFIG_FILES([build_aux/Makefile tools/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([tools/uninstalled-env], [chmod +x tools/uninstalled-env])

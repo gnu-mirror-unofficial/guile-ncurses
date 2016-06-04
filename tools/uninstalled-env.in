@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#	Copyright (C) 2003, 2006, 2008, 2009, 2010 Free Software Foundation
+#	Copyright (C) 2003, 2006, 2008, 2009, 2010, 2016 Free Software Foundation
 #
 #   This file is part of GUILE, that has been modified for the
 #   guile-ncurses project
@@ -33,7 +33,7 @@
 # Example: ../../uninstalled-env ./guile-test-foo
 
 # config
-subdirs_with_ltlibs="ncurses"       # maintain me
+subdirs_with_ltlibs="src/ncurses"       # maintain me
 
 # env (set by configure)
 top_srcdir="@abs_top_srcdir@"
