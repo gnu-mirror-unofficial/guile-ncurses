@@ -1511,8 +1511,10 @@ gucu_resetty ()
 SCM
 gucu_resize (SCM win, SCM lines, SCM columns)
 {
-  int c_lines, c_columns, ret, c_win;
-
+  int c_columns, c_lines;
+  WINDOW *c_win;
+  int ret;
+  
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "resize");
   SCM_ASSERT (scm_is_integer (lines), lines, SCM_ARG2, "resize");
   SCM_ASSERT (scm_is_integer (columns), columns, SCM_ARG3, "resize");
