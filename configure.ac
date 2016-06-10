@@ -86,10 +86,10 @@ then
 fi
 
 AC_ARG_WITH(ncursesw,
-            [AS_HELP_STRING([--with-ncursesw],
-                            [Use ncursesw (wide character support)])],
-            [with_ncursesw=check],
-            [with_ncursesw=no])
+            [AS_HELP_STRING([--without-ncursesw],
+                            [Don't use ncursesw (wide character support)])],
+            [with_ncursesw=no],
+            [with_ncursesw=check])
 
 AS_IF([test "$with_ncursesw" = check],
       [AC_SEARCH_LIBS([initscr], [ncursesw],
@@ -274,10 +274,10 @@ AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_
 # AC_FUNC_MALLOC
 
 AC_ARG_ENABLE([termios],
-              [AS_HELP_STRING([--enable-termios],
-                              [enable experimental support for termios functions])],
+              [AS_HELP_STRING([--disable-termios],
+                              [disable support for termios functions])],
             [],
-            [enable_termios=no])
+            [enable_termios=yes])
 
 AS_IF([test "x$enable_termios" != xno],
       [AC_DEFINE([ENABLE_TERMIOS], [1],

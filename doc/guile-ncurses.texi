@@ -6320,7 +6320,24 @@ The return value is unspecified.
 @end deffn
 
 @node Terminal resizing, Querying the terminfo database, Window creation, The basic curses library
-@subsection Terminal resizing
+@subsection Terminal and window resizing
+
+@deffn Procedure resize win lines columns
+@cindex Windows, resizing
+@cindex Resizing windows
+@findex bkgdset!
+
+The function @code{resize} reallocates storage for an ncurses window
+to adjust its dimensions to the specified values.  If either dimension
+is larger than the current values, the window's data is filled with
+blanks that have the current background rendition (as set by
+@code{bkgdset!}) merged into them.
+
+It returns @code{#t} on success or @code{#f} on failure.  It fails
+for zero-sized dimensions or memory allocation problems.
+
+@end deffn
+       
 
 @deffn Procedure resizeterm lines columns
 @cindex Windows, resizing

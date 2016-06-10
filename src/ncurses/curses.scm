@@ -380,6 +380,7 @@
             reset-prog-mode
             reset-shell-mode
             resetty
+            resize
             resizeterm
             savetty
             scr-dump

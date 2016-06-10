@@ -135,6 +135,7 @@ GUCU_API SCM gucu_refresh (SCM arg1);
 GUCU_API SCM gucu_reset_prog_mode (void);
 GUCU_API SCM gucu_reset_shell_mode (void);
 GUCU_API SCM gucu_resetty (void);
+GUCU_API SCM gucu_resize (SCM win, SCM lines, SCM columns);
 GUCU_API SCM gucu_resizeterm(SCM lines, SCM columns);
 GUCU_API SCM gucu_savetty (void);
 GUCU_API SCM gucu_scr_dump (SCM arg1);
