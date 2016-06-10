@@ -37,22 +37,75 @@ AC_SUBST(LIBGUILE_NCURSES_INTERFACE)
 
 ##################
 # Check for Programs
-
+PKG_PROG_PKG_CONFIG
 AC_PROG_CC
 AC_CANONICAL_HOST
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 AM_PROG_AR
 
-AC_ARG_WITH([guilesitedir],
-            [AS_HELP_STRING([--with-guilesitedir],
-                            [use the specified installation path for Guile modules])],
-            [case "x$withval" in
-             xyes|xno) guilesitedir="";;
-             *)        guilesitedir="$withval";;
-             esac],
-             [guilesitedir=""])
+# from guile.m4
+# sets: GUILE_CFLAGS and GUILE_LDFLAGS
+GUILE_PROGS
+GUILE_FLAGS
 
+AC_PATH_PROG([GUILD],[guild])
+AC_SUBST([GUILD])
+
+AC_MSG_CHECKING([the Guile effective version])
+guile_effective_version="`$GUILE -c '(display (effective-version))'`"
+AC_MSG_RESULT([$guile_effective_version])
+
+################
+# Guile has three directories that don't follow the GNU Filesystem
+# Heirarchy Standards.  If one follows the GNU FHS, files get installed
+# in directories in which Guile does not search for them by default.
+AC_ARG_WITH([guile-install-directories],
+            [AS_HELP_STRING([--with-guile-install-directories],
+                            [Don't follow GNU Filesystem Heirarchy when installing.  Instead install to the directories that Guile expects.])])
+
+case "x$with_guile_install_directories" in
+     xyes)
+       # Get the installation directories from Guile
+       # Installed .scm scheme libraries go here
+       AC_MSG_CHECKING([Guile site directory])
+       guilesitedir="`$PKG_CONFIG guile-$guile_effective_version --variable=sitedir`"
+       AC_MSG_RESULT([$guilesitedir])
+       AC_SUBST(guilesitedir)
+
+       # Compiled libguile-*.so extension libraries go here
+       AC_MSG_CHECKING([Guile extension directory])
+       guileextensiondir="`$PKG_CONFIG guile-$guile_effective_version --variable=extensiondir`"
+       AC_MSG_RESULT([$guileextensiondir])
+       AC_SUBST(guileextensiondir)
+
+       # Compiled .go scheme libraries go here
+       AC_MSG_CHECKING([Guile object directory])
+       guileobjectdir="`$GUILE -c '(display (cadr %load-compiled-path))'`"
+       AC_MSG_RESULT([$guileobjectdir])
+       AC_SUBST(guileobjectdir)
+       ;;
+     *)
+       # Follow the GNU Filesystem Heirarchy Standard correctly
+       # Installed .scm scheme libraries go here
+       AC_MSG_CHECKING([Guile site directory])
+       guilesitedir="\$(datadir)/guile/site/$guile_effective_version"
+       AC_MSG_RESULT([$guilesitedir])
+       AC_SUBST(guilesitedir)
+
+       # Compiled libguile-*.so extension libraries go here
+       AC_MSG_CHECKING([Guile extension directory])
+       guileextensiondir="$libdir/guile/$guile_effective_version"
+       AC_MSG_RESULT([$guileextensiondir])
+       AC_SUBST(guileextensiondir)
+
+       # Compiled .go scheme libraries go here
+       AC_MSG_CHECKING([Guile object directory])
+       guileobjectdir="$libdir/guile/$guile_effective_version/site-ccache"
+       AC_MSG_RESULT([$guileobjectdir])
+       AC_SUBST(guileobjectdir)
+       ;;
+esac
 
 # The curses man page lists the following possibilities for curses
 # headers
@@ -169,24 +222,6 @@ AM_CONDITIONAL([BUILDING_SHELL], [test "$building_shell" = yes])
 AM_CONDITIONAL([DLL_VERSION_INFO], [test "$dll_version_info" = yes])
 ##################
 # Check for libraries
-
-# from guile.m4
-# sets: GUILE_CFLAGS and GUILE_LDFLAGS
-GUILE_PROGS
-GUILE_FLAGS
-GUILE_SITE_DIR
-
-# Some versions of Cygwin have a bad guile-config
-AC_MSG_CHECKING([if Guile flags have the janneke's path problem])
-ac_cv_janneke_test="`echo $GUILE_CFLAGS | grep janneke`"
-ac_cv_janneke_fix=no
-if test -n "$ac_cv_janneke_test"
-then
-  GUILE_CFLAGS=/usr/include
-  GUILE_LDFLAGS="-lguile -L/usr/lib -L/usr/bin -L/usr/lib/w32api -lgmp -lcrypt -lm -lltdl"
-  ac_cv_janneke_fix=yes
-fi
-AC_MSG_RESULT([$ac_cv_janneke_fix])
 
 AC_MSG_CHECKING([if guile can handle UCS4 characters])
 GUILE_CHECK([ac_cv_guile_ucs4],
@@ -311,24 +346,21 @@ AM_CONDITIONAL([HAVE_XTERM_TERMINFO],[test "$havexterm" = yes])
 ##################
 #  Output
 
-pkgdatadir="$datadir/$PACKAGE"
-if test "x$guilesitedir" = "x"; then
-   guilesitedir="$pkgdatadir"
-fi
-AC_SUBST([guilesitedir])
-
 AC_CONFIG_FILES([Makefile src/ncurses/Makefile doc/Makefile m4/Makefile])
 AC_CONFIG_FILES([build_aux/Makefile tools/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([tools/uninstalled-env], [chmod +x tools/uninstalled-env])
 AC_OUTPUT
 
-if test "$guilesitedir" != "$GUILE_SITE"; then
+if test "$with_guile_install_directories" != "yes"; then
    # Guile has a different prefix than this module
    AC_MSG_WARN([]
-   [The Guile modules will be installed in ${guilesitedir}.]
+   [The Guile modules will be installed in $guilesitedir.]
+   [The Guile extension libraries will be installed in $guileextensiondir.]
+   [The compiled modules will be installed in $guileobjectdir.]
    [You should probably re-run `configure' with]
-   [`--with-guilesitedir=$GUILE_SITE']
+   [`--with-guile-install-directories]
    [Otherwise, you will have to adjust the `GUILE_LOAD_PATH' environment]
    [variable.])
 fi
+AC_SUBST([guilesitedir])
