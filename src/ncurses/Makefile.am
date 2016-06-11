@@ -18,7 +18,7 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-lib_LTLIBRARIES = libguile-ncurses.la
+guileextension_LTLIBRARIES = libguile-ncurses.la
 libguile_ncurses_la_SOURCES = compat.c compat.h curs_const.c		\
 	curs_const.h curs_func.c curs_func.h curs_port.c curs_port.h	\
 	curs_spec.c curs_spec.h curs_main.c eti_const.c eti_const.h	\
