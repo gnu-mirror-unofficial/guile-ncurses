@@ -1,7 +1,7 @@
 /*
   panel_spec.c
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -118,6 +118,24 @@ gucu_panel_userdata (SCM pan)
 }
 #endif
 
+SCM
+gucu_panels_list ()
+{
+  PANEL *p_cur = panel_below ((PANEL *) NULL);
+  SCM lst = SCM_EOL;
+  while (p_cur != (PANEL *) NULL)
+    {
+      void *uptr = panel_userptr (p_cur);
+      if (uptr != NULL)
+        {
+          SCM win = PTR2SCM (panel_userptr (p_cur));
+          lst = scm_append (scm_list_2 (lst, scm_list_1 (win)));
+        }
+      p_cur = panel_below (p_cur);
+    }
+  return lst;
+}
+
 void
 gucu_panel_init_special (void)
 {
@@ -127,4 +145,5 @@ gucu_panel_init_special (void)
   scm_c_define_gsubr ("set-panel-userdata", 2, 0, 0, gucu_set_panel_userdata);
   scm_c_define_gsubr ("panel-userdata", 1, 0, 0, gucu_panel_userdata);
 #endif
+  scm_c_define_gsubr ("%panels-list", 0, 0, 0, gucu_panels_list);
 }

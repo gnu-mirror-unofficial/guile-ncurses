@@ -242,6 +242,7 @@ NARROWTESTS = \
  panel_p_panel.scm \
  panel_p_window.scm \
  panel_update_demo.scm \
+ panel_panels_map.scm \
  form_gc_refcount.scm \
  form_new_no_fields.scm \
  form_new_one_field.scm \

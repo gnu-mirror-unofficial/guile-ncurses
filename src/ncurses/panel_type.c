@@ -117,6 +117,7 @@ free_panel (SCM x)
       wp = (struct gucu_window *) SCM_SMOB_DATA (x);
       if (wp && wp->window && wp->panel)
 	{
+	  set_panel_userptr (wp->panel, NULL);
 	  int retval = del_panel (wp->panel);
 	  if (retval != OK)
 	    {
@@ -163,8 +164,15 @@ gucu_make_panel_x (SCM win)
   if (wp && wp->window)
     {
       wp->panel = new_panel (wp->window);
+
       if (wp->panel == NULL)
 	scm_misc_error ("make-panel!", "bad window ~A", scm_list_1 (win));
+      {
+	/* We need a reference back to the parent #<window> so we can
+	   write a panel. */
+	assert (!SCM_IMP (win));
+	set_panel_userptr (wp->panel, SCM2PTR (win));
+      }
     }
   return SCM_UNSPECIFIED;
 }

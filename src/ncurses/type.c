@@ -1107,6 +1107,7 @@ free_window (SCM x)
       if (wp->panel != (PANEL *) NULL)
         {
           int retval;
+	  set_panel_userptr (wp->panel, NULL);
           retval = del_panel (wp->panel);
           if (retval != OK)
             {
