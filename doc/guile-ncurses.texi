@@ -6604,7 +6604,7 @@ panels are traversed.
 @end deffn
 
 @deffn Procedure panels-for-each proc
-Applies the procedure @ver{proc} to all currently allocated #<panel>s.
+Applies the procedure @var{proc} to all currently allocated #<panel>s.
 The panels are traversed in top-down order.  The return values of
 @var{proc} are discarded.  Note that both shown and hidden panels are
 traversed. The return value is unspecified.
