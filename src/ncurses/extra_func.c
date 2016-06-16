@@ -1,7 +1,7 @@
 /*
   extra_func.c
 
-  Copyright 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -21,12 +21,14 @@
 */
 
 #include <config.h>
+#include <gucuconfig.h>
 
 #include <assert.h>
 #include <libguile.h>
 #include <sys/types.h>
 #ifdef GUILE_CHARS_ARE_UCS4
 #include <uniwidth.h>
+#include <unilbrk.h>
 #else
 #include <wchar.h>
 #endif
@@ -161,7 +163,7 @@ gucu_ptsmakeraw (SCM fd)
   if (ret == -1)
     scm_syserror ("ptsmakeraw");
   terminal_attributes.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
-				   | INLCR | IGNCR | ICRNL | IXON);
+                                   | INLCR | IGNCR | ICRNL | IXON);
   terminal_attributes.c_oflag &= ~OPOST;
   terminal_attributes.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
   terminal_attributes.c_cflag &= ~(CSIZE | PARENB);
@@ -206,7 +208,7 @@ SCM gucu_tcdrain (SCM s_fd_or_port)
     s_fd = s_fd_or_port;
   else
     scm_wrong_type_arg ("tcdrain", SCM_ARG1, s_fd_or_port);
- 
+
   c_fd = scm_to_int (s_fd);
 
   c_ret = tcdrain (c_fd);
@@ -299,7 +301,7 @@ SCM gucu_tcgetsid (SCM s_fd_or_port)
     s_fd = s_fd_or_port;
   else
     scm_wrong_type_arg ("tcgetsid", SCM_ARG1, s_fd_or_port);
- 
+
   c_fd = scm_to_int (s_fd);
 
   c_pid = tcgetsid (c_fd);
@@ -363,8 +365,8 @@ SCM
 gucu_termios_iflag (SCM s_termios)
 {
   struct termios *c_termios;
-  
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, 
+
+  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
               "termios-iflag");
   c_termios = _scm_to_termios (s_termios);
   return scm_from_uint (c_termios->c_iflag);
@@ -374,7 +376,7 @@ SCM
 gucu_termios_oflag (SCM s_termios)
 {
   struct termios *c_termios;
-  
+
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
               "termios-oflag");
   c_termios = _scm_to_termios (s_termios);
@@ -396,7 +398,7 @@ SCM
 gucu_termios_lflag (SCM s_termios)
 {
   struct termios *c_termios;
-  
+
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
               "termios-lflag");
   c_termios = _scm_to_termios (s_termios);
@@ -407,7 +409,7 @@ SCM
 gucu_termios_line (SCM s_termios)
 {
   struct termios *c_termios;
-  
+
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
               "termios-line");
   c_termios = _scm_to_termios (s_termios);
@@ -440,8 +442,6 @@ gucu_termios_iflag_set_x (SCM s_termios, SCM s_flag)
 
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
               "termios-iflag-set!");
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG2,
-              "termios-iflag-set!");
   c_termios = _scm_to_termios (s_termios);
   c_flag = scm_to_uint (s_flag);
   c_termios->c_iflag = c_flag;
@@ -455,8 +455,6 @@ gucu_termios_oflag_set_x (SCM s_termios, SCM s_flag)
   unsigned int c_flag;
 
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
-              "termios-oflag-set!");
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG2,
               "termios-oflag-set!");
   c_termios = _scm_to_termios (s_termios);
   c_flag = scm_to_uint (s_flag);
@@ -472,8 +470,6 @@ gucu_termios_cflag_set_x (SCM s_termios, SCM s_flag)
 
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
               "termios-cflag-set!");
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG2,
-              "termios-cflag-set!");
   c_termios = _scm_to_termios (s_termios);
   c_flag = scm_to_uint (s_flag);
   c_termios->c_cflag = c_flag;
@@ -487,8 +483,6 @@ gucu_termios_lflag_set_x (SCM s_termios, SCM s_flag)
   unsigned int c_flag;
 
   SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
-              "termios-lflag-set!");
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG2,
               "termios-lflag-set!");
   c_termios = _scm_to_termios (s_termios);
   c_flag = scm_to_uint (s_flag);
@@ -568,7 +562,7 @@ gucu_strwidth (SCM str)
     {
       s = wcwidth (btowc (SCM_CHAR (scm_c_string_ref (str, i))));
       if (s >= 0 && s <= 2)
-	siz += s;
+        siz += s;
     }
   return scm_from_int (siz);
 #else
