@@ -317,7 +317,7 @@ endif
 endif
 endif
 
-STRESS_TESTS = stress_001_derwin_panel.scm slk_demo.scm
+DEMOS = panel_gc_demo.scm slk_demo.scm termios_demo.scm
 
-EXTRA_DIST = $(TESTLIB) $(NOTERMTESTS) $(NARROWTESTS) $(WIDETESTS) $(STRESS_TESTS)
+EXTRA_DIST = $(TESTLIB) $(NOTERMTESTS) $(NARROWTESTS) $(WIDETESTS) $(DEMOS)
 
