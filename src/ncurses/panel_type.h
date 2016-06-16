@@ -1,7 +1,7 @@
 /*
   panel_type.h
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -42,6 +42,7 @@
 GUCU_LOCAL int _scm_is_panel (SCM x);
 GUCU_LOCAL PANEL *_scm_to_panel (SCM x);
 
+GUCU_API SCM equalp_panel (SCM a, SCM b);
 GUCU_API SCM gucu_is_panel_p (SCM x);
 GUCU_API SCM gucu_make_panel_x (SCM arg1);
 GUCU_API SCM gucu_del_panel_x (SCM arg1);

@@ -6534,6 +6534,13 @@ a window.
 
 @end deffn
 
+@deffn Procedure panel=? win1 win2
+
+This procedure returns @code{#t} is @var{win1} and @var{win2} are
+the same panel window.  It returns @code{#f} otherwise.
+
+@end deffn
+
 @deffn Procedure update-panels
 
 This procedure refreshes the virtual screen to reflect the relations
@@ -6588,6 +6595,21 @@ corner is at @var{starty}, @var{startx}.  It does not change the
 position of the panel in the stack.  Be sure to use this function, not
 @code{mvwin}, to move a panel window.
 @end deffn
+
+@deffn Procedure panels-map proc
+Applies the procedure @var{proc} to all currently allocated #<panel>s.
+The panels are traversed in top-down order.  The return values of
+@var{proc} are collected in a list.  Note that both shown and hidden
+panels are traversed.
+@end deffn
+
+@deffn Procedure panels-for-each proc
+Applies the procedure @ver{proc} to all currently allocated #<panel>s.
+The panels are traversed in top-down order.  The return values of
+@var{proc} are discarded.  Note that both shown and hidden panels are
+traversed. The return value is unspecified.
+@end deffn
+
 
 @node The curses menu library, The curses form library, The curses panel library, Curses Reference
 @section The curses menu library: @code{(ncurses menu)}

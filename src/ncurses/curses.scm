@@ -500,6 +500,7 @@
 
             ;; Forward declaration of panel library functions
             panel?
+            panel=?
             make-panel!
             del-panel!
             ))

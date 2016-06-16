@@ -176,4 +176,5 @@ gucu_panel_init_type ()
   scm_c_define_gsubr ("panel?", 1, 0, 0, gucu_is_panel_p);
   scm_c_define_gsubr ("make-panel!", 1, 0, 0, gucu_make_panel_x);
   scm_c_define_gsubr ("del-panel!", 1, 0, 0, gucu_del_panel_x);
+  scm_c_define_gsubr ("panel=?", 2, 0, 0, equalp_panel);
 }
