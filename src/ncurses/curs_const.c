@@ -188,8 +188,7 @@ SCM gucu_BUTTON4_RELEASED;
 SCM gucu_BUTTON4_CLICKED;
 SCM gucu_BUTTON4_DOUBLE_CLICKED;
 SCM gucu_BUTTON4_TRIPLE_CLICKED;
-#if 0
-// These could be added back in someday
+#ifdef HAVE_BUTTON5
 SCM gucu_BUTTON5_PRESSED;
 SCM gucu_BUTTON5_RELEASED;
 SCM gucu_BUTTON5_CLICKED;
@@ -613,7 +612,7 @@ gucu_init_constant ()
     scm_permanent_object (scm_c_define
                           ("BUTTON4_TRIPLE_CLICKED",
                            scm_from_uint (BUTTON4_TRIPLE_CLICKED)));
-#if 0
+#ifdef HAVE_BUTTON5
   gucu_BUTTON5_PRESSED =
     scm_permanent_object (scm_c_define
                           ("BUTTON5_PRESSED",
