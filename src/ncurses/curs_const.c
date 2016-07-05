@@ -168,6 +168,7 @@ SCM gucu_KEY_RESIZE;
 #ifdef HAS_KEY_EVENT
 SCM gucu_KEY_EVENT;
 #endif
+SCM gucu_NCURSES_MOUSE_VERSION;
 SCM gucu_BUTTON1_PRESSED;
 SCM gucu_BUTTON1_RELEASED;
 SCM gucu_BUTTON1_CLICKED;
@@ -532,6 +533,10 @@ gucu_init_constant ()
     scm_permanent_object (scm_c_define
                           ("KEY_EVENT", scm_from_int (KEY_EVENT)));
 #endif
+  gucu_NCURSES_MOUSE_VERSION =
+    scm_permanent_object (scm_c_define
+			  ("NCURSES_MOUSE_VERSION",
+			   scm_from_uint (NCURSES_MOUSE_VERSION)));
   gucu_BUTTON1_PRESSED =
     scm_permanent_object (scm_c_define
                           ("BUTTON1_PRESSED",

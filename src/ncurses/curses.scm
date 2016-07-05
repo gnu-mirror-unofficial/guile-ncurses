@@ -59,6 +59,7 @@
             A_TOP
             A_UNDERLINE
             A_VERTICAL
+            NCURSES_MOUSE_VERSION
             BUTTON1_CLICKED
             BUTTON1_DOUBLE_CLICKED
             BUTTON1_PRESSED
