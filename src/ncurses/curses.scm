@@ -1905,10 +1905,11 @@ foreground color and color number BACK as its background color.  Returns
 
 (define (initscr)
   "Initialize curses and return the window object that is the base window."
-  (let ((ret (%initscr)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error)))
-        ret)))
+  (or (false-if-exception (stdscr))
+      (let ((ret (%initscr)))
+        (if (not ret)
+            (raise (condition (&curses-bad-state-error)))
+            ret))))
 
 (define* (insch win ch #:key y x)
   "Insert the complex character CH before the character under the cursor
