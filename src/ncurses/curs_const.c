@@ -165,7 +165,7 @@ SCM gucu_KEY_SUSPEND;
 SCM gucu_KEY_UNDO;
 SCM gucu_KEY_MOUSE;
 SCM gucu_KEY_RESIZE;
-#ifdef HAS_KEY_EVENT
+#ifdef HAVE_KEY_EVENT
 SCM gucu_KEY_EVENT;
 #endif
 SCM gucu_NCURSES_MOUSE_VERSION;
@@ -528,7 +528,7 @@ gucu_init_constant ()
   gucu_KEY_RESIZE =
     scm_permanent_object (scm_c_define
                           ("KEY_RESIZE", scm_from_int (KEY_RESIZE)));
-#ifdef HAS_KEY_EVENT
+#ifdef HAVE_KEY_EVENT
   gucu_KEY_EVENT =
     scm_permanent_object (scm_c_define
                           ("KEY_EVENT", scm_from_int (KEY_EVENT)));

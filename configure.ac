@@ -286,19 +286,19 @@ then
   AC_CHECK_SIZEOF([chtype], ,[#include <curses.h>])
   AC_CHECK_SIZEOF([attr_t], ,[#include <curses.h>])
   AX_CHECK_DEFINE([curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
-  AX_CHECK_DEFINE([curses.h],[KEY_EVENT],[KEY_EVENT=1],[KEY_EVENT=0])
+  AX_CHECK_DEFINE([curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
 else
 if test "$have_ncurses_curses_h" = yes
 then
   AC_CHECK_SIZEOF([chtype], ,[#include <ncurses/curses.h>])
   AC_CHECK_SIZEOF([attr_t], ,[#include <ncurses/curses.h>])
   AX_CHECK_DEFINE([ncurses/curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
-  AX_CHECK_DEFINE([ncurses/curses.h],[KEY_EVENT],[KEY_EVENT=1],[KEY_EVENT=0])
+  AX_CHECK_DEFINE([ncurses/curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
 else
   AC_CHECK_SIZEOF([chtype], ,[#include <ncursesw/curses.h>])
   AC_CHECK_SIZEOF([attr_t], ,[#include <ncursesw/curses.h>])
   AX_CHECK_DEFINE([ncursesw/curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
-  AX_CHECK_DEFINE([ncurses/curses.h],[KEY_EVENT],[KEY_EVENT=1],[KEY_EVENT=0])
+  AX_CHECK_DEFINE([ncursesw/curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
 fi
 fi
 AS_IF([test "x$HAVE_BUTTON5" = "x1"], AC_DEFINE([HAVE_BUTTON5], 1, [Have BUTTON5 defines]))
