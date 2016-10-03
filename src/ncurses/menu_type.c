@@ -202,20 +202,20 @@ gc_free_item (SCM item)
     {
       item_decrease_refcount (m);
       if (item_get_refcount (m) == 0)
-	{
-	  // Since no other #<menu> or #<item> is using the underlying
-	  // ITEM *, we can free it.
-	  free (item_name (m));
-	  free (item_description (m));
-	  free_item (m);
-	  SCM_SET_SMOB_DATA (item, 0);
-	}
+        {
+          // Since no other #<menu> or #<item> is using the underlying
+          // ITEM *, we can free it.
+          free (item_name (m));
+          free (item_description (m));
+          free_item (m);
+          SCM_SET_SMOB_DATA (item, 0);
+        }
       else
-	{
-	  // Since some other #<menu> or #<item> has a reference to
-	  // this ITEM *, we just detach it.
-	  SCM_SET_SMOB_DATA (item, 0);
-	}
+        {
+          // Since some other #<menu> or #<item> has a reference to
+          // this ITEM *, we just detach it.
+          SCM_SET_SMOB_DATA (item, 0);
+        }
     }
 
   return 0;
@@ -461,9 +461,9 @@ print_menu (SCM x, SCM port, scm_print_state * pstate UNUSED)
   else
     {
       if (snprintf (str, sizeof(str), "%p", (void *) menu) < 0)
-	scm_puts ("???", port);
+        scm_puts ("???", port);
       else
-	scm_puts (str, port);
+        scm_puts (str, port);
     }
   scm_puts (">", port);
 
@@ -530,13 +530,13 @@ gucu_new_menu (SCM items)
       entry = scm_list_ref (items, scm_from_int (i));
       c_items[i] = _scm_to_item (entry);
       if (!item_increase_refcount (c_items[i]))
-	{
-	  // Zero out this array so that it can be garbage collected.
-	  memset (c_items, 0, (len + 1) * sizeof (ITEM *));
+        {
+          // Zero out this array so that it can be garbage collected.
+          memset (c_items, 0, (len + 1) * sizeof (ITEM *));
 
-	  scm_misc_error ("new-menu", "too many references on item ~s",
-			  scm_list_1 (entry));
-	}
+          scm_misc_error ("new-menu", "too many references on item ~s",
+                          scm_list_1 (entry));
+        }
     }
 
   /* This is a null-terminated array */
