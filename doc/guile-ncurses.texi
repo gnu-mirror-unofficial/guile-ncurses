@@ -7739,6 +7739,11 @@ at the beginning of a field goes to the previous field.
 @node Setting the page number and field, Writing or erasing forms from associated subwindows, Setting and getting form options, The curses form library
 @subsection Setting the page number and field
 
+@deffn Procedure current-field form
+This procedure returns the current field on the form.  Note that this
+field cannot be used or assigned to any other form.
+@end deffn
+
 @deffn Procedure set-current-field! form field
 This procedure sets the current field on the form.
 @end deffn
