@@ -95,6 +95,22 @@ form_posted_error (const char *funcname)
   scm_misc_error (funcname, "the form is posted", SCM_BOOL_F);
 }
 
+/* Given a form, return the current field. */
+SCM
+gucu_current_field (SCM form)
+{
+  SCM_ASSERT (_scm_is_form (form), form, SCM_ARG1, "current-field");
+
+  const FORM *c_form = _scm_to_form (form);
+  FIELD *c_field = current_field (c_form);
+  if (c_field != (FIELD *) 0)
+    if (!field_increase_refcount (c_field))
+      scm_misc_error ("current-field", "too many references to field", NULL);
+  SCM s_field = _scm_from_field (c_field);
+
+  return s_field;
+}
+
 /* Tests for off-screen data ahead on the form */
 SCM
 gucu_data_ahead_p (SCM form)
@@ -916,6 +932,7 @@ gucu_unpost_form (SCM frm)
 void
 gucu_form_init_function ()
 {
+  scm_c_define_gsubr ("current-field", 1, 0, 0, gucu_current_field);
   scm_c_define_gsubr ("data-ahead?", 1, 0, 0, gucu_data_ahead_p);
   scm_c_define_gsubr ("data-behind?", 1, 0, 0, gucu_data_behind_p);
   scm_c_define_gsubr ("field-back", 1, 0, 0, gucu_field_back);

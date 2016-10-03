@@ -35,6 +35,7 @@ GUCU_LOCAL void form_not_connected_error (const char *funcname);
 GUCU_LOCAL void form_not_posted_error (const char *funcname);
 GUCU_LOCAL void form_posted_error (const char *funcname);
 
+GUCU_API SCM gucu_current_field (SCM form);
 GUCU_API SCM gucu_data_ahead_p (SCM form);
 GUCU_API SCM gucu_data_behind_p (SCM form);
 GUCU_API SCM gucu_field_back (SCM arg1);

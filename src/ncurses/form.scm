@@ -21,6 +21,7 @@
 (define-module (ncurses form)
   #:use-module (ncurses eti)
   #:export (
+            current-field
             data-ahead?
             data-behind?
             field-back
