@@ -1,6 +1,6 @@
 # Makefile for the toolsdirectory of GNU Guile-Ncurses.
 #
-# Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+# Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
@@ -49,5 +49,5 @@ endif
 LIBS=
 LDADD = -lutil $(GUILE_LDFLAGS)
 
-EXTRA_DIST = uninstalled-env.in ncurses-keyboard-test posix-explorer
+EXTRA_DIST = uninstalled-env.in ncurses-keyboard-test posix-explorer gdb-test.sh
 ETAGS_ARGS = shell.[ch] --language=scheme ncurses-keyboard-test
