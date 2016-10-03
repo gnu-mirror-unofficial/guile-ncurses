@@ -20,20 +20,6 @@
              (ncurses curses)
              (ncurses menu))
 
-(define (show-one-item-menu-get-refcount win item)
-  (let ((m (new-menu (list item)))
-        (rc (%item-refcount item)))
-    (post-menu m)
-    (set-current-item! m item)
-    (refresh win)
-    (maybe-sleep 2)
-    (unpost-menu m)
-    rc))
-
-;; Here we make a menu without holding any other reference
-;; to the items used to create it.  The menu's internal copy
-;; of the items should survive an instance of garbage collection.
-
 (automake-test
  (let* ((mainwin (initscr))
 
@@ -41,11 +27,11 @@
         ;; menu items.
         (my-menu (new-menu (list (new-item "item1" "description1")
                                  (new-item "item2" "descritpion2")))))
-   ;; Hit that garbage collector
+   ;; Hit the garbage collector
    (gc)
 
    ;; Menu should post sucessfully, even though the temporary
-   ;; items created by new-item should have been collected.
+   ;; items created by new-item may have been collected.
    (post-menu my-menu)
    (refresh mainwin)
    (maybe-sleep 2)
@@ -67,10 +53,10 @@
        (endwin)
        (newline)
 
-       ;; If everything has worked as expected, these menu
-       ;; items that we got from current-item calls should
-       ;; have the same info as the one created by new-item
-       ;; even though there was a garbage collection.
+       ;; If everything has worked as expected, these menu items
+       ;; that we got from current-item calls should have a refcount
+       ;; of two or three. One from the current-item and one that
+       ;; binds it to my-menu, and maybe one from the new-item.
        (format #t "menu: ~s~%" my-menu)
        (format #t "item1: ~s~%" item1)
        (format #t "refcount item 1: ~s~%" (%item-refcount item1))
@@ -79,5 +65,5 @@
        (and
         (string=? "item1" (item-name item1))
         (string=? "item2" (item-name item2))
-        (= 2 (%item-refcount item1))
-        (= 2 (%item-refcount item2)))))))
+        (or (= 2 (%item-refcount item1)) (= 3 (%item-refcount item1)))
+        (or (= 2 (%item-refcount item2)) (= 3 (%item-refcount item2))))))))
