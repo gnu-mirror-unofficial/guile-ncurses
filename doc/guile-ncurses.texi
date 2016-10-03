@@ -7748,9 +7748,10 @@ field cannot be used or assigned to any other form.
 This procedure sets the current field on the form.
 @end deffn
 
-@deffn Procedure field-index form
-This returns the index into the field array that is current for the
-form.
+@deffn Procedure field-index field
+The function field-index returns the index of the field in the field
+array of the form it is connected to. If the field is not connected
+to a form, it will throw an error.
 @end deffn
 
 @deffn Procedure set-form-page form n
