@@ -21,8 +21,8 @@
 	     (ncurses form))
 
 (define (show-one-field-form-get-refcount win field)
-  (let ((m (new-form (list field)))
-	(rc (%field-refcount field)))
+  (let* ((m (new-form (list field)))
+         (rc (%field-refcount field)))
     (post-form m)
     (set-current-field! m field)
     (refresh win)
