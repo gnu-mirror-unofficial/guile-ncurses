@@ -61,6 +61,9 @@ SCM gucu_O_ROWMAJOR;
 SCM gucu_O_IGNORECASE;
 SCM gucu_O_SHOWMATCH;
 SCM gucu_O_NONCYCLIC;
+#ifdef HAVE_O_MOUSE_MENU
+SCM gucu_O_MOUSE_MENU;
+#endif
 SCM gucu_O_SELECTABLE;
 
 void
@@ -141,6 +144,11 @@ gucu_menu_init_constant ()
   gucu_O_NONCYCLIC =
     scm_permanent_object (scm_c_define
 			  ("O_NONCYCLIC", scm_from_int (O_NONCYCLIC)));
+#ifdef HAVE_O_MOUSE_MENU
+  gucu_O_MOUSE_MENU =
+    scm_permanent_object (scm_c_define
+			  ("O_MOUSE_MENU", scm_from_int (O_MOUSE_MENU)));
+#endif
   gucu_O_SELECTABLE =
     scm_permanent_object (scm_c_define
 			  ("O_SELECTABLE", scm_from_int (O_SELECTABLE)));

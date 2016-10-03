@@ -40,10 +40,16 @@
        (format #t "O_IGNORECASE ~8,'0b~%" O_IGNORECASE)
        (format #t " O_SHOWMATCH ~8,'0b~%" O_SHOWMATCH)
        (format #t " O_NONCYCLIC ~8,'0b~%" O_NONCYCLIC)
+       (if (defined? 'O_MOUSE_MENU)
+           (format #t "O_MOUSE_MENU ~8,'0b~%" O_MOUSE_MENU))
        (format #t "   menu-opts ~8,'0b~%" opts)
        (equal? opts (logior O_ONEVALUE
 			    O_SHOWDESC
 			    O_ROWMAJOR
 			    O_IGNORECASE
 			    O_SHOWMATCH
-			    O_NONCYCLIC))))))
+			    O_NONCYCLIC
+                            (if (defined? 'O_MOUSE_MENU)
+                                O_MOUSE_MENU
+                                0)
+                            ))))))

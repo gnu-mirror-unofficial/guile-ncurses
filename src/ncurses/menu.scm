@@ -117,4 +117,9 @@
 	       E_INVALID_FIELD
 	       E_CURRENT
 	       ))
-(load-extension "libguile-ncurses" "gucu_menu_init")
+
+(eval-when (expand load eval)
+           (load-extension "libguile-ncurses" "gucu_menu_init"))
+
+(if (defined? 'O_MOUSE_MENU)
+    (export O_MOUSE_MENU))
