@@ -357,7 +357,7 @@ gc_free_menu (SCM x)
       ITEM **pitem = menu_items (gm->menu);
       ITEM **pitem_store = scm_malloc (sizeof (ITEM *) * len);
       for (i = 0; i < len; i ++)
-	pitem_store[i] = pitem[i];
+        pitem_store[i] = pitem[i];
 
       // Next, we try to free the menu.  Note that if the menu freeing
       // is successful, ncurses will modify this menu's items to no
@@ -368,51 +368,66 @@ gc_free_menu (SCM x)
       retval = free_menu (gm->menu);
 
       if (retval == E_BAD_ARGUMENT)
-	{
-	  free (pitem_store);
-	  scm_misc_error ("garbage collection of menu", "bad argument", SCM_EOL);
-	}
+        {
+          free (pitem_store);
+          scm_misc_error ("garbage collection of menu", "bad argument", SCM_EOL);
+        }
       else if (retval == E_SYSTEM_ERROR)
-	{
-	  free (pitem_store);
-	  scm_misc_error ("garbage collection of menu", "system error", SCM_EOL);
-	}
+        {
+          free (pitem_store);
+          scm_misc_error ("garbage collection of menu", "system error", SCM_EOL);
+        }
       else if (retval == E_POSTED)
-	{
-	  // If we get the E_POSTED error, this menu is being garbage
-	  // collected without someone having properly called
-	  // unpost_menu() first.  We'll try to recover from that
-	  // mistake here.
-	  if (free_attempts == 0)
-	    {
-	      unpost_menu (gm->menu);
-	      free_attempts ++;
-	      goto freemenu;
-	    }
-	  else
-	    {
-	      free (pitem_store);
-	      scm_misc_error ("garbage collection of menu", "posted", SCM_EOL);
-	    }
-	}
+        {
+          // If we get the E_POSTED error, this menu is being garbage
+          // collected without someone having properly called
+          // unpost_menu() first.  We'll try to recover from that
+          // mistake here.
+          if (free_attempts == 0)
+            {
+              unpost_menu (gm->menu);
+              free_attempts ++;
+              goto freemenu;
+            }
+          else
+            {
+              free (pitem_store);
+              scm_misc_error ("garbage collection of menu", "posted", SCM_EOL);
+            }
+        }
 
       // If we get this far, the menu is now detached from the menu items.
+
+      // It is a violation of the Ncurses Menu library to keep using an item
+      // after the menu is gone, but, scheme programmers expect to be
+      // able to use menu items and menus separately.  When a menu
+      // is freed, its menu items still hold references to one another
+      // to organize themselves in a doubly linked list, which frustrates
+      // garbage collection.  This doubly-linked list deteched here.
+      for (i = 0; i < len; i ++)
+        {
+          pitem_store[i]->left = NULL;
+          pitem_store[i]->right = NULL;
+          pitem_store[i]->up = NULL;
+          pitem_store[i]->down = NULL;
+        }
+
       // Decrease the refcount on these items, and maybe free them.
       for (i = 0; i < len; i ++)
-	{
-	  if (!item_decrease_refcount (pitem_store[i]))
-	    {
-	      // Supposed to be impossible to hit this error
-	      scm_misc_error ("garbage collection of menu",
-			      "refcount underflow", SCM_EOL);
-	    }
-	  if (item_get_refcount (pitem_store[i]) == 0)
-	    {
-	      free (item_name (pitem_store[i]));
-	      free (item_description (pitem_store[i]));
-	      free_item (pitem_store[i]);
-	    }
-	}
+        {
+          if (!item_decrease_refcount (pitem_store[i]))
+            {
+              // Supposed to be impossible to hit this error
+              scm_misc_error ("garbage collection of menu",
+                              "refcount underflow", SCM_EOL);
+            }
+          if (item_get_refcount (pitem_store[i]) == 0)
+            {
+              free (item_name (pitem_store[i]));
+              free (item_description (pitem_store[i]));
+              free_item (pitem_store[i]);
+            }
+        }
 
       // Free our storage of the ITEM *
       free (pitem_store);
