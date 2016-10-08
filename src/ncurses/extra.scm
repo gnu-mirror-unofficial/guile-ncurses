@@ -24,6 +24,8 @@
   #:use-module (ncurses curses)
   #:use-module (srfi srfi-1)
   #:export (
+            %has-termios
+
             BS0
             BS1
             BSDLY

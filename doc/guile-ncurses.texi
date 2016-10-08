@@ -212,6 +212,7 @@ Curses Reference
 * The curses panel library::
 * The curses menu library::
 * The curses form library::
+* The termios and miscellaneous library::
 
 The basic curses library: @code{(ncurses curses)}
 
@@ -297,6 +298,12 @@ The curses form library: @code{(ncurses form)}
 * Writing or erasing forms from associated subwindows::
 * Printable form request names::
 * Form windows::
+
+The termios and miscellaneous library: @code{(ncurses extra)}
+
+* Termios introduction::
+* Standard termios functions::
+* Linux termios functions::
 
 @end detailmenu
 @end menu
@@ -3008,6 +3015,7 @@ The guile-ncurses package provides the following modules:
 * The curses panel library::
 * The curses menu library::
 * The curses form library::
+* The termios and miscellaneous library::
 @end menu
 
 @node The naming of routines, The basic curses library, Curses Reference, Curses Reference
@@ -3585,7 +3593,7 @@ Returns @code{#t} if @var{c} is a complex character.
 @cindex Complex characters, querying
 
 These three procedures return the attributes, color pair number, and
-list of constiuent characters of a complex character, respectively.
+list of constituent characters of a complex character, respectively.
 
 @end deffn
 
@@ -7127,7 +7135,7 @@ following, @code{E_OK}, @code{E_SYSTEM_ERROR}, @code{E_BAD_ARGUMENT},
 or @code{E_POSTED} if the menu has already been posted.
 @end deffn
 
-@node The curses form library,  , The curses menu library, Curses Reference
+@node The curses form library, The termios and miscellaneous library, The curses menu library, Curses Reference
 @section The curses form library: @code{(ncurses form)}
 
 These are the functions in the @code{(ncurses form)} module.
@@ -7804,6 +7812,49 @@ necessary to set either window; by default, the driver code uses
 The function scale-form returns the a list of two elements: minimum
 size required for the subwindow of form.
 @end deffn
+
+
+@node The termios and miscellaneous library,  , The curses form library, Curses Reference
+@section The termios and miscellaneous library: @code{(ncurses extra)}
+
+These are the functions in the @code{(ncurses extra)} module.
+
+The procedures in the @code{extra} library largely follow
+the C-language termios API.  Most of the procedures in the library
+have approximately the same name and arguments as the termios functions.
+
+@menu
+* Termios introduction::
+* Standard termios functions::
+* Linux termios functions::
+@end menu
+
+@node Termios introduction, Standard termios functions, The termios and miscellaneous library, The termios and miscellaneous library
+@subsection Termios introduction
+
+Termios functions form the bulk of the @code{(ncurses extra)} library.
+These are procedures that can query and modify the terminal attributes,
+line control, and baud rate of scheme ports that use file descriptors.
+
+There is a constant @code{%has-termios} that can be use to check if,
+at configure time, the library was compiled to include the termios capabilities.
+
+@defvr Constant %has-termios
+Is @code{#t} if the termios functionality is present.
+@code{#f} otherwise.
+@end defvr
+
+The termios functionality is old school and rarely used, but, for
+modern systems it can serve two important functions.
+
+@enumerate
+@item
+It can set the baud rate and line discipline for serial ports.
+@item
+It can cause characters typed on the standard input port to not be
+echoed to the terminal, which might be useful when querying for a
+password.
+@end enumerate
 
 @node Index,  , Curses Reference, Top
 @unnumbered Index

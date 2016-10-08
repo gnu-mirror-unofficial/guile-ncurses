@@ -1,7 +1,7 @@
 /*
   extra_const.c
 
-  Copyright 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -43,6 +43,7 @@
 #include "compat.h"
 #include "extra_const.h"
 
+SCM gucu_has_termios;
 #ifdef ENABLE_TERMIOS
 
 SCM gucu_BS0;
@@ -171,6 +172,14 @@ SCM gucu_B9600;
 void
 gucu_extra_init_const ()
 {
+#ifdef ENABLE_TERMIOS
+  gucu_has_termios =
+    scm_permanent_object (scm_c_define ("%has-termios", SCM_BOOL_T));
+#else
+  gucu_has_termios =
+    scm_permanent_object (scm_c_define ("%has-termios", SCM_BOOL_F);
+#endif
+
 #if HAVE_DECL_BS0
   D(BS0);			/* XOPEN */
   D(BS1);			/* XOPEN */
