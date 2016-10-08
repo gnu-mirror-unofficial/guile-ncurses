@@ -44,8 +44,6 @@
 #include "extra_const.h"
 
 SCM gucu_has_termios;
-#ifdef ENABLE_TERMIOS
-
 SCM gucu_BS0;
 SCM gucu_BS1;
 SCM gucu_BSDLY;
@@ -150,23 +148,37 @@ SCM gucu_PENDIN;
 SCM gucu_TOSTOP;
 
 SCM gucu_B0;
+SCM gucu_B50;
+SCM gucu_B75;
 SCM gucu_B110;
-SCM gucu_B1200;
 SCM gucu_B134;
 SCM gucu_B150;
-SCM gucu_B1800;
-SCM gucu_B19200;
 SCM gucu_B200;
-SCM gucu_B2400;
 SCM gucu_B300;
-SCM gucu_B38400;
-SCM gucu_B4800;
-SCM gucu_B50;
 SCM gucu_B600;
-SCM gucu_B75;
+SCM gucu_B1200;
+SCM gucu_B1800;
+SCM gucu_B2400;
+SCM gucu_B4800;
 SCM gucu_B9600;
+SCM gucu_B19200;
+SCM gucu_B38400;
 
+SCM gucu_B115200;
+SCM gucu_B14400;
+SCM gucu_B230400;
+SCM gucu_B28800;
+SCM gucu_B57600;
+SCM gucu_B7200;
+SCM gucu_B76800;
+
+
+#ifdef ENABLE_TERMIOS
 #define D(x) gucu_ ## x = scm_permanent_object(scm_c_define(#x, scm_from_int(x)))
+#else
+#define D(x) gucu_ ## x = scm_permanent_object(scm_c_define(#x, SCM_BOOL_F))
+#endif
+
 #define F(x) gucu_ ## x = scm_permanent_object(scm_c_define(#x, SCM_BOOL_F))
 
 void
@@ -296,7 +308,7 @@ gucu_extra_init_const ()
   D(VTIME);
 
   D(ECHO);
-  D(ECHOE);			
+  D(ECHOE);
   D(ECHOK);
   D(ECHONL);
   D(ICANON);
@@ -341,11 +353,39 @@ gucu_extra_init_const ()
   D(B600);
   D(B75);
   D(B9600);
-}
-
-#else /* !ENABLE_TERMIOS */
-void
-gucu_extra_init_const ()
-{
-}
+#if HAVE_DECL_B115200
+  D(B115200);
+#else
+  F(B115200);
 #endif
+#if HAVE_DECL_B14400
+  D(B14400);
+#else
+  F(B14400);
+#endif
+#if HAVE_DECL_B230400
+  D(B230400);
+#else
+  F(B230400);
+#endif
+#if HAVE_DECL_B28800
+  D(B28800);
+#else
+  F(B28800);
+#endif
+#if HAVE_DECL_B57600
+  D(B57600);
+#else
+  F(B57600);
+#endif
+#if HAVE_DECL_B7200
+  D(B7200);
+#else
+  F(B7200);
+#endif
+#if HAVE_DECL_B76800
+  D(B76800);
+#else
+  F(B76800);
+#endif
+}

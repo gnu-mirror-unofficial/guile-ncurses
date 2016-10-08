@@ -346,6 +346,12 @@ AS_IF([test "x$enable_termios" != xno],
        AC_CHECK_DECLS([XCASE, ECHOPRT, PENDIN], [], [],
        [[
        #include <termios.h>
+       ]])
+
+       # Check for rarer termios baud rate constants
+       AC_CHECK_DECLS([B7200, B14400, B28800, B57600, B76800, B115200, B230400], [], [],
+       [[
+       #include <termios.h>
        ]])])
 
 ##################

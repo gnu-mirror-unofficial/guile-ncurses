@@ -143,6 +143,17 @@
             B75
             B9600
 
+            B115200
+            B14400
+            B230400
+            B28800
+            B57600
+            B7200
+            B76800
+
+            speed->bps
+            bps->speed
+
             termios?
             new-termios
 
@@ -173,6 +184,7 @@
 
             %termios-debug
 	    string-split-at-line-endings
+
             ))
 
 ;; Return the number of character cells that C takes
@@ -192,7 +204,11 @@
     (error "Invalid input ~s" x))))
 
 (define (speed->bps x)
+  "Given a speed enumeration, such as B9600, returns a speed in
+bits-per-second. It returns #f is no match is found."
   (cond
+   ((eqv? x #f)                         ; Catch when B?? is #f
+    #f)
    ((= x B0)
     0)
    ((= x B110)
@@ -225,7 +241,78 @@
     75)
    ((= x B9600)
     9600)
-   (else (- x))))
+
+   ((eqv? x B115200)
+    115200)
+   ((eqv? x B14400)
+    14400)
+   ((eqv? x B230400)
+    230400)
+   ((eqv? x B28800)
+    28800)
+   ((eqv? x B57600)
+    57600)
+   ((eqv? x B7200)
+    7200)
+   ((eqv? x B76800)
+    76800)
+
+   (else #f)))
+
+(define (bps->speed x)
+  "Given a integer bits-per-second value, it returns a speed
+enumeration value, such as B9600. It returns #f if not match
+is found."
+  (cond
+   ((= x 0)
+    B0)
+   ((= x 110)
+    B110)
+   ((= x 134)
+    B134)
+   ((= x 1200)
+    B1200)
+   ((= x 150)
+    B150)
+   ((= x 1800)
+    B1800)
+   ((= x 19200)
+    B19200)
+   ((= x 200)
+    B200)
+   ((= x 2400)
+    B2400)
+   ((= x 300)
+    B300)
+   ((= x 38400)
+    B38400)
+   ((= x 4800)
+    B4800)
+   ((= x 50)
+    B50)
+   ((= x 600)
+    B600)
+   ((= x 75)
+    B75)
+   ((= x B9600)
+    9600)
+
+   ((eqv? x 115200)
+    B115200)
+   ((eqv? x 14400)
+    B14400)
+   ((eqv? x 230400)
+    B230400)
+   ((eqv? x 28800)
+    B28800)
+   ((eqv? x 57600)
+    B57600)
+   ((eqv? x 7200)
+    B7200)
+   ((eqv? x 76800)
+    B76800)
+
+   (else #f)))
 
 
 (define (%termios-debug t)

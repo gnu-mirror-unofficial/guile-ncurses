@@ -7856,6 +7856,67 @@ echoed to the terminal, which might be useful when querying for a
 password.
 @end enumerate
 
+@node Standard termios functions, Linux termios functions, Termios introduction, The termios and miscellaneous library
+@subsection Standard termios functions
+
+These procedures and constants are common in systems in both
+the Linux and BSD families.
+
+@defvr Constant BS0
+@defvrx Constant B50
+@defvrx Constant B75
+@defvrx Constant B110
+@defvrx Constant B134
+@defvrx Constant B150
+@defvrx Constant B200
+@defvrx Constant B300
+@defvrx Constant B600
+@defvrx Constant B1200
+@defvrx Constant B1800
+@defvrx Constant B2400
+@defvrx Constant B4800
+@defvrx Constant B9600
+@defvrx Constant B19200
+@defvrx Constant B38400
+
+These integer constants indicate baud rates used in @code{#<termios>}
+types.
+@end defvr
+
+@defvr Constant B7200
+@defvrx Constant B14400
+@defvrx Constant B28800
+@defvrx Constant B57600
+@defvrx Constant B76800
+@defvrx Constant 115200
+@defvrx Constant 230400
+
+As above, these integer constants indicate baud rates used in @code{#<termios>}
+types.  These may or may not exist, even on POSIX systems.  If the value
+is not present on a system, the constant will be @code{#f}.
+@end defvr
+
+@deffn Procedure speed->bps speed
+@deffnx Procedure bps->speed bps
+These procedures convert speed categories, such as @code{B9600} to
+transmission rates in bits per second.  If there is match to a bps and
+a speed category, the procedure will return @code{#f}.
+@end deffn
+
+@deffn Procedure cfgetispeed termios
+@deffnx Procedure cfgetospeed termios
+Given a @var{termios} parameter, these extract the baud rate of
+@var{termios}. @code{cfgetispeed} returns the input baud rate and
+@code{cfgetospeed} returns the output baud rate.  The return value is
+an integer speed category, such as @code{B9600}.
+@end deffn
+
+@node Linux termios functions,  , Standard termios functions, The termios and miscellaneous library
+@subsection Linux termios functions
+
+This section describes termios functions that are unportable specific
+to the Linux kernel.
+
 @node Index,  , Curses Reference, Top
 @unnumbered Index
 @printindex cp
