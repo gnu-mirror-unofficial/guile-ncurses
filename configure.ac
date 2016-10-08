@@ -330,6 +330,7 @@ AC_ARG_ENABLE([termios],
                               [disable support for termios functions])],
             [],
             [enable_termios=yes])
+AM_CONDITIONAL([TERMIOS], [test "$enable_termios" = yes])
 
 AS_IF([test "x$enable_termios" != xno],
       [AC_DEFINE([ENABLE_TERMIOS], [1],

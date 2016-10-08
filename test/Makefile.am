@@ -307,6 +307,9 @@ WIDETESTS = \
  curs_getstr_getnstr_unicode.scm \
  form_new_unicode.scm
 
+TERMIOSTESTS = \
+ termios_speed_bps.scm
+
 TESTS = $(NOTERMTESTS)
 
 if HAVE_XTERM_TERMINFO
@@ -318,7 +321,11 @@ endif
 endif
 endif
 
+if TERMIOS
+TESTS += $(TERMIOSTESTS)
+endif
+
 DEMOS = panel_gc_demo.scm slk_demo.scm termios_demo.scm
 
-EXTRA_DIST = $(TESTLIB) $(NOTERMTESTS) $(NARROWTESTS) $(WIDETESTS) $(DEMOS)
+EXTRA_DIST = $(TESTLIB) $(NOTERMTESTS) $(NARROWTESTS) $(WIDETESTS) $(TERMIOSTESTS) $(DEMOS)
 
