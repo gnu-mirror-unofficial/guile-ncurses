@@ -39,11 +39,17 @@
    (let ((rc3 (%field-refcount field)))
      (endwin)
      (newline)
+
+     ;; A new field should have a refcount of 1
      (format #t "recount as field: ~s~%" rc1)
+
+     ;; When attached to a form, its refcount should be 2
      (format #t "refcount attached to form: ~s~%" rc2)
+
+     ;; After detaching from the form, the refcount
+     ;; might be reduced to one, if the GC is fast enough.
      (format #t "refcount after gc: ~s~%" rc3)
      (and
       (= rc1 1)
       (= rc2 2)
-      (= rc3 1)))))
-   
+      (or (= rc3 2) (= rc3 1))))))
