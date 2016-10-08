@@ -23,7 +23,7 @@
 #include <config.h>
 
 #include <libguile.h>
-#ifdef ENABLE_TERMIOS
+#if HAVE_TERMIOS_H
 #include <termios.h>
 #endif
 
@@ -55,18 +55,16 @@ SCM gucu_CRDLY;
 SCM gucu_FF0;
 SCM gucu_FF1;
 SCM gucu_FFDLY;
-SCM gucu_IUCLC;
 SCM gucu_NL0;
 SCM gucu_NL1;
 SCM gucu_NLDLY;
 SCM gucu_OCRNL;
-SCM gucu_OFDEL;
 SCM gucu_OFILL;
-SCM gucu_OLCUC;
 SCM gucu_ONLCR;
 SCM gucu_ONLRET;
 SCM gucu_ONOCR;
 SCM gucu_OPOST;
+SCM gucu_TAB0;
 SCM gucu_TAB1;
 SCM gucu_TAB2;
 SCM gucu_TAB3;
@@ -84,33 +82,23 @@ SCM gucu_TCSANOW;
 SCM gucu_VT0;
 SCM gucu_VT1;
 SCM gucu_VTDLY;
-SCM gucu_XCASE;
 
-SCM gucu_NCCS;
-
-SCM gucu_VDISCARD;
 SCM gucu_VEOF;
 SCM gucu_VEOL;
-SCM gucu_VEOL2;
 SCM gucu_VERASE;
 SCM gucu_VINTR;
 SCM gucu_VKILL;
-SCM gucu_VLNEXT;
 SCM gucu_VMIN;
 SCM gucu_VQUIT;
-SCM gucu_VREPRINT;
 SCM gucu_VSTART;
 SCM gucu_VSTOP;
 SCM gucu_VSUSP;
-SCM gucu_VSWTC;
-SCM gucu_VWERASE;
 
 SCM gucu_BRKINT;
 SCM gucu_ICRNL;
 SCM gucu_IGNBRK;
 SCM gucu_IGNCR;
 SCM gucu_IGNPAR;
-SCM gucu_IMAXBEL;
 SCM gucu_INLCR;
 SCM gucu_INPCK;
 SCM gucu_ISTRIP;
@@ -133,18 +121,13 @@ SCM gucu_PARODD;
 SCM gucu_VTIME;
 
 SCM gucu_ECHO;
-SCM gucu_ECHOCTL;
 SCM gucu_ECHOE;
 SCM gucu_ECHOK;
-SCM gucu_ECHOKE;
 SCM gucu_ECHONL;
-SCM gucu_ECHOPRT;
-SCM gucu_FLUSHO;
 SCM gucu_ICANON;
 SCM gucu_IEXTEN;
 SCM gucu_ISIG;
 SCM gucu_NOFLSH;
-SCM gucu_PENDIN;
 SCM gucu_TOSTOP;
 
 SCM gucu_B0;
@@ -189,63 +172,147 @@ gucu_extra_init_const ()
     scm_permanent_object (scm_c_define ("%has-termios", SCM_BOOL_T));
 #else
   gucu_has_termios =
-    scm_permanent_object (scm_c_define ("%has-termios", SCM_BOOL_F);
+    scm_permanent_object (scm_c_define ("%has-termios", SCM_BOOL_F));
 #endif
 
 #if HAVE_DECL_BS0
-  D(BS0);			/* XOPEN */
-  D(BS1);			/* XOPEN */
-  D(BSDLY);			/* XOPEN */
-  D(CR0);			/* XOPEN */
-  D(CR1);			/* XOPEN */
-  D(CR2);			/* XOPEN */
-  D(CR3);			/* XOPEN */
-  D(CRDLY);			/* XOPEN */
-  D(FF0);			/* XOPEN */
-  D(FF1);			/* XOPEN */
-  D(FFDLY);			/* XOPEN */
-  D(NL0);			/* XOPEN */
-  D(NL1);			/* XOPEN */
-  D(NLDLY);			/* XOPEN */
-  D(TAB1);			/* XOPEN */
-  D(TAB2);			/* XOPEN */
-  D(TAB3);			/* XOPEN */
-  D(TABDLY);			/* XOPEN */
+  D(BS0);
 #else
-  F(BS0);			/* XOPEN */
-  F(BS1);			/* XOPEN */
-  F(BSDLY);			/* XOPEN */
-  F(CR0);			/* XOPEN */
-  F(CR1);			/* XOPEN */
-  F(CR2);			/* XOPEN */
-  F(CR3);			/* XOPEN */
-  F(CRDLY);			/* XOPEN */
-  F(FF0);			/* XOPEN */
-  F(FF1);			/* XOPEN */
-  F(FFDLY);			/* XOPEN */
-  F(NL0);			/* XOPEN */
-  F(NL1);			/* XOPEN */
-  F(NLDLY);			/* XOPEN */
-  F(TAB1);			/* XOPEN */
-  F(TAB2);			/* XOPEN */
-  F(TAB3);			/* XOPEN */
-  F(TABDLY);			/* XOPEN */
+  F(BS0);
 #endif
-
-#if HAVE_DECL_XCASE
-  D(XCASE);			/* XOPEN */
+#if HAVE_DECL_BS1
+  D(BS1);
 #else
-  F(XCASE);
+  F(BS1);
 #endif
-
-  D(IUCLC);
+#if HAVE_DECL_BSDLY
+  D(BSDLY);
+#else
+  F(BSDLY);
+#endif
+#if HAVE_DECL_CR0
+  D(CR0);
+#else
+  F(CR0);
+#endif
+#if HAVE_DECL_CR1
+  D(CR1);
+#else
+  F(CR1);
+#endif
+#if HAVE_DECL_CR2
+  D(CR2);
+#else
+  F(CR2);
+#endif
+#if HAVE_DECL_CR3
+  D(CR3);
+#else
+  F(CR3);
+#endif
+#if HAVE_DECL_CRDLY
+  D(CRDLY);
+#else
+  F(CRDLY);
+#endif
+#if HAVE_DECL_FF0
+  D(FF0);
+#else
+  F(FF0);
+#endif
+#if HAVE_DECL_FF1
+  D(FF1);
+#else
+  F(FF1);
+#endif
+#if HAVE_DECL_FFDLY
+  D(FFDLY);
+#else
+  F(FFDLY);
+#endif
+#if HAVE_DECL_NL0
+  D(NL0);
+#else
+  F(NL0);
+#endif
+#if HAVE_DECL_NL1
+  D(NL1);
+#else
+  F(NL1);
+#endif
+#if HAVE_DECL_NLDLY
+  D(NLDLY);
+#else
+  F(NLDLY);
+#endif
+#if HAVE_DECL_OCRNL
   D(OCRNL);
-  D(OFDEL);
+#else
+  F(OCRNL);
+#endif
+#if HAVE_DECL_OFILL
   D(OFILL);
-  D(OLCUC);
+#else
+  F(OFILL);
+#endif
+#if HAVE_DECL_ONLCR
+  D(ONLCR);
+#else
+  F(ONLCR);
+#endif
+#if HAVE_DECL_ONLRET
+  D(ONLRET);
+#else
+  F(ONLRET);
+#endif
+#if HAVE_DECL_ONOCR
+  D(ONOCR);
+#else
+  F(ONOCR);
+#endif
+#if HAVE_DECL_TAB0
+  D(TAB0);
+#else
+  F(TAB0);
+#endif
+#if HAVE_DECL_TAB1
+  D(TAB1);
+#else
+  F(TAB1);
+#endif
+#if HAVE_DECL_TAB2
+  D(TAB2);
+#else
+  F(TAB2);
+#endif
+#if HAVE_DECL_TAB3
+  D(TAB3);
+#else
+  F(TAB3);
+#endif
+#if HAVE_DECL_TABDLY
+  D(TABDLY);
+#else
+  F(TABDLY);
+#endif
+#if HAVE_DECL_VT0
+  D(VT0);
+#else
+  F(VT0);
+#endif
+#if HAVE_DECL_VT1
+  D(VT1);
+#else
+  F(VT1);
+#endif
+#if HAVE_DECL_VTDLY
+  D(VTDLY);
+#else
+  F(VTDLY);
+#endif
+
   D(ONLCR);
   D(ONLRET);
-  D(ONOCR);
   D(OPOST);
   D(TCIFLUSH);
   D(TCIOFF);
@@ -261,35 +328,30 @@ gucu_extra_init_const ()
   D(VT1);
   D(VTDLY);
 
-  D(NCCS);
-
-  D(VDISCARD);
   D(VEOF);
   D(VEOL);
-  D(VEOL2);
   D(VERASE);
   D(VINTR);
   D(VKILL);
-  D(VLNEXT);
   D(VMIN);
   D(VQUIT);
-  D(VREPRINT);
   D(VSTART);
   D(VSTOP);
   D(VSUSP);
-  D(VSWTC);
-  D(VWERASE);
 
   D(BRKINT);
   D(ICRNL);
   D(IGNBRK);
   D(IGNCR);
   D(IGNPAR);
-  D(IMAXBEL);
   D(INLCR);
   D(INPCK);
   D(ISTRIP);
+  #if HAVE_DECL_IXANY
   D(IXANY);
+  #else
+  F(IXANY);
+  #endif
   D(IXOFF);
   D(IXON);
   D(PARMRK);
@@ -316,26 +378,6 @@ gucu_extra_init_const ()
   D(ISIG);
   D(NOFLSH);
   D(TOSTOP);
-
-#if HAVE_DECL_ECHOCTL
-  D(ECHOCTL);			/* BSD/SVID */
-  D(ECHOKE);			/* BSD/SVID */
-  D(FLUSHO);			/* BSD/SVID */
-#else
-  F(ECHOCTL);			/* BSD/SVID */
-  F(ECHOKE);			/* BSD/SVID */
-  F(FLUSHO);			/* BSD/SVID */
-#endif
-#if HAVE_DECL_ECHOPRT
-  D(ECHOPRT);			/* BSD/SVID */
-#else
-  F(ECHOPRT);			/* BSD/SVID */
-#endif
-#if HAVE_DECL_PENDIN
-  D(PENDIN);			/* BSD/SVID */
-#else
-  F(PENDIN);			/* BSD/SVID */
-#endif
 
   D(B0);
   D(B110);

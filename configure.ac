@@ -189,6 +189,14 @@ else
                  [AC_MSG_ERROR([the ncurses panelw library is required])])
 fi
 
+AC_CHECK_HEADER([termios.h],
+                [AC_DEFINE([HAVE_TERMIOS_H],
+                           [1],
+                           [Define if you have termios.h])
+                 have_termios_h=yes],
+                [have_termios_h=no])
+
+
 ##################
 # Check for Libtool
 
@@ -332,21 +340,47 @@ AC_ARG_ENABLE([termios],
             [enable_termios=yes])
 AM_CONDITIONAL([TERMIOS], [test "$enable_termios" = yes])
 
-AS_IF([test "x$enable_termios" != xno],
+AS_IF([test "x$enable_termios" != xno && test "x$have_termios_h" = xyes ],
       [AC_DEFINE([ENABLE_TERMIOS], [1],
                  [Define to enable TERMIOS support])
-       # Check for the XOpen and BSD termios constants.
-       # Hopefully just one will suffice for the entire set.
-       AC_CHECK_DECLS([BS0, ECHOCTL], [], [],
+
+       ## DEFAULT CONSTANTS
+       # assume OPOST, TCIFLUSH, TCIOFF, TCIOFLUSH, TCION, TCOFLUSH,
+       # TCOOFF, TCOON, TCSADRAIN, TCSAFLUSH, TCSANOW are always
+       # present
+
+       # Check for the XOpen and old BSD termios constants.
+       AC_CHECK_DECLS([BS0, BS1, BSDLY, CR0, CR1, CR2, CR3, CRDLY, FF0, FF1, FFDLY, NL0, NL1, NLDLY, OCRNL, OFILL, ONLCR, ONOCR, ONLRET, TAB0, TAB1, TAB2, TAB3, TABDLY, VT0, VT1, VTDLY], [], [],
        [[
        #include <termios.h>
        ]])
 
-       # Check for rarer termios constants
-       AC_CHECK_DECLS([XCASE, ECHOPRT, PENDIN], [], [],
+       ## SPECIAL CONTROL CHARACTERS
+       # assume VEOF, VEOL, VERASE, VINTR, VKILL, VMIN, VQUIT, VSTART,
+       # VSTOP, VSUSP always present
+
+       ## INPUT FLAGS
+       # assume BRKINT, ICRNL, IGNBRK, IGNCR, IGNPAR, INLCR, INPCK,
+       # ISTRIP, IXOFF, IXON, PARMRK are always present
+
+AC_CHECK_DECLS([IXANY], [], [],
        [[
        #include <termios.h>
        ]])
+
+       ## OUTPUT FLAGS
+
+       ## CONTROL FLAGS
+       # assume CLOCAL, CREAD, CS5, CS6, CS7, CS8, CSIZE, CSTOPB,
+       # HUPCL, PARENB, PARODD, VTIME are always present
+
+       ## LOCAL FLAGS
+       # assume ECHO, ECHOE, ECHOK, ECHONL, ICANON, IEXTEN, ISIG,
+       # NOFLSH, TOSTOP are always present
+
+       ## Standard speeds
+       # assume B0, B110, B1200, B134, B150, B1800, B19200, B200, B2400,
+       # B300, B38400, B4800, B50, B600, B75, B9600 are always present
 
        # Check for rarer termios baud rate constants
        AC_CHECK_DECLS([B7200, B14400, B28800, B57600, B76800, B115200, B230400], [], [],

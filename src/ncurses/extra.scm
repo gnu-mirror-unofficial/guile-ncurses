@@ -37,14 +37,11 @@
             FF0
             FF1
             FFDLY
-            IUCLC
             NL0
             NL1
             NLDLY
             OCRNL
-            OFDEL
             OFILL
-            OLCUC
             ONLCR
             ONLRET
             ONOCR
@@ -67,12 +64,8 @@
             VT1
             VTDLY
 
-            NCCS
-
-            VDISCARD
             VEOF
             VEOL
-            VEOL2
             VERASE
             VINTR
             VKILL
@@ -83,15 +76,12 @@
             VSTART
             VSTOP
             VSUSP
-            VSWTC
-            VWERASE
 
             BRKINT
             ICRNL
             IGNBRK
             IGNCR
             IGNPAR
-            IMAXBEL
             INLCR
             INPCK
             ISTRIP
@@ -114,10 +104,8 @@
             VTIME
 
             ECHO
-            ECHOCTL
             ECHOE
             ECHOK
-            ECHOKE
             ECHONL
             FLUSHO
             ICANON
@@ -451,9 +439,6 @@ is found."
 ;; capabilities of the underlying system
 (if (defined? 'cfsetspeed!)     (export cfsetspeed!))
 (if (defined? 'tcgetsid)        (export tcgetsid))
-(if (defined? 'XCASE)           (export XCASE))
-(if (defined? 'ECHOPRT)         (export ECHOPRT))
-(if (defined? 'PENDIN)          (export PENDIN))
 (if (defined? 'unlockpt)        (export unlockpt))
 (if (defined? 'ptsname)         (export ptsname))
 (if (defined? 'grantpt)         (export grantpt))
