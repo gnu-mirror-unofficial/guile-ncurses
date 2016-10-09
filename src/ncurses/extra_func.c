@@ -113,12 +113,18 @@ SCM gucu_cfsetospeed_x (SCM s_termios, SCM s_speed)
    changes the mode and permissions of the slave pseudo-terminal
    so that it can be used.  */
 SCM
-gucu_grantpt (SCM fd)
+gucu_grantpt (SCM s_fd_or_port)
 {
   int c_fd;
   int ret;
 
-  SCM_ASSERT (scm_is_integer (fd), fd, SCM_ARG1, "grantpt");
+  if (scm_is_true (scm_port_p (s_fd_or_port)))
+    s_fd = scm_fileno (s_fd_or_port);
+  else if (scm_is_integer (s_fd_or_port))
+    s_fd = s_fd_or_port;
+  else
+    scm_wrong_type_arg ("grantpt", SCM_ARG1, s_fd_or_port);
+
   c_fd = scm_to_int (fd);
   ret = grantpt (c_fd);
   if (ret == -1)
@@ -132,15 +138,21 @@ gucu_grantpt (SCM fd)
 /* IF FD is a file descriptor of a pseudo-terminal device,
    this sets that pseudoterminal to RAW mode. */
 SCM
-gucu_ptsmakeraw (SCM fd)
+gucu_ptsmakeraw (SCM s_fd_or_port)
 {
-  int c_fd;
-  int ret;
   struct termios terminal_attributes;
+  SCM s_fd;
+  int c_fd;
 
-  SCM_ASSERT (scm_is_integer (fd), fd, SCM_ARG1, "ptsmakeraw");
+  if (scm_is_true (scm_port_p (s_fd_or_port)))
+    s_fd = scm_fileno (s_fd_or_port);
+  else if (scm_is_integer (s_fd_or_port))
+    s_fd = s_fd_or_port;
+  else
+    scm_wrong_type_arg ("ptsmakeraw", SCM_ARG1, s_fd_or_port);
 
-  c_fd = scm_to_int (fd);
+  c_fd = scm_to_int (s_fd);
+
   ret = tcgetattr (c_fd, &terminal_attributes);
   if (ret == -1)
     scm_syserror ("ptsmakeraw");
@@ -161,14 +173,19 @@ gucu_ptsmakeraw (SCM fd)
    returns a string that contains the name of the slave
    pseudo-terminal device.  */
 SCM
-gucu_ptsname (SCM fd)
+gucu_ptsname (SCM s_fd_or_port)
 {
+  SCM s_fd;
   int c_fd;
   char *name;
 
-  SCM_ASSERT (scm_is_integer (fd), fd, SCM_ARG1, "ptsname");
+  if (scm_is_true (scm_port_p (s_fd_or_port)))
+    s_fd = scm_fileno (s_fd_or_port);
+  else if (scm_is_integer (s_fd_or_port))
+    s_fd = s_fd_or_port;
+  else
+    scm_wrong_type_arg ("ptsname", SCM_ARG1, s_fd_or_port);
 
-  c_fd = scm_to_int (fd);
   name = ptsname (c_fd);
   if (name == NULL)
     return SCM_BOOL_F;
@@ -501,10 +518,19 @@ gucu_termios_cc_set_x (SCM s_termios, SCM s_pos, SCM s_char)
    changes the mode and permissions of the slave pseudo-terminal
    so that it can be used.  */
 SCM
-gucu_unlockpt (SCM fd)
+gucu_unlockpt (SCM s_fd_or_port)
 {
+  SCM s_fc;
+  int c_fd;
   int ret;
-  SCM_ASSERT (scm_is_integer (fd), fd, SCM_ARG1, "unlockpt");
+
+  if (scm_is_true (scm_port_p (s_fd_or_port)))
+    s_fd = scm_fileno (s_fd_or_port);
+  else if (scm_is_integer (s_fd_or_port))
+    s_fd = s_fd_or_port;
+  else
+    scm_wrong_type_arg ("unlockpt", SCM_ARG1, s_fd_or_port);
+
   ret = unlockpt (scm_to_int (fd));
   if (ret == -1)
     scm_syserror ("unlockpt");
@@ -559,7 +585,7 @@ gucu_string_split_at_line_endings (SCM str)
   SCM res = SCM_EOL;
 
   SCM_ASSERT (scm_is_string (str), str, SCM_ARG1, "string-split-at-line-endings");
-  
+
   long idx, last_idx;
 
   idx = scm_c_string_length (str);
