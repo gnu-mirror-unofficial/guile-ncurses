@@ -25,31 +25,11 @@
   #:use-module (srfi srfi-1)
   #:export (
             %has-termios
+            %termios-debug
 
-            BS0
-            BS1
-            BSDLY
-            CR0
-            CR1
-            CR2
-            CR3
-            CRDLY
-            FF0
-            FF1
-            FFDLY
-            NL0
-            NL1
-            NLDLY
-            OCRNL
-            OFILL
-            ONLCR
-            ONLRET
-            ONOCR
-            OPOST
-            TAB1
-            TAB2
-            TAB3
-            TABDLY
+            termios?
+            new-termios
+
             TCIFLUSH
             TCIOFF
             TCIOFLUSH
@@ -60,120 +40,264 @@
             TCSADRAIN
             TCSAFLUSH
             TCSANOW
-            VT0
-            VT1
-            VTDLY
 
-            VEOF
-            VEOL
-            VERASE
-            VINTR
-            VKILL
-            VLNEXT
-            VMIN
-            VQUIT
-            VREPRINT
-            VSTART
-            VSTOP
-            VSUSP
-
-            BRKINT
-            ICRNL
-            IGNBRK
-            IGNCR
-            IGNPAR
-            INLCR
-            INPCK
-            ISTRIP
-            IXANY
-            IXOFF
-            IXON
-            PARMRK
-
-            CLOCAL
-            CREAD
-            CS5
-            CS6
-            CS7
-            CS8
-            CSIZE
-            CSTOPB
-            HUPCL
-            PARENB
-            PARODD
-            VTIME
-
-            ECHO
-            ECHOE
-            ECHOK
-            ECHONL
-            FLUSHO
-            ICANON
-            IEXTEN
-            ISIG
-            NOFLSH
-            TOSTOP
-
-            B0
-            B110
-            B1200
-            B134
-            B150
-            B1800
-            B19200
-            B200
-            B2400
-            B300
-            B38400
-            B4800
-            B50
-            B600
-            B75
-            B9600
-
-            B115200
-            B14400
-            B230400
-            B28800
-            B57600
-            B7200
-            B76800
-
-            speed->bps
-            bps->speed
-
-            termios?
-            new-termios
-
-            cfgetispeed
-            cfgetospeed
-            cfmakeraw!
-            cfsetispeed!
-            cfsetospeed!
-            ptsmakeraw
             tcdrain
             tcflow
             tcflush
             tcgetattr
-            tcsendbreak
             tcsetattr!
 
-            termios-iflag
-            termios-oflag
-            termios-cflag
-            termios-lflag
-            termios-line
-            termios-cc
-            termios-iflag-set!
-            termios-oflag-set!
-            termios-cflag-set!
-            termios-lflag-set!
-            termios-cc-set!
+            termios-flag-set!
+            termios-flag-clear!
+            termios-flag-get
+            termios-flag-test
+            termios-makeraw!
 
-            %termios-debug
-	    string-split-at-line-endings
+            termios-csize-get
+            termios-csize-set!
 
+            termios-ispeed-set!
+            termios-ispeed-get
+            termios-ospeed-set!
+            termios-ospeed-get
+
+            termios-veof-get
+            termios-veol-get
+            termios-veof-get
+            termios-veol-get
+            termios-verase-get
+            termios-vintr-get
+            termios-vkill-get
+            termios-vquit-get
+            termios-vstart-get
+            termios-vstop-get
+            termios-vsusp-get
+            termios-vtime-get
+            termios-vmin-get
+
+            termios-veof-set!
+            termios-veol-set!
+            termios-verase-set!
+            termios-vintr-set!
+            termios-vkill-set!
+            termios-vquit-set!
+            termios-vstart-set!
+            termios-vstop-set!
+            termios-vsusp-set!
+            termios-vtime-set!
+            termios-vmin-set!
+
+            ptsmakeraw
             ))
+
+(define (iflag-symbol->const x)
+  (cond
+   ((eqv? x 'IGNBRK) IGNBRK)
+   ((eqv? x 'BRKINT) BRKINT)
+   ((eqv? x 'IGNPAR) IGNPAR)
+   ((eqv? x 'PARMRK) PARMRK)
+   ((eqv? x 'INPCK) INPCK)
+   ((eqv? x 'INLCR) INLCR)
+   ((eqv? x 'IGNCR) IGNCR)
+   ((eqv? x 'ICRNL) ICRNL)
+   ((eqv? x 'IXON) IXON)
+   ((eqv? x 'IXOFF) IXOFF)
+   ((eqv? x 'IXANY) IXANY)
+   (else #f)))
+
+(define (iflag-const->symbol-list c)
+  (apply append
+   (map
+    (lambda (f)
+      (if (logtest (iflag-symbol->const f) c)
+          (list f)
+          (list)))
+    `(IGNBRK BRKINT IGNPAR PARMRK INPCK INLCR IGNCR ICRNL IXON IXOFF IXANY))))
+
+(define (oflag-symbol->const x)
+  (cond
+   ((eqv? x 'ONLCR) ONLCR)
+   ((eqv? x 'OCRNL) OCRNL)
+   ((eqv? x 'ONOCR) ONOCR)
+   ((eqv? x 'ONLRET) ONLRET)
+   ((eqv? x 'OPOST) OPOST)
+   (else #f)))
+
+(define (oflag-const->symbol-list c)
+  (apply append
+   (map
+    (lambda (f)
+      (if (logtest (oflag-symbol->const f) c)
+          (list f)
+          (list)))
+    `(ONLCR OCRNL ONOCR ONLRET OPOST))))
+
+(define (cflag-symbol->const x)
+  (cond
+   ((eqv? x 'CSTOPB) CSTOPB)
+   ((eqv? x 'CREAD) CREAD)
+   ((eqv? x 'PARENB) PARENB)
+   ((eqv? x 'PARODD) PARODD)
+   ((eqv? x 'HUPCL) HUPCL)
+   ((eqv? x 'CLOCAL) CLOCAL)
+   (else #f)))
+
+(define (cflag-const->symbol-list c)
+  (apply append
+   (map
+    (lambda (f)
+      (if (logtest (cflag-symbol->const f) c)
+          (list f)
+          (list)))
+    `(CSTOPB CREAD PARENB PARODD HUPCL CLOCAL))))
+
+(define (lflag-symbol->const x)
+  (cond
+   ((eqv? x 'ISIG) ISIG)
+   ((eqv? x 'ICANON) ICANON)
+   ((eqv? x 'ECHO) ECHO)
+   ((eqv? x 'ECHOE) ECHOE)
+   ((eqv? x 'ECHOK) ECHOK)
+   ((eqv? x 'ECHONL) ECHONL)
+   ((eqv? x 'NOFLSH) NOFLSH)
+   ((eqv? x 'TOSTOP) TOSTOP)
+   (else #f)))
+
+(define (lflag-const->symbol-list c)
+  (apply append
+   (map
+    (lambda (f)
+      (if (logtest (lflag-symbol->const f) c)
+          (list f)
+          (list)))
+    `(ISIG ICANON ECHO ECHOE ECHOK ECHONL NOFLSH TOSTOP))))
+
+(define (set-flag term flag)
+  (let ((iconst (iflag-symbol->const flag))
+        (oconst (oflag-symbol->const flag))
+        (cconst (cflag-symbol->const flag))
+        (lconst (lflag-symbol->const flag)))
+    (cond
+     (iconst
+      (termios-iflag-set! term (logior iconst (termios-iflag term)))
+      #t)
+     (oconst
+      (termios-oflag-set! term (logior oconst (termios-oflag term)))
+      #t)
+     (cconst
+      (termios-cflag-set! term (logior cconst (termios-cflag term)))
+      #t)
+     (lconst
+      (termios-lflag-set! term (logior lconst (termios-lflag term)))
+      #t)
+     (else #f))))
+
+(define (clear-flag term flag)
+  (let ((iconst (iflag-symbol->const flag))
+        (oconst (oflag-symbol->const flag))
+        (cconst (cflag-symbol->const flag))
+        (lconst (lflag-symbol->const flag)))
+    (cond
+     (iconst
+      (termios-iflag-set! term (logand (lognot iconst) (termios-iflag term)))
+      #t)
+     (oconst
+      (termios-oflag-set! term (logand (lognot oconst) (termios-oflag term)))
+      #t)
+     (cconst
+      (termios-cflag-set! term (logand (lognot cconst) (termios-cflag term)))
+      #t)
+     (lconst
+      (termios-lflag-set! term (logand (lognot lconst) (termios-lflag term)))
+      #t)
+     (else #f))))
+
+(define (get-flags term)
+  (append (iflag-const->symbol-list (termios-iflag term))
+          (oflag-const->symbol-list (termios-oflag term))
+          (cflag-const->symbol-list (termios-cflag term))
+          (lflag-const->symbol-list (termios-lflag term))))
+
+(define (termios-flag-set! term flag-or-flags)
+  (let ((flags (if (list? flag-or-flags)
+                   flag-or-flags
+                   (list flag-or-flags))))
+    (for-each
+     (lambda (x)
+       (set-flag term x))
+     flags)))
+
+(define (termios-flag-clear! term flag-or-flags)
+  (let ((flags (if (list? flag-or-flags)
+                   flag-or-flags
+                   (list flag-or-flags))))
+    (for-each
+     (lambda (x)
+       (clear-flag term x))
+     flags)))
+
+(define (termios-flag-get term)
+  (get-flags term))
+
+(define (termios-flag-test term flag)
+  (if (member flag (get-flags term))
+      #t
+      #f))
+
+(define (termios-csize-get term)
+  (let ((c (logand CSIZE (termios-cflag term))))
+    (cond
+     ((= c CS5) 5)
+     ((= c CS6) 6)
+     ((= c CS7) 7)
+     ((= c CS8) 8)
+     (else #f))))
+
+(define (termios-csize-set! term siz)
+  (let ((c (logand CSIZE (termios-cflag term)))
+        (rest (lognot (logand (lognot CSIZE) (termios-cflag term)))))
+    (cond
+     ((= siz 5) (termios-cflag-set! term (logior rest CS5)))
+     ((= siz 6) (termios-cflag-set! term (logior rest CS6)))
+     ((= siz 7) (termios-cflag-set! term (logior rest CS7)))
+     ((= siz 8) (termios-cflag-set! term (logior rest CS8))))))
+
+(define (termios-makeraw! term)
+  (termios-csize-set! term 8)
+  (termios-flag-clear! term '(IGNBRK BRKINT PARMRK ISTROP INLCR IGNCR ICRNL IXON))
+  (termios-flag-clear! tgerm '(OPOST ECHO ECHONL ICANON ISIG IEXTEN CSIZE PARENB)))
+
+(define (termios-veof-get term) (termios-cc term VEOF))
+(define (termios-veol-get term) (termios-cc term VEOL))
+(define (termios-verase-get term) (termios-cc term VERASE))
+(define (termios-vintr-get term) (termios-cc term VINTR))
+(define (termios-vkill-get term) (termios-cc term VKILL))
+(define (termios-vquit-get term) (termios-cc term VQUIT))
+(define (termios-vstart-get term) (termios-cc term VSTART))
+(define (termios-vstop-get term) (termios-cc term VSTOP))
+(define (termios-vsusp-get term) (termios-cc term VSUSP))
+(define (termios-vtime-get term) (* 0.1 (char->integer (termios-cc term VTIME))))
+(define (termios-vmin-get term) (char->integer (termios-cc term VTIME)))
+
+(define (termios-veof-set! term c) (termios-cc-set! term VEOF c))
+(define (termios-veol-set! term c) (termios-cc-set! term VEOL c))
+(define (termios-verase-set! term c) (termios-cc-set! term VERASE c))
+(define (termios-vintr-set! term c) (termios-cc-set! term VINTR c))
+(define (termios-vkill-set! term c) (termios-cc-set! term VKILL c))
+(define (termios-vquit-set! term c) (termios-cc-set! term VQUIT c))
+(define (termios-vstart-set! term c) (termios-cc-set! term VSTART c))
+(define (termios-vstop-set! term c) (termios-cc-set! term VSTOP c))
+(define (termios-vsusp-set! term c) (termios-cc-set! term VSUSP c))
+(define (termios-vtime-set! term t)
+  (termios-cc-set! term VTIME
+                   (integer->char
+                    (inexact->exact
+                     (round
+                      (* t 10.0))))))
+(define (termios-vmin-set! term n)
+  (termios-cc-set! term VMIN (integer->char n)))
+
+
 
 ;; Return the number of character cells that C takes
 (define (wcwidth x)
@@ -249,59 +373,63 @@ bits-per-second. It returns #f is no match is found."
 
 (define (bps->speed x)
   "Given a integer bits-per-second value, it returns a speed
-enumeration value, such as B9600. It returns #f if not match
-is found."
+enumeration value, such as B9600. If no exact match is found,
+it returns the next slower valid value."
   (cond
-   ((= x 0)
+   ((< x 50)
     B0)
-   ((= x 110)
-    B110)
-   ((= x 134)
-    B134)
-   ((= x 1200)
-    B1200)
-   ((= x 150)
-    B150)
-   ((= x 1800)
-    B1800)
-   ((= x 19200)
-    B19200)
-   ((= x 200)
-    B200)
-   ((= x 2400)
-    B2400)
-   ((= x 300)
-    B300)
-   ((= x 38400)
-    B38400)
-   ((= x 4800)
-    B4800)
-   ((= x 50)
+   ((< x 75)
     B50)
-   ((= x 600)
-    B600)
-   ((= x 75)
+   ((< x 110)
     B75)
-   ((= x B9600)
-    9600)
+   ((< x 134)
+    B110)
+   ((< x 150)
+    B134)
+   ((< x 200)
+    B150)
+   ((< x 300)
+    B200)
+   ((< x 600)
+    B300)
+   ((< x 1200)
+    B600)
+   ((< x 1800)
+    B1200)
+   ((< x 2400)
+    B1800)
+   ((< x 4800)
+    B2400)
+   ((< x 9600)
+    B4800)
+   ((< x 14400)
+    B9600)
+   ((< x 19200)
+    (or B14400 B9600))
+   ((< x 28800)
+    B19200)
+   ((< x 38400)
+    (or B28800 B19200))
+   ((< x 57600)
+    B38400)
+   ((< x 76800)
+    (or B57600 B38400))
+   ((< x 115200)
+    (or B76800 B57600 B38400))
+   ((< x 230400)
+    (or B115200 B76800 B57600 B38400))
+   (else
+    (or B230400 B115200 B76800 B57600 B38400))))
 
-   ((eqv? x 115200)
-    B115200)
-   ((eqv? x 14400)
-    B14400)
-   ((eqv? x 230400)
-    B230400)
-   ((eqv? x 28800)
-    B28800)
-   ((eqv? x 57600)
-    B57600)
-   ((eqv? x 7200)
-    B7200)
-   ((eqv? x 76800)
-    B76800)
+(define (termios-ispeed-get term)
+  (speed->bps (cfgetispeed term)))
+(define (termios-ospeed-get term)
+  (speed->bps (cfgetospeed term)))
 
-   (else #f)))
-
+(define (termios-ispeed-set! term bps)
+  (cfsetispeed! term (bps->speed bps)))
+(define (termios-ospeed-set! term bps)
+  (cfsetospeed! term (bps->speed bps)))
 
 (define (%termios-debug t)
   (let ((cflag (termios-cflag t))
