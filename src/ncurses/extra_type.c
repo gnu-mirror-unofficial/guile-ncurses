@@ -183,6 +183,7 @@ gucu_new_termios (void)
 
   /* Step 2: initialize it with C code */
   memset (gp, 0, sizeof(struct termios));
+  gp->c_cflag = CS8;
 
   /* Step 3: create the smob */
   SCM_NEWSMOB (smob, termios_tag, gp);
