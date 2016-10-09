@@ -44,31 +44,11 @@
 #include "extra_const.h"
 
 SCM gucu_has_termios;
-SCM gucu_BS0;
-SCM gucu_BS1;
-SCM gucu_BSDLY;
-SCM gucu_CR0;
-SCM gucu_CR1;
-SCM gucu_CR2;
-SCM gucu_CR3;
-SCM gucu_CRDLY;
-SCM gucu_FF0;
-SCM gucu_FF1;
-SCM gucu_FFDLY;
-SCM gucu_NL0;
-SCM gucu_NL1;
-SCM gucu_NLDLY;
 SCM gucu_OCRNL;
-SCM gucu_OFILL;
 SCM gucu_ONLCR;
 SCM gucu_ONLRET;
 SCM gucu_ONOCR;
 SCM gucu_OPOST;
-SCM gucu_TAB0;
-SCM gucu_TAB1;
-SCM gucu_TAB2;
-SCM gucu_TAB3;
-SCM gucu_TABDLY;
 SCM gucu_TCIFLUSH;
 SCM gucu_TCIOFF;
 SCM gucu_TCIOFLUSH;
@@ -79,9 +59,6 @@ SCM gucu_TCOON;
 SCM gucu_TCSADRAIN;
 SCM gucu_TCSAFLUSH;
 SCM gucu_TCSANOW;
-SCM gucu_VT0;
-SCM gucu_VT1;
-SCM gucu_VTDLY;
 
 SCM gucu_VEOF;
 SCM gucu_VEOL;
@@ -125,7 +102,6 @@ SCM gucu_ECHOE;
 SCM gucu_ECHOK;
 SCM gucu_ECHONL;
 SCM gucu_ICANON;
-SCM gucu_IEXTEN;
 SCM gucu_ISIG;
 SCM gucu_NOFLSH;
 SCM gucu_TOSTOP;
@@ -175,85 +151,10 @@ gucu_extra_init_const ()
     scm_permanent_object (scm_c_define ("%has-termios", SCM_BOOL_F));
 #endif
 
-#if HAVE_DECL_BS0
-  D(BS0);
-#else
-  F(BS0);
-#endif
-#if HAVE_DECL_BS1
-  D(BS1);
-#else
-  F(BS1);
-#endif
-#if HAVE_DECL_BSDLY
-  D(BSDLY);
-#else
-  F(BSDLY);
-#endif
-#if HAVE_DECL_CR0
-  D(CR0);
-#else
-  F(CR0);
-#endif
-#if HAVE_DECL_CR1
-  D(CR1);
-#else
-  F(CR1);
-#endif
-#if HAVE_DECL_CR2
-  D(CR2);
-#else
-  F(CR2);
-#endif
-#if HAVE_DECL_CR3
-  D(CR3);
-#else
-  F(CR3);
-#endif
-#if HAVE_DECL_CRDLY
-  D(CRDLY);
-#else
-  F(CRDLY);
-#endif
-#if HAVE_DECL_FF0
-  D(FF0);
-#else
-  F(FF0);
-#endif
-#if HAVE_DECL_FF1
-  D(FF1);
-#else
-  F(FF1);
-#endif
-#if HAVE_DECL_FFDLY
-  D(FFDLY);
-#else
-  F(FFDLY);
-#endif
-#if HAVE_DECL_NL0
-  D(NL0);
-#else
-  F(NL0);
-#endif
-#if HAVE_DECL_NL1
-  D(NL1);
-#else
-  F(NL1);
-#endif
-#if HAVE_DECL_NLDLY
-  D(NLDLY);
-#else
-  F(NLDLY);
-#endif
 #if HAVE_DECL_OCRNL
   D(OCRNL);
 #else
   F(OCRNL);
-#endif
-#if HAVE_DECL_OFILL
-  D(OFILL);
-#else
-  F(OFILL);
 #endif
 #if HAVE_DECL_ONLCR
   D(ONLCR);
@@ -270,46 +171,6 @@ gucu_extra_init_const ()
 #else
   F(ONOCR);
 #endif
-#if HAVE_DECL_TAB0
-  D(TAB0);
-#else
-  F(TAB0);
-#endif
-#if HAVE_DECL_TAB1
-  D(TAB1);
-#else
-  F(TAB1);
-#endif
-#if HAVE_DECL_TAB2
-  D(TAB2);
-#else
-  F(TAB2);
-#endif
-#if HAVE_DECL_TAB3
-  D(TAB3);
-#else
-  F(TAB3);
-#endif
-#if HAVE_DECL_TABDLY
-  D(TABDLY);
-#else
-  F(TABDLY);
-#endif
-#if HAVE_DECL_VT0
-  D(VT0);
-#else
-  F(VT0);
-#endif
-#if HAVE_DECL_VT1
-  D(VT1);
-#else
-  F(VT1);
-#endif
-#if HAVE_DECL_VTDLY
-  D(VTDLY);
-#else
-  F(VTDLY);
-#endif
 
   D(ONLCR);
   D(ONLRET);
@@ -324,9 +185,6 @@ gucu_extra_init_const ()
   D(TCSADRAIN);
   D(TCSAFLUSH);
   D(TCSANOW);
-  D(VT0);
-  D(VT1);
-  D(VTDLY);
 
   D(VEOF);
   D(VEOL);
@@ -374,7 +232,6 @@ gucu_extra_init_const ()
   D(ECHOK);
   D(ECHONL);
   D(ICANON);
-  D(IEXTEN);
   D(ISIG);
   D(NOFLSH);
   D(TOSTOP);

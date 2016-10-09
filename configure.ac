@@ -349,8 +349,9 @@ AS_IF([test "x$enable_termios" != xno && test "x$have_termios_h" = xyes ],
        # TCOOFF, TCOON, TCSADRAIN, TCSAFLUSH, TCSANOW are always
        # present
 
-       # Check for the XOpen and old BSD termios constants.
-       AC_CHECK_DECLS([BS0, BS1, BSDLY, CR0, CR1, CR2, CR3, CRDLY, FF0, FF1, FFDLY, NL0, NL1, NLDLY, OCRNL, OFILL, ONLCR, ONOCR, ONLRET, TAB0, TAB1, TAB2, TAB3, TABDLY, VT0, VT1, VTDLY], [], [],
+       # Check for some of the XOpen and old BSD termios constants.
+       # I'm intentionally ignoring all of the delays like NL0 and VT0.
+       AC_CHECK_DECLS([OCRNL, OFILL, ONLCR, ONOCR, ONLRET], [], [],
        [[
        #include <termios.h>
        ]])
