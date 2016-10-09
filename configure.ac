@@ -325,7 +325,7 @@ AC_CHECK_SIZEOF([wint_t], ,[#include <wchar.h>])
 
 ##################
 # Check for C library functions
-AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname grantpt unlockpt tcgetsid cfsetspeed wcwidth])
+AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname grantpt unlockpt tcgetsid  wcwidth])
 
 # Check for ncurses library functions
 AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_w])

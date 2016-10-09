@@ -92,24 +92,6 @@ SCM gucu_cfsetispeed_x (SCM s_termios, SCM s_speed)
   return SCM_UNSPECIFIED;
 }
 
-#ifdef HAVE_CFSETSPEED
-SCM gucu_cfsetspeed_x (SCM s_termios, SCM s_speed)
-{
-  struct termios *c_termios;
-  speed_t c_speed;
-  int c_ret;
-
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, "cfsetspeed!");
-  SCM_ASSERT (scm_is_integer (s_speed), s_speed, SCM_ARG2, "cfsetspeed!");
-  c_termios = _scm_to_termios (s_termios);
-  c_speed = scm_to_uint (s_speed);
-  c_ret = cfsetspeed (c_termios, c_speed);
-  if (c_ret == 0)
-    scm_syserror ("cfsetspeed!");
-  return SCM_UNSPECIFIED;
-}
-#endif
-
 SCM gucu_cfsetospeed_x (SCM s_termios, SCM s_speed)
 {
   struct termios *c_termios;
@@ -620,9 +602,6 @@ gucu_extra_init_function ()
   scm_c_define_gsubr ("cfgetospeed", 1, 0, 0, gucu_cfgetospeed);
   scm_c_define_gsubr ("cfmakeraw!", 1, 0, 0, gucu_cfmakeraw_x);
   scm_c_define_gsubr ("cfsetispeed!", 2, 0, 0, gucu_cfsetispeed_x);
-#ifdef HAVE_CFSETSPEED
-  scm_c_define_gsubr ("cfsetspeed!", 2, 0, 0, gucu_cfsetspeed_x);
-#endif
   scm_c_define_gsubr ("cfsetospeed!", 2, 0, 0, gucu_cfsetospeed_x);
 #ifdef HAVE_GRANTPT
   scm_c_define_gsubr ("grantpt", 1, 0, 0, gucu_grantpt);

@@ -427,9 +427,6 @@ is found."
         (display "NOFLSH: flushing input and output queues on receipt of INT, QUIT and SUSP is disabled\n"))
     (if (logtest lflag TOSTOP)
         (display "TOSTOP: SIGTTOU is sent to the background process process group on attempted writes to its controlling terminal\n"))
-    (if (logtest lflag IEXTEN)
-        (display "IEXTEN: implementation-defined input processing is enabled\n"))
-
     ))
 
 
@@ -437,7 +434,6 @@ is found."
 
 ;; These function may not exist depending of the
 ;; capabilities of the underlying system
-(if (defined? 'cfsetspeed!)     (export cfsetspeed!))
 (if (defined? 'tcgetsid)        (export tcgetsid))
 (if (defined? 'unlockpt)        (export unlockpt))
 (if (defined? 'ptsname)         (export ptsname))
