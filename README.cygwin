@@ -6,20 +6,10 @@ A README file for using GNU Guile-Ncurses on Cygwin
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-Guile-ncurses was tested on Cygwin
+This version Guile-ncurses was not tested on Cygwin.
 
-There are some special things to watch out for when building on
-Cygwin.
+I'm not longer testing it on Guile 1.8.x, which is what Cygwin
+provides.
 
-1. The packaged Guile on Cygwin is 8-bit characters only
-
-  The version of Guile that comes with Cygwin is from the 1.8.x
-  release series.  This version of Guile uses 8-bit characters, so
-  the full Unicode is not available.
-
-  Thus, you should not try to use the --with-ncursesw configure flag
-  on Cygwin.
-
-2. The packaged Guile shell on Cygwin may have broken command-line
-  editing.  This is not a bug in Guile-Ncurses or its shell tool;
-  it is upstream.
+I could not get Guile 2.0.12 or 2.0.13 to build from source as of
+2016/10/15.  I think the problem is a mutex lock.
