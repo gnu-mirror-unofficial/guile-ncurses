@@ -36,6 +36,14 @@ License along with Guile-Ncurses.  If not, see
 #error "No curses.h file included"
 #endif
 
+#if HAVE_TERM_H
+#include <term.h>
+#elif HAVE_NCURSES_TERM_H
+#include <ncurses/term.h>
+#elif HAVE_NCURSESW_TERM_H
+#include <ncursesw/term.h>
+#endif
+
 #ifdef GUILE_CHARS_ARE_UCS4
 /* Work around unistring bug */
 #ifndef _UNUSED_PARAMETER_

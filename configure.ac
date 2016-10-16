@@ -19,7 +19,7 @@
 
 ##################
 # Package info
-AC_INIT([GNU Guile-Ncurses],[1.7],[bug-guile-ncurses@gnu.org])
+AC_INIT([GNU Guile-Ncurses],[2.0],[bug-guile-ncurses@gnu.org])
 
 AC_CONFIG_AUX_DIR([build_aux])
 AM_INIT_AUTOMAKE([gnu std-options -Wall])
@@ -209,6 +209,38 @@ AS_IF([test "$with_ncursesw" = no],
                       [AC_MSG_FAILURE([the ncurses library was not found])])])
 
 AM_CONDITIONAL([WIDE], [test "$with_ncursesw" = yes])
+
+AC_MSG_NOTICE([checking for term.h])
+
+have_ncursesw_term_h=no
+
+if test "$with_ncursesw" = yes
+then
+  AC_CHECK_HEADER([ncursesw/term.h],
+                  [AC_DEFINE([HAVE_NCURSESW_TERM_H],
+                             [1],
+                             [Define if you have ncursesw/term.h])
+                   have_ncursesw_term_h=yes])
+fi
+
+if test "$have_ncursesw_term_h" = no
+then
+  AC_CHECK_HEADER([ncurses/term.h],
+                  [AC_DEFINE([HAVE_NCURSES_TERM_H],
+                             [1],
+                             [Define if you have ncurses/term.h])
+                   have_ncurses_term_h=yes],
+                  [have_ncurses_term_h=no])
+fi
+
+if test "$have_ncurses_term_h" = no && test "$have_ncursesw_term_h" = no
+then
+  AC_CHECK_HEADER([term.h],
+                  [AC_DEFINE([HAVE_TERM_H],
+                             [1],
+                             [Define if you have term.h])])
+fi
+
 
 AC_CHECK_HEADER([termios.h],
                 [AC_DEFINE([HAVE_TERMIOS_H],
