@@ -118,8 +118,7 @@
 	       E_CURRENT
 	       ))
 
-(eval-when (expand load eval)
-           (load-extension "libguile-ncurses" "gucu_menu_init"))
+(load-extension "libguile-ncurses" "gucu_menu_init")
 
 (if (defined? 'O_MOUSE_MENU)
     (export O_MOUSE_MENU))
