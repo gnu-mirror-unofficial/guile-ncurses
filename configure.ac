@@ -110,16 +110,26 @@ esac
 # The curses man page lists the following possibilities for curses
 # headers
 
+AC_ARG_WITH(ncursesw,
+            [AS_HELP_STRING([--without-ncursesw],
+                            [Don't use ncursesw (wide character support)])],
+            [with_ncursesw=no],
+            [with_ncursesw=check])
+
 AC_MSG_NOTICE([checking for ncurses])
 
-AC_CHECK_HEADER([curses.h],
-                [AC_DEFINE([HAVE_CURSES_H],
-                           [1],
-                           [Define if you have curses.h])
-                 have_curses_h=yes],
-                [have_curses_h=no])
+have_ncursesw_curses_h=no
 
-if test "$have_curses_h" = no
+if test "$with_ncursesw" = check
+then
+  AC_CHECK_HEADER([ncursesw/curses.h],
+                  [AC_DEFINE([HAVE_NCURSESW_CURSES_H],
+                             [1],
+                             [Define if you have ncursesw/curses.h])
+                   have_ncursesw_curses_h=yes])
+fi
+
+if test "$have_ncursesw_curses_h" = no
 then
   AC_CHECK_HEADER([ncurses/curses.h],
                   [AC_DEFINE([HAVE_NCURSES_CURSES_H],
@@ -129,20 +139,14 @@ then
                 [have_ncurses_curses_h=no])
 fi
 
-if test "$have_curses_h" = no && test "$have_ncurses_curses_h" = no
+if test "$have_ncurses_curses_h" = no && test "$have_ncursesw_curses_h" = no
 then
-  AC_CHECK_HEADER([ncursesw/curses.h],
-                  [AC_DEFINE([HAVE_NCURSESW_CURSES_H],
+  AC_CHECK_HEADER([curses.h],
+                  [AC_DEFINE([HAVE_CURSES_H],
                              [1],
-                             [Define if you have ncursesw/curses.h])],
+                             [Define if you have curses.h])],
                   [AC_MSG_FAILURE([curses.h could not be found])])
 fi
-
-AC_ARG_WITH(ncursesw,
-            [AS_HELP_STRING([--without-ncursesw],
-                            [Don't use ncursesw (wide character support)])],
-            [with_ncursesw=no],
-            [with_ncursesw=check])
 
 AS_IF([test "$with_ncursesw" = check],
       [AC_SEARCH_LIBS([initscr], [ncursesw],
@@ -188,6 +192,23 @@ else
                  [],
                  [AC_MSG_ERROR([the ncurses panelw library is required])])
 fi
+
+AS_IF([test "$with_ncursesw" = check],
+      [AC_SEARCH_LIBS([initscr], [ncursesw],
+                      [AC_DEFINE([HAVE_NCURSESW],
+                                 [1],
+                                 [Define if you have libncursesw])
+                       with_ncursesw=yes],
+                      [AC_MSG_FAILURE([--with-ncursesw was given, but, test for ncursesw failed])])])
+
+AS_IF([test "$with_ncursesw" = no],
+      [AC_SEARCH_LIBS([initscr], [ncurses],
+                      [AC_DEFINE([HAVE_NCURSES],
+                                 [1],
+                                 [Define if you have libncurses])],
+                      [AC_MSG_FAILURE([the ncurses library was not found])])])
+
+AM_CONDITIONAL([WIDE], [test "$with_ncursesw" = yes])
 
 AC_CHECK_HEADER([termios.h],
                 [AC_DEFINE([HAVE_TERMIOS_H],
@@ -289,13 +310,13 @@ AC_CHECK_TYPE([cookie_io_functions_t],
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([void *])
-if test "$have_curses_h" = yes
+if test "$have_ncursesw_curses_h" = yes
 then
-  AC_CHECK_SIZEOF([chtype], ,[#include <curses.h>])
-  AC_CHECK_SIZEOF([attr_t], ,[#include <curses.h>])
-  AX_CHECK_DEFINE([curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
-  AX_CHECK_DEFINE([curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
-  AX_CHECK_DEFINE([menu.h], [O_MOUSE_MENU],[HAVE_O_MOUSE_MENU=1],[HAVE_O_MOUSE_MENU=0])
+  AC_CHECK_SIZEOF([chtype], ,[#include <ncursesw/curses.h>])
+  AC_CHECK_SIZEOF([attr_t], ,[#include <ncursesw/curses.h>])
+  AX_CHECK_DEFINE([ncursesw/curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
+  AX_CHECK_DEFINE([ncursesw/curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
+  AX_CHECK_DEFINE([ncursesw/menu.h], [O_MOUSE_MENU],[HAVE_O_MOUSE_MENU=1],[HAVE_O_MOUSE_MENU=0])
 else
 if test "$have_ncurses_curses_h" = yes
 then
@@ -305,13 +326,14 @@ then
   AX_CHECK_DEFINE([ncurses/curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
   AX_CHECK_DEFINE([ncurses/menu.h], [O_MOUSE_MENU],[HAVE_O_MOUSE_MENU=1],[HAVE_O_MOUSE_MENU=0])
 else
-  AC_CHECK_SIZEOF([chtype], ,[#include <ncursesw/curses.h>])
-  AC_CHECK_SIZEOF([attr_t], ,[#include <ncursesw/curses.h>])
-  AX_CHECK_DEFINE([ncursesw/curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
-  AX_CHECK_DEFINE([ncursesw/curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
-  AX_CHECK_DEFINE([ncursesw/menu.h], [O_MOUSE_MENU],[HAVE_O_MOUSE_MENU=1],[HAVE_O_MOUSE_MENU=0])
+  AC_CHECK_SIZEOF([chtype], ,[#include <curses.h>])
+  AC_CHECK_SIZEOF([attr_t], ,[#include <curses.h>])
+  AX_CHECK_DEFINE([curses.h],[BUTTON5_PRESSED],[HAVE_BUTTON5=1],[HAVE_BUTTON5=0])
+  AX_CHECK_DEFINE([curses.h],[KEY_EVENT],[HAVE_KEY_EVENT=1],[HAVE_KEY_EVENT=0])
+  AX_CHECK_DEFINE([menu.h], [O_MOUSE_MENU],[HAVE_O_MOUSE_MENU=1],[HAVE_O_MOUSE_MENU=0])
 fi
 fi
+
 AS_IF([test "x$HAVE_BUTTON5" = "x1"], AC_DEFINE([HAVE_BUTTON5], 1, [Have BUTTON5 defines]))
 AM_CONDITIONAL(HAVE_BUTTON5, test "x$HAVE_BUTTON5" = "x1")
 AS_IF([test "x$HAVE_KEY_EVENT" = "x1"], AC_DEFINE([HAVE_KEY_EVENT], 1, [Have KEY_EVENT defines]))
@@ -319,16 +341,15 @@ AM_CONDITIONAL(HAVE_KEY_EVENT, test "x$HAVE_KEY_EVENT" = "x1")
 AS_IF([test "x$HAVE_O_MOUSE_MENU" = "x1"], AC_DEFINE([HAVE_O_MOUSE_MENU], 1, [Have O_MOUSE_MENU define]))
 AM_CONDITIONAL(HAVE_O_MOUSE_MENU, test "x$HAVE_O_MOUSE_MENU" = "x1")
 
-
 AC_CHECK_SIZEOF([wchar_t], ,[#include <stddef.h>])
 AC_CHECK_SIZEOF([wint_t], ,[#include <wchar.h>])
 
 ##################
 # Check for C library functions
-AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname grantpt unlockpt tcgetsid  wcwidth])
+AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname grantpt unlockpt tcgetsid wcwidth])
 
 # Check for ncurses library functions
-AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_w])
+AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_w setupterm])
 
 # Later something should be done with this
 # AC_FUNC_MALLOC
