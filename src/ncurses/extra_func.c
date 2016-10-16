@@ -117,6 +117,7 @@ gucu_grantpt (SCM s_fd_or_port)
 {
   int c_fd;
   int ret;
+  SCM s_fd;
 
   if (scm_is_true (scm_port_p (s_fd_or_port)))
     s_fd = scm_fileno (s_fd_or_port);
@@ -125,7 +126,7 @@ gucu_grantpt (SCM s_fd_or_port)
   else
     scm_wrong_type_arg ("grantpt", SCM_ARG1, s_fd_or_port);
 
-  c_fd = scm_to_int (fd);
+  c_fd = scm_to_int (s_fd);
   ret = grantpt (c_fd);
   if (ret == -1)
     scm_syserror ("grantpt");
@@ -143,6 +144,7 @@ gucu_ptsmakeraw (SCM s_fd_or_port)
   struct termios terminal_attributes;
   SCM s_fd;
   int c_fd;
+  int ret;
 
   if (scm_is_true (scm_port_p (s_fd_or_port)))
     s_fd = scm_fileno (s_fd_or_port);
@@ -287,7 +289,7 @@ SCM gucu_tcgetattr (SCM s_fd_or_port)
   return s_termios;
 }
 
-#ifdef HAVE_CFSETSPEED
+#ifdef HAVE_TCGETSID
 SCM gucu_tcgetsid (SCM s_fd_or_port)
 {
   SCM s_fd;
@@ -520,7 +522,7 @@ gucu_termios_cc_set_x (SCM s_termios, SCM s_pos, SCM s_char)
 SCM
 gucu_unlockpt (SCM s_fd_or_port)
 {
-  SCM s_fc;
+  SCM s_fd;
   int c_fd;
   int ret;
 
@@ -531,7 +533,7 @@ gucu_unlockpt (SCM s_fd_or_port)
   else
     scm_wrong_type_arg ("unlockpt", SCM_ARG1, s_fd_or_port);
 
-  ret = unlockpt (scm_to_int (fd));
+  ret = unlockpt (scm_to_int (s_fd));
   if (ret == -1)
     scm_syserror ("unlockpt");
 
