@@ -1,12 +1,12 @@
 The README file for GNU Guile-Ncurses
 
-  Copyright (C) 2009, 2010, 2011, 2014 Free Software Foundation, Inc.
+  Copyright (C) 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-This is GNU Guile-Ncurses v1.6.  It provides functionality to allow
+This is GNU Guile-Ncurses v2.0.  It provides functionality to allow
 programs written in the GNU Guile interpreter of the Scheme
 programming language to interact with character screens in a
 terminal-independent manner.  It is a wrapper to the underlying
@@ -15,20 +15,23 @@ ncurses library.
 This library can be found at http://www.gnu.org/software/guile-ncurses/
 
 It can be compiled either using 8-bit characters or Unicode characters.
+Unicode characters are the default, but, it requires Guile 2.0.x,
+and a version of Ncurses compiled with wide characters enabled.
 
-The Unicode-enabled version is known to work on the following system:
+It probably requires a version of Guile >= 2.0.11 and a version of
+Ncurses >= 6.0. Earlier releases of Guile or Ncurses have not been tested.
 
-  Fedora 20 on i686-pc-linux-gnu with Guile 2.0.11, Libunistring
-    0.9.3, and NCursesW 5.9.20130511
+It would likely take little modification to work on Guile 1.8.8, but,
+support for Guile 1.8 is not longer being maintained.
 
-The 8-bit version is known to work on the following systems
+It builds on version 24 of the Fedora distribution of GNU/Linux operating
+systems, and will likely build on most recent distributions of GNU/Linux.
 
-  Cygwin 1.7.32 on i686-pc-cygwin with Guile 1.8.7 and NCurses 5.9.20140524
-  MinGW version MINGW32_NT-6.1 on i686 with Guile 1.8.8 and Ncurses 5.9.20140920
-  OpenBSD 5.5 on i386 with Guile 1.8.8 and NCurses 5.7.20081102
+For more information on the current state of the build on Cygwin or
+MinGW, see README.cygwin or README.mingw respectively.
 
 This distribution has the following subdirectories:
-- ncurses: the source code for the library
+- src: the source code for the library
 - test: test scripts to verify that the library functions correctly
 - doc: documentation for the library source to generate it
 - build_aux: files used by the configuration and building programs
@@ -39,8 +42,9 @@ INSTALLATION
 For a basic explanation of the installation of the package, see the
 INSTALL file.
 
-*important* If you want to use the wide ncurses library with Unicode
-support, you need to run configure using the "--with-ncursesw" option.
+*important* If you want to use the narrow ncurses library with only
+8-bit character support, you need to run configure using the
+"--without-ncursesw" option.
 
 *important* You probably want to call configure with the
 "--with-guilesitedir" option so that this package is installed in
