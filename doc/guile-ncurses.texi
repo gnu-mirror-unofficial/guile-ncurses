@@ -8183,8 +8183,6 @@ data written but not transmitted.
 @node Pseudoterminal helper procedures,  , Termios port interface, The termios and miscellaneous library
 @subsection Pseudoterminal helper procedures
 
-@deffn Procedure openpty
-
 @deffn Procedure ptsmakeraw fd-or-port
 Given a file descriptor or file port a pseudo-terminal device,
 this sets that pseudoterminal to RAW mode.
