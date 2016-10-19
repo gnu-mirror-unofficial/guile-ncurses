@@ -21,18 +21,22 @@
 
 (setlocale LC_ALL "C")
 (automake-test
- (with-utf8-locale*
-  (lambda ()
-    (let ((win (initscr)))
-      (cbreak!)
-      (echo!)
-      (ungetch #\ż) ; LATIN SMALL LETTER Z WITH DOT ABOVE
-      (clear win)
-      (refresh win)
-      (let ((x1 (getch win)))
-	(endwin)
-	(newline)
-	(format #t "getch: ~s~%" x1)
-	(equal? x1 #\ż))))))
+ (if (or (string-contains (curses-version) "5.7")
+         (string-contains (curses-version) "5.8")
+         (string-contains (curses-version) "5.9"))
+     'skipped
+     (with-utf8-locale*
+      (lambda ()
+        (let ((win (initscr)))
+          (cbreak!)
+          (echo!)
+          (ungetch #\ż) ; LATIN SMALL LETTER Z WITH DOT ABOVE
+          (clear win)
+          (refresh win)
+          (let ((x1 (getch win)))
+            (endwin)
+            (newline)
+            (format #t "getch: ~s~%" x1)
+            (equal? x1 #\ż)))))))
 ;; This should work, but some pre-2009 ncurses libraries
 ;; ncurses library can't ungetch non-ASCII chars

@@ -17,25 +17,31 @@
 ;; <http://www.gnu.org/licenses/>.
 
 (use-modules (test automake-test-lib)
-	     (srfi srfi-1)
+             (srfi srfi-1)
              (ncurses curses))
 
 (setlocale LC_ALL "C")
 (automake-test
- (with-utf8-locale*
-  (lambda ()
-    (let* ((win (initscr)))
-      (erase win)
-      (refresh win)
-      (ungetch #\nl)
-      (ungetch #\¶)
-      (ungetch #\⅕)
-      (ungetch #\ᴁ)
-      (let ((s1 (getnstr win 10)))
-	(refresh win)
-	(maybe-sleep 2)
-	(endwin)
-	(newline)
-	(format #t "genstr: ~s" s1)
-	(newline)
-	(string=? s1 "ᴁ⅕¶"))))))
+ (if (or (string-contains (curses-version) "5.7")
+         (string-contains (curses-version) "5.8")
+         (string-contains (curses-version) "5.9"))
+     'skipped
+     (with-utf8-locale*
+      (lambda ()
+        (let* ((win (initscr)))
+          (erase win)
+          (refresh win)
+          (ungetch #\nl)
+          (ungetch #\¶)
+          (ungetch #\⅕)
+          (ungetch #\ᴁ)
+          (let ((s1 (getnstr win 10)))
+            (refresh win)
+            (maybe-sleep 2)
+            (endwin)
+            (newline)
+            (format #t "getnstr: ~s" s1)
+            (newline)
+            (string=? s1 "ᴁ⅕¶")))))))
+;; This should work, but some pre-2009 ncurses libraries
+;; ncurses library can't ungetch non-ASCII chars
