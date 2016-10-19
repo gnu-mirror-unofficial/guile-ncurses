@@ -21,10 +21,14 @@
              (srfi srfi-1))
 
 (automake-test
- (let* ((mainwin (initscr))
-	(win (newwin 10 10 1 1))
-	(ret (resizeterm -1 -1)))
-   (endwin)
-   (newline)
-   (format #t "resizeterm: (~s, ~s) ~s~%" (lines) (cols) ret)
-   (not ret)))
+ (if (or (string-contains (ncurses-version) "5.7")
+	 (string-contains (ncurses-version) "5.8")
+	 (string-contains (ncurses-version) "5.9"))
+     'skipped
+     (let* ((mainwin (initscr))
+	    (win (newwin 10 10 1 1))
+	    (ret (resizeterm -1 -1)))
+       (endwin)
+       (newline)
+       (format #t "resizeterm: (~s, ~s) ~s~%" (lines) (cols) ret)
+       (not ret))))
