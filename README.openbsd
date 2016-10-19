@@ -1,0 +1,26 @@
+A README file for using GNU Guile-Ncurses on OpenBSD
+
+  Copyright (C) 2016 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+This version Guile-ncurses was tested on OpenBSD 5.9 i386, which was
+already one release behind current OpenBSD at the time of the release.
+
+I used the version of guile2 in the packages collection. I didn't use
+the default guile in the packages collection because it was version
+1.8.  All the other required libraries (libunistring, ncurses) also
+came from the packages collection.
+
+Because the guile2 in the packages collection installs its libraries
+and headers in /usr/local, I had to invoke the configure script like
+so...
+
+  ./configure LDFLAGS="-L/usr/local/lib" CPPFLAGS=-I/usr/local/include
+
+Aside from that, installation is standard.
+
+Note that the default ncurses version in OpenBSD is 5.7, which has
+many old bugs.
