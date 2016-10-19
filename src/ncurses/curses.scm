@@ -284,7 +284,6 @@
             getch
             getcurx
             getcury
-            getdelay
             getmaxx
             getmaxy
             getmaxyx
@@ -2665,4 +2664,5 @@ by the given window."
 (if (defined? 'BUTTON5_CLICKED) (export BUTTON5_CLICKED))
 (if (defined? 'BUTTON5_DOUBLE_CLICKED) (export BUTTON5_DOUBLE_CLICKED))
 (if (defined? 'BUTTON5_TRIPLE_CLICKED) (export BUTTON5_TRIPLE_CLICKED))
-(if (defined? '%has-mouse?) (export has-mouse?))
+(if (defined? '%has-mouse?)  (export has-mouse?))
+(if (defined? '%getdelay)    (export getdelay))

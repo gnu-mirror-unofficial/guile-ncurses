@@ -63,7 +63,9 @@ GUCU_API SCM gucu_filter (void);
 GUCU_API SCM gucu_flash (void);
 GUCU_API SCM gucu_flushinp (void);
 GUCU_API SCM gucu_getbkgd (SCM arg1);
+#if HAVE_WGETDELAY
 GUCU_API SCM gucu_getdelay (SCM win);
+#endif
 GUCU_API SCM gucu_halfdelay (SCM arg1);
 GUCU_API SCM gucu_has_colors_p (void);
 GUCU_API SCM gucu_has_ic_p (void);

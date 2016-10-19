@@ -378,7 +378,7 @@ AC_CHECK_SIZEOF([wint_t], ,[#include <wchar.h>])
 AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname grantpt unlockpt tcgetsid wcwidth])
 
 # Check for ncurses library functions
-AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_w setupterm has_mouse])
+AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_w setupterm wgetdelay has_mouse])
 
 # Later something should be done with this
 # AC_FUNC_MALLOC

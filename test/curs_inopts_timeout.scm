@@ -23,12 +23,14 @@
 ;; so we just check for its existence.
 
 (automake-test
- (let ((win (initscr)))
-   (clear win)
-   (qiflush!)
-   (timeout! win 2)
-   (let ((t (getdelay win)))
-     (endwin)
-     (newline)
-     (format #t "getdelay: ~s~%" t)
-     (equal? t 2))))
+ (if (not (defined? 'getdelay))
+     'skipped
+     (let ((win (initscr)))
+       (clear win)
+       (qiflush!)
+       (timeout! win 2)
+       (let ((t (getdelay win)))
+	 (endwin)
+	 (newline)
+	 (format #t "getdelay: ~s~%" t)
+	 (equal? t 2)))))

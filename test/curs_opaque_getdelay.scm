@@ -21,11 +21,13 @@
              (srfi srfi-1))
 
 (automake-test
- (let* ((win (initscr)))
-   (timeout! win 2)
-   (let ((ret (getdelay win)))
-     (endwin)
-     (newline)
-     (format #t "getdelay: ~s (expected 2)" ret)
-     (newline)
-     (= ret 2))))
+ (if (not (defined? 'getdelay))
+     'skipped
+     (let* ((win (initscr)))
+       (timeout! win 2)
+       (let ((ret (getdelay win)))
+	 (endwin)
+	 (newline)
+	 (format #t "getdelay: ~s (expected 2)" ret)
+	 (newline)
+	 (= ret 2)))))

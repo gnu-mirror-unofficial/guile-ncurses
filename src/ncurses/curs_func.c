@@ -624,6 +624,7 @@ gucu_getbkgd (SCM win)
 }
 
 /* Return the delay timeout as set in timeout! */
+#if HAVE_WGETDELAY
 SCM
 gucu_getdelay (SCM win)
 {
@@ -632,6 +633,7 @@ gucu_getdelay (SCM win)
   c_win = _scm_to_window (win);
   return scm_from_int (wgetdelay (c_win));
 }
+#endif
 
 /* Set halfdelay. */
 SCM
@@ -2438,7 +2440,9 @@ gucu_init_function ()
   scm_c_define_gsubr ("%flash", 0, 0, 0, gucu_flash);
   scm_c_define_gsubr ("flushinp", 0, 0, 0, gucu_flushinp);
   scm_c_define_gsubr ("%getbkgd", 1, 0, 0, gucu_getbkgd);
+#if HAVE_WGETDELAY
   scm_c_define_gsubr ("%getdelay", 1, 0, 0, gucu_getdelay);
+#endif
   scm_c_define_gsubr ("%halfdelay!", 1, 0, 0, gucu_halfdelay);
   scm_c_define_gsubr ("%has-colors?", 0, 0, 0, gucu_has_colors_p);
   scm_c_define_gsubr ("%has-ic?", 0, 0, 0, gucu_has_ic_p);

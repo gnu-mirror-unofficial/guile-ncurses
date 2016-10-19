@@ -5099,6 +5099,8 @@ milliseconds (where @var{delay} is positive).
 The @code{getdelay} procedure returns the timeout delay as set by
 @code{timeout!}.
 
+This procedure may not be present if the underlying version of
+ncurses does not support it.
 @end deffn
 
 
