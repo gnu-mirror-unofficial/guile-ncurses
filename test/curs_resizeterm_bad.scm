@@ -21,9 +21,9 @@
              (srfi srfi-1))
 
 (automake-test
- (if (or (string-contains (ncurses-version) "5.7")
-	 (string-contains (ncurses-version) "5.8")
-	 (string-contains (ncurses-version) "5.9"))
+ (if (or (string-contains (curses-version) "5.7")
+	 (string-contains (curses-version) "5.8")
+	 (string-contains (curses-version) "5.9"))
      'skipped
      (let* ((mainwin (initscr))
 	    (win (newwin 10 10 1 1))
