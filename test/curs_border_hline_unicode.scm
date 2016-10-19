@@ -20,18 +20,20 @@
 
 (setlocale LC_ALL "")
 (automake-test
- (let ((win (initscr)))
-   (clear win)
-   (move win 1 1)
-   (hline win (normal #\─) 2)    ; U+2500
-   (refresh win)
-   (maybe-sleep 2)
-   (let ((x1  (inch win #:y 1 #:x 1))
-	 (x2  (inch win #:y 1 #:x 2)))
-     (endwin)
-     (newline)
-     (format #t "at (1,1) ~s~%" x1)
-     (format #t "at (2,1) ~s~%" x2)
-     (and
-      (xchar-equal? x1 (normal #\─))
-      (xchar-equal? x2 (normal #\─))))))
+ (with-utf8-locale*
+  (lambda ()
+    (let ((win (initscr)))
+      (clear win)
+      (move win 1 1)
+      (hline win (normal #\─) 2)    ; U+2500
+      (refresh win)
+      (maybe-sleep 2)
+      (let ((x1  (inch win #:y 1 #:x 1))
+	    (x2  (inch win #:y 1 #:x 2)))
+	(endwin)
+	(newline)
+	(format #t "at (1,1) ~s~%" x1)
+	(format #t "at (2,1) ~s~%" x2)
+	(and
+	 (xchar-equal? x1 (normal #\─))
+	 (xchar-equal? x2 (normal #\─))))))))

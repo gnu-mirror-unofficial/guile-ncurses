@@ -24,7 +24,8 @@
 	    EXIT_HARD_ERROR
 	    automake-test
 	    maybe-sleep
-	    with-latin1-locale*))
+	    with-latin1-locale*
+	    with-utf8-locale*))
 
 (define EXIT_SUCCESS 0)
 (define EXIT_FAILURE 1)
@@ -108,6 +109,22 @@
           (lambda (key . args)
             (loop (cdr locales)))))))
 
+;;; Try out several UTF8 locales and run THUNK under the one that works
+;;; (if any).
+(define (with-utf8-locale* thunk)
+  (define %locales
+    (append-map (lambda (name)
+                  (list (string-append name ".utf8")
+                        (string-append name ".UTF-8")
+                        (string-append name ".utf-8")
+                        (string-append name ".UTF8")
+			))
+                '("ca_ES" "da_DK" "de_DE" "es_ES" "es_MX" "en_GB" "en_US"
+                  "fr_FR" "pt_PT" "nl_NL" "sv_SE")))
+
+  (let loop ((locales %locales))
+    (if (null? locales)
+        'skipped
         (catch 'unresolved
           (lambda ()
             (with-locale* (car locales) thunk))
