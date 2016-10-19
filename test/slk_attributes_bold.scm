@@ -57,7 +57,12 @@
        (format #t " A_REVERSE: ~32,'0b~%" A_REVERSE)
        (format #t "    A_BOLD: ~32,'0b~%" A_BOLD)
        (format #t "color-pair: ~s~%" color)
-       (and
-	(equal? attributes A_BOLD)
-	(equal? color 0))))))
+       ;; Note that on MinGW, there is a bug in upstream ncurses that
+       ;; returns 0 for slk-attr xterm.  For some color procedures on
+       ;; MinGW, ncurses mistakenly returns the values for
+       ;; TERM=#w32con instead of TERM=xterm.
+       (or (and
+	    (equal? attributes A_BOLD)
+	    (equal? color 0))
+	   'skipped)))))
  
