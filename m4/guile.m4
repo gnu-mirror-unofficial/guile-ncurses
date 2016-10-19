@@ -198,7 +198,7 @@ AC_DEFUN([GUILE_SITE_DIR],
 # The variables are marked for substitution, as by @code{AC_SUBST}.
 #
 AC_DEFUN([GUILE_PROGS],
- [AC_PATH_PROG(GUILE,guile)
+ [AC_PATH_PROGS(GUILE,[guile2 guile])
   _guile_required_version="m4_default([$1], [$GUILE_EFFECTIVE_VERSION])"
   if test -z "$_guile_required_version"; then
     _guile_required_version=2.0
@@ -242,15 +242,15 @@ AC_DEFUN([GUILE_PROGS],
   fi
   AC_MSG_RESULT([$_guile_prog_version])
 
-  AC_PATH_PROG(GUILD,guild)
+  AC_PATH_PROGS(GUILD,[guild2 guile])
   AC_SUBST(GUILD)
 
-  AC_PATH_PROG(GUILE_CONFIG,guile-config)
+  AC_PATH_PROGS(GUILE_CONFIG,[guile2-config guile-config])
   AC_SUBST(GUILE_CONFIG)
   if test -n "$GUILD"; then
     GUILE_TOOLS=$GUILD
   else
-    AC_PATH_PROG(GUILE_TOOLS,guile-tools)
+    AC_PATH_PROGS(GUILE_TOOLS,[guile2-tools guile-tools])
   fi
   AC_SUBST(GUILE_TOOLS)
  ])
