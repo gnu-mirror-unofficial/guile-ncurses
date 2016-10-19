@@ -49,9 +49,6 @@ AM_PROG_AR
 GUILE_PROGS
 GUILE_FLAGS
 
-AC_PATH_PROG([GUILD],[guild])
-AC_SUBST([GUILD])
-
 AC_MSG_CHECKING([the Guile effective version])
 guile_effective_version="`$GUILE -c '(display (effective-version))'`"
 AC_MSG_RESULT([$guile_effective_version])

@@ -18,9 +18,6 @@
 /inttypes-pri.m4
 /inttypes_h.m4
 /lcmessage.m4
-/lib-ld.m4
-/lib-link.m4
-/lib-prefix.m4
 /lock.m4
 /longlong.m4
 /ltoptions.m4

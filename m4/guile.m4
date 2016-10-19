@@ -242,7 +242,7 @@ AC_DEFUN([GUILE_PROGS],
   fi
   AC_MSG_RESULT([$_guile_prog_version])
 
-  AC_PATH_PROGS(GUILD,[guild2 guile])
+  AC_PATH_PROGS(GUILD,[guild2 guild])
   AC_SUBST(GUILD)
 
   AC_PATH_PROGS(GUILE_CONFIG,[guile2-config guile-config])

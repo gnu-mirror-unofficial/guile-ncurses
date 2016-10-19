@@ -1,1 +1,2 @@
-# empty
+EXTRA_DIST = \
+  config.rpath
