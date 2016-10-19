@@ -689,11 +689,13 @@ gucu_has_key_p (SCM key)
 }
 
 /* Return #t if the mouse driver has been successfully initialized. */
+#if HAVE_HAS_MOUSE
 SCM
 gucu_has_mouse_p (void)
 {
   return (scm_from_bool (has_mouse ()));
 }
+#endif
 
 /* When true, try to use a terminal's hardware to clear characters */
 SCM
@@ -1514,7 +1516,7 @@ gucu_resize (SCM win, SCM lines, SCM columns)
   int c_columns, c_lines;
   WINDOW *c_win;
   int ret;
-  
+
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "resize");
   SCM_ASSERT (scm_is_integer (lines), lines, SCM_ARG2, "resize");
   SCM_ASSERT (scm_is_integer (columns), columns, SCM_ARG3, "resize");
@@ -1728,7 +1730,7 @@ gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x, SCM name
   ret = subwin (c_orig, c_nlines, c_ncols, c_begin_y, c_begin_x);
   if (ret == NULL)
     return SCM_BOOL_F;
-  
+
   if (SCM_UNBNDP (name))
     return _scm_from_window_full (orig, SCM_BOOL_F, ret);
 
@@ -2442,7 +2444,9 @@ gucu_init_function ()
   scm_c_define_gsubr ("%has-ic?", 0, 0, 0, gucu_has_ic_p);
   scm_c_define_gsubr ("%has-il?", 0, 0, 0, gucu_has_il_p);
   scm_c_define_gsubr ("%has-key?", 1, 0, 0, gucu_has_key_p);
+#if HAVE_HAS_MOUSE
   scm_c_define_gsubr ("%has-mouse?", 0, 0, 0, gucu_has_mouse_p);
+#endif
   scm_c_define_gsubr ("%idcok!", 2, 0, 0, gucu_idcok_x);
   scm_c_define_gsubr ("%idlok!", 2, 0, 0, gucu_idlok_x);
   scm_c_define_gsubr ("%immedok!", 2, 0, 0, gucu_immedok_x);

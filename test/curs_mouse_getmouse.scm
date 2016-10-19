@@ -23,21 +23,24 @@
 ;; xterm can do mouse events
 
 (automake-test
- (let ((win (initscr)))
-   (mousemask ALL_MOUSE_EVENTS)
-   (clear win)
-   (refresh win)
-   (if (has-mouse?)
-       (begin
-	 (ungetmouse (list 0 1 2 0 BUTTON1_PRESSED))
-	 (let* ((c (getch win))
-		(c-is-key-mouse (eqv? c KEY_MOUSE))
-		(mevent (getmouse)))
-	   (endwin)
-	   (newline)
-	   (format #t "getch: ~S~%" c)
-	   (format #t "KEY_MOUSE: ~S~%" KEY_MOUSE)
-	   (format #t "mevent: ~S~%" mevent)
-	   (list= eqv? (list 0 1 2 0 BUTTON1_PRESSED) mevent)))
-       ;; else
-       #f)))
+ (if (not (defined? 'has-mouse?))
+     'skipped
+     (let ((win (initscr)))
+       (mousemask ALL_MOUSE_EVENTS)
+       (clear win)
+       (refresh win)
+       (if (has-mouse?)
+	   (begin
+	     (ungetmouse (list 0 1 2 0 BUTTON1_PRESSED))
+	     (let* ((c (getch win))
+		    (c-is-key-mouse (eqv? c KEY_MOUSE))
+		    (mevent (getmouse)))
+	       (endwin)
+	       (newline)
+	       (format #t "getch: ~S~%" c)
+	       (format #t "KEY_MOUSE: ~S~%" KEY_MOUSE)
+	       (format #t "mevent: ~S~%" mevent)
+	       (list= eqv? (list 0 1 2 0 BUTTON1_PRESSED) mevent)))
+	   ;; else
+	   #f))))
+ 

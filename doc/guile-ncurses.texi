@@ -5271,6 +5271,9 @@ To make mouse events visible, use the @code{mousemask} function.
 
 @deffn Procedure has-mouse?
 Returns @code{#t} if the mouse driver has been successfully installed.
+
+This procedure is only present if the underlying version of ncurses
+supports it.
 @end deffn
 
 @deffn Procedure mousemask mask

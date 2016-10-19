@@ -69,7 +69,9 @@ GUCU_API SCM gucu_has_colors_p (void);
 GUCU_API SCM gucu_has_ic_p (void);
 GUCU_API SCM gucu_has_il_p (void);
 GUCU_API SCM gucu_has_key_p (SCM key);
+#if HAVE_HAS_MOUSE
 GUCU_API SCM gucu_has_mouse_p (void);
+#endif
 GUCU_API SCM gucu_idcok_x (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_idlok_x (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_immedok_x (SCM arg1, SCM arg2);

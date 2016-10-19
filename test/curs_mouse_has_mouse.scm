@@ -23,12 +23,14 @@
 ;; xterm can do mouse events
 
 (automake-test
- (let ((win (initscr)))
-   (mousemask ALL_MOUSE_EVENTS)
-   (clear win)
-   (refresh win)
-   (let ((ret (has-mouse?)))
-     (endwin)
-     (newline)
-     (format #t "has-mouse? ~s~%" ret)
-     ret)))
+ (if (not (defined? 'has-mouse?))
+     'skipped
+     (let ((win (initscr)))
+       (mousemask ALL_MOUSE_EVENTS)
+       (clear win)
+       (refresh win)
+       (let ((ret (has-mouse?)))
+	 (endwin)
+	 (newline)
+	 (format #t "has-mouse? ~s~%" ret)
+	 ret))))

@@ -303,7 +303,6 @@
             has-ic?
             has-il?
             has-key?
-            has-mouse?
             hline
             idcok!
             idlok!
@@ -2666,4 +2665,4 @@ by the given window."
 (if (defined? 'BUTTON5_CLICKED) (export BUTTON5_CLICKED))
 (if (defined? 'BUTTON5_DOUBLE_CLICKED) (export BUTTON5_DOUBLE_CLICKED))
 (if (defined? 'BUTTON5_TRIPLE_CLICKED) (export BUTTON5_TRIPLE_CLICKED))
-
+(if (defined? '%has-mouse?) (export has-mouse?))
