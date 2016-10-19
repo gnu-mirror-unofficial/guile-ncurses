@@ -101,7 +101,13 @@
 
   (let loop ((locales %locales))
     (if (null? locales)
-        (throw 'skipped)
+        'skipped
+        (catch 'unresolved
+          (lambda ()
+            (with-locale* (car locales) thunk))
+          (lambda (key . args)
+            (loop (cdr locales)))))))
+
         (catch 'unresolved
           (lambda ()
             (with-locale* (car locales) thunk))
