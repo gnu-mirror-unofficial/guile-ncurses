@@ -29,6 +29,6 @@
      (format #t "is-subwin? ~s~%" (is-subwin? spad))
      (format #t "is-pad? ~s" (is-pad? pad))
      (newline)
-     (if (not (and %is-subwin-broken %is-subpad-broken))
+     (if (not (and %is-subwin-broken %is-pad-broken))
 	 ret
 	 'skipped))))
