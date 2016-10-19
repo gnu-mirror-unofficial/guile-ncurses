@@ -19,24 +19,20 @@
 (use-modules (test automake-test-lib)
              (ncurses curses))
 
-(setlocale LC_ALL "")
+(setlocale LC_ALL "C")
 (automake-test
- (begin
-   (if (not (fluid-ref %default-port-encoding))
-       (throw 'skipped))
-   (if (not (string-contains-ci (fluid-ref %default-port-encoding) "utf"))
-       (throw 'skipped))
-   
-   (let ((win (initscr)))
-     (cbreak!)
-     (echo!)
-     (ungetch #\ż) ; LATIN SMALL LETTER Z WITH DOT ABOVE
-     (clear win)
-     (refresh win)
-     (let ((x1 (getch win)))
-       (endwin)
-       (newline)
-       (format #t "getch: ~s~%" x1)
-       (equal? x1 #\ż)))))
- ;; This should work, but some pre-2009 ncurses libraries
- ;; ncurses library can't ungetch non-ASCII chars
+ (with-utf8-locale*
+  (lambda ()
+    (let ((win (initscr)))
+      (cbreak!)
+      (echo!)
+      (ungetch #\ż) ; LATIN SMALL LETTER Z WITH DOT ABOVE
+      (clear win)
+      (refresh win)
+      (let ((x1 (getch win)))
+	(endwin)
+	(newline)
+	(format #t "getch: ~s~%" x1)
+	(equal? x1 #\ż))))))
+;; This should work, but some pre-2009 ncurses libraries
+;; ncurses library can't ungetch non-ASCII chars
