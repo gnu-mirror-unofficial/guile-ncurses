@@ -39,10 +39,12 @@
      (unpost-menu m)
      (endwin)
      (newline)
+     ;; Should be 1 for new-item
      (format #t "recount item #1 before menu: ~s~%" rc1)
+     ;; Could be anything between 2 and 7
      (format #t "refcount item #1 after freeing get-current-item: ~s~%" rc2)
      (and
       (= rc1 1)
-      (= rc2 2)))))
+      (and (>= rc2 2) (<= rc2 7))))))
 
    
