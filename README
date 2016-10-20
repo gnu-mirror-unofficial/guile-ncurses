@@ -45,18 +45,60 @@ This distribution has the following subdirectories:
 
 INSTALLATION
 
-For a basic explanation of the installation of the package, see the
-INSTALL file.
+basically, to build and install this on GNU/Linux or MinGW do
 
-*important* If you want to use the narrow ncurses library with only
-8-bit character support, you need to run configure using the
-"--without-ncursesw" option.
+  ./configure --with-guile-install-directories
+  make
+  make install
 
-*important* You probably want to call configure with the
-"--with-guilesitedir" option so that this package is installed in
-Guile's default path.  But, if you don't know where your Guile site
-directory is, run "configure" without the option, and it will give you
-a suggestion.
+On BSD-like systems it is more like
+
+  AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.15 \
+   ./configure --with-guile-install-directories \
+   CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib
+  make
+  make install
+
+For a basic explanation of the installation of any GNU-like package,
+see the INSTALL file.
+
+The INSTALL files says, in brief, that a supplied program called
+"configure" needs to be run before "make".  This configure program
+runs many tests of the compiler and the libraries to determine how to
+build the program.
+
+Most of the flags and options in the configure program are generic to
+all configure scripts.  All those options like "--disable-rpath" or
+"--enable-fast-install"... to be honest I've never used them, and I
+don't really know what they do.
+
+But there are some configure flags that are unique to Guile-Ncurses
+that you need to get correct.
+
+--with-guile-install-directories: this flag will make sure that the
+       libraries and scheme files for this program get installed in
+       the proper locations.  You should use this always.
+
+--without-ncursesw: this flag will build a version of Guile-Ncurses
+       that is for 8-bit locales only, such as ASCII or Latin1.
+       Normally, the default is to build the UTF-8 version. You
+       probably shouldn't use this flag under normal circumstances.
+
+--disable-termios: this flag will prevent the low-level termios
+       library functions from being included in the library. These
+       functions are rather obscure and are not necessary for writing
+       ncurses applications.
+
+--enable-demo-install: there are a couple of sample programs
+       "posix-explorer" and "ncurses-keyboard-test".  If you enable
+       this configure option, they will be installed.  You don't
+       really need these demos to be installed.
+
+--enable-warnings: if you define this, the compiler will display more
+       warnings.  This won't have an effect on how the library
+       is actually built.
+
+
 
 For an explanation of the copying restrictions for this package, see
 COPYING.LESSER.

@@ -7,7 +7,10 @@ The NEWS file for GNU Guile-NCurses
   notice and this notice are preserved.
 
 Release 2.0
-- guile 2.0 is expected. guile 1.8 is not supported.
+- guile 2.0 is expected. guile 1.8 is not tested.
+- the configure flag --with-guile-install-directories is available
+  to install the libraries and scheme files into directories that
+  Guile expects, instead of in /usr/local/lib/guile-ncurses, etc.
 - the "wide" version of the ncurses libraries is now used by default.
   The configure option '--without-ncursesw' can be used to explicitly
   compile with the 8-bit-only "narrow" ncurses libraries.
