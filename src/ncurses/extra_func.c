@@ -407,17 +407,6 @@ gucu_termios_lflag (SCM s_termios)
 }
 
 SCM
-gucu_termios_line (SCM s_termios)
-{
-  struct termios *c_termios;
-
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
-              "termios-line");
-  c_termios = _scm_to_termios (s_termios);
-  return scm_from_uchar (c_termios->c_line);
-}
-
-SCM
 gucu_termios_cc (SCM s_termios, SCM s_mode)
 {
   int c_mode;
@@ -655,7 +644,6 @@ gucu_extra_init_function ()
   scm_c_define_gsubr ("termios-oflag", 1, 0, 0, gucu_termios_oflag);
   scm_c_define_gsubr ("termios-cflag", 1, 0, 0, gucu_termios_cflag);
   scm_c_define_gsubr ("termios-lflag", 1, 0, 0, gucu_termios_lflag);
-  scm_c_define_gsubr ("termios-line", 1, 0, 0, gucu_termios_line);
   scm_c_define_gsubr ("termios-cc", 2, 0, 0, gucu_termios_cc);
   scm_c_define_gsubr ("termios-iflag-set!", 2, 0, 0, gucu_termios_iflag_set_x);
   scm_c_define_gsubr ("termios-oflag-set!", 2, 0, 0, gucu_termios_oflag_set_x);

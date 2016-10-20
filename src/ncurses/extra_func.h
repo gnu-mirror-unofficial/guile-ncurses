@@ -51,7 +51,6 @@ GUCU_API SCM gucu_termios_iflag (SCM termios);
 GUCU_API SCM gucu_termios_oflag (SCM termios);
 GUCU_API SCM gucu_termios_cflag (SCM termios);
 GUCU_API SCM gucu_termios_lflag (SCM termios);
-GUCU_API SCM gucu_termios_line (SCM termios);
 GUCU_API SCM gucu_termios_cc (SCM termios, SCM c);
 GUCU_API SCM gucu_termios_iflag_set_x (SCM termios, SCM val);
 GUCU_API SCM gucu_termios_oflag_set_x (SCM termios, SCM val);
