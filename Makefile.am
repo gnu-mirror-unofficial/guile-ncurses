@@ -2,7 +2,7 @@
 
 # Makefile for the top-level directory of GNU Guile-Ncurses.
 #
-# Copyright 2009, 2010 Free Software Foundation, Inc.
+# Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,6 @@
 ACLOCAL_AMFLAGS = -I m4 --install
 
 # Additional files to distribute
-EXTRA_DIST = README.cygwin README.mingw
+EXTRA_DIST = README.cygwin README.mingw README.openbsd
 
 SUBDIRS = src/ncurses doc m4 build_aux tools test
