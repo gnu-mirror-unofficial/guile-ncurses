@@ -6,6 +6,10 @@ Additional contributors to GNU Guile-Ncurses
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+Release 2.0
+
+Thanks to John Darrington for suggestions, patches, and debug help.
+
 Release 1.7
 
 Thanks to John Darrington, and Ludovic Courtès for suggestions,

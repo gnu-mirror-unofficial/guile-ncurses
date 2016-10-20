@@ -6,6 +6,31 @@ The NEWS file for GNU Guile-NCurses
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+Release 2.0
+- guile 2.0 is expected. guile 1.8 is not supported.
+- the "wide" version of the ncurses libraries is now used by default.
+  The configure option '--without-ncursesw' can be used to explicitly
+  compile with the 8-bit-only "narrow" ncurses libraries.
+- changes to the base library
+  - new procedures 'use-extended-names', 'getdelay'
+  - new panel iterator functions 'panels-map' and 'panels-for-each'
+  - new panel equivalence function 'panel=?'
+  - new window function 'resize'
+  - new key/mouse constants KEY_EVENT,
+    NCURSES_MOUSE_VERSION, the BUTTON5 constants
+  - for systems with no wchar_t conversions availble in libunistring,
+    such as FreeBSD, character conversions assume that wchar_t is
+    UTF-32
+- changes to the menu library
+  - new constant O_MOUSE_EVENT
+- changest to the form library
+  - new procedure 'current-field'
+- changes to the termios library
+  - it is now built by default
+  - the API is completely re-written, and incompatible with the
+    previous version
+- the test suite has be reworked. tests are more specific.
+
 Release 1.7
 - the previously undocumented (ncurses curses) procedure 'window?' is
   now public and documented
