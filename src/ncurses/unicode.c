@@ -104,8 +104,10 @@ wchar_to_codepoint (wchar_t c, uint32_t * p_codepoint)
 				    sizeof (wchar_t), NULL, NULL, &u32_len);
   if (u32_str == NULL)
     {
-      *p_codepoint = 0;
-      return 0;
+      /* If WCHAR_T conversion fails, chances are that this setup
+	 has WCHAR_T == UCS4, so just assume that it true.  */
+      *p_codepoint = c;
+      return 1;
     }
   if (u32_len != 1)
     {
@@ -203,8 +205,10 @@ codepoint_to_wchar (uint32_t codepoint, wchar_t * p_c)
 						1, NULL, NULL, &wchar_len);
   if (wchar_str == NULL)
     {
-      *p_c = 0;
-      return 0;
+      /* If WCHAR_T conversion fails, chances are that this setup
+	 has WCHAR_T == UCS4, so just assume that is true.  */
+      *p_c = codepoint;
+      return 1;
     }
   if (wchar_len != SIZEOF_WCHAR_T)
     {
