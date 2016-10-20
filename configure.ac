@@ -32,7 +32,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 ##################
 # Set the library libtool version constant
-LIBGUILE_NCURSES_INTERFACE="10:0:0"
+LIBGUILE_NCURSES_INTERFACE="11:0:0"
 AC_SUBST(LIBGUILE_NCURSES_INTERFACE)
 
 ##################
