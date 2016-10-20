@@ -14,27 +14,33 @@ ncurses library.
 
 This library can be found at http://www.gnu.org/software/guile-ncurses/
 
-It can be compiled either using 8-bit characters or Unicode characters.
-Unicode characters are the default, but, it requires Guile 2.0.x,
-and a version of Ncurses compiled with wide characters enabled.
+It provides bindings for most of the ncurses ecosystem. The base
+ncurses library is for creating simple text applications. The
+panels library adds the idea of overlapping panels.  The menu library
+add widgets for selecting from a list.  The forms library adds widgets
+for creating more complex text entry.
 
-It probably requires a version of Guile >= 2.0.11 and a version of
-Ncurses >= 6.0. Earlier releases of Guile or Ncurses have not been tested.
+It also provides some bindings for the low-level termios library, which
+is for manipulating the characteristics of terminal interfaces.
 
-It would likely take little modification to work on Guile 1.8.8, but,
-support for Guile 1.8 is not longer being maintained.
+Depending on how it is compiled, Guile-Ncurses will use either the
+"narrow" versions of the ncurses libraries, which only handles 8-bit
+locales like ASCII or Latin1, or the "wide" version of the ncurses
+libraries, which can handle UTF-8 locales.
 
-It builds on version 24 of the Fedora distribution of GNU/Linux operating
-systems, and will likely build on most recent distributions of GNU/Linux.
+A version of Guile >= 2.0.11 and a version of Ncurses >= 6.0 is
+preferred. Earlier releases of Guile or Ncurses have not been tested.
 
-For more information on the current state of the build on Cygwin or
-MinGW, see README.cygwin or README.mingw respectively.
+For more information on the current state of the build on Cygwin,
+MinGW or Openbsd, see README.cygwin or README.mingw or README.openbsd
+respectively.
 
 This distribution has the following subdirectories:
 - src: the source code for the library
 - test: test scripts to verify that the library functions correctly
 - doc: documentation for the library source to generate it
 - build_aux: files used by the configuration and building programs
+- m4: more files used by the configuration process
 - tools: some executable programs that might be useful
 
 INSTALLATION
