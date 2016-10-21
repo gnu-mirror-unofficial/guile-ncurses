@@ -33,7 +33,7 @@ libguile_ncurses_la_SOURCES = compat.c compat.h curs_const.c		\
 	type.c type.h                                                   \
 	unicode.c unicode.h visibility.h
 
-libguile_ncurses_la_CPPFLAGS = -I $(top_builddir)/lib $(GUILE_CFLAGS)
+libguile_ncurses_la_CPPFLAGS = $(GUILE_CFLAGS)
 
 if WARN
 libguile_ncurses_la_CPPFLAGS += -Wall -Wextra -Wstrict-prototypes	\
@@ -61,5 +61,23 @@ endif
 pkgguilesitedir = $(guilesitedir)/ncurses
 dist_pkgguilesite_DATA = curses.scm menu.scm panel.scm form.scm	\
 	eti.scm slk.scm extra.scm
+
+### compiled scheme files ###
+
+pkgguileobjectdir = $(guileobjectdir)/ncurses
+pkgguileobject_DATA = $(dist_pkgguilesite_DATA:%.scm=%.go)
+
+$(pkgguileobject_DATA): libguile-ncurses.la
+
+GUILEC_FLAGS = -Warity-mismatch -Wformat -Wunused-variable
+
+.scm.go:
+	GUILE_AUTO_COMPILE=0 \
+	LTDL_LIBRARY_PATH=$(abs_builddir)/.libs \
+	$(GUILD) compile --target="$(host)" $(GUILEC_FLAGS) \
+	 -L "$(abs_builddir)/.." -L "$(abs_srcdir)/.." -o "$@" "$<"
+
 ETAGS_ARGS = curses.scm menu.scm panel.scm form.scm eti.scm slk.scm	\
 	extra.scm
+
+CLEANFILES = $(pkgguileobject_DATA)
