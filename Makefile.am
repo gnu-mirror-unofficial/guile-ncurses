@@ -19,6 +19,7 @@
 # <http://www.gnu.org/licenses/>.
 
 ACLOCAL_AMFLAGS = -I m4 --install
+AM_DISTCHECK_CONFIGURE_FLAGS = --with-gnu-filesystem-hierarchy
 
 # Additional files to distribute
 EXTRA_DIST = README.cygwin README.mingw README.openbsd

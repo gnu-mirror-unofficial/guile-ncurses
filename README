@@ -47,15 +47,13 @@ INSTALLATION
 
 basically, to build and install this on GNU/Linux or MinGW do
 
-  ./configure --with-guile-install-directories
+  ./configure
   make
   make install
 
 On BSD-like systems it is more like
 
-  AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.15 \
-   ./configure --with-guile-install-directories \
-   CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib
+  ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib
   make
   make install
 
@@ -75,9 +73,18 @@ don't really know what they do.
 But there are some configure flags that are unique to Guile-Ncurses
 that you need to get correct.
 
---with-guile-install-directories: this flag will make sure that the
+--with-gnu-filesystem-hierarchy: this flag will make sure that the
        libraries and scheme files for this program get installed in
-       the proper locations.  You should use this always.
+       the proper locations according to the GNU filesystem hierarchy.
+       In practice, this means that they will usually get install under
+       /usr/local.
+
+       The problem is that Guile is usually compiled to only search
+       for libraries under the /usr directory, so following the GNU
+       filesystem hierarchy usually results in an install that doesn't
+       work out of the box.  It requires setting environmental
+       variables such as GNU_LOAD_PATH.  Thus, you probably shouldn't
+       set the flag under normal circumstances.
 
 --without-ncursesw: this flag will build a version of Guile-Ncurses
        that is for 8-bit locales only, such as ASCII or Latin1.

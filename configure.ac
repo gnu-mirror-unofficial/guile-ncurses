@@ -57,32 +57,12 @@ AC_MSG_RESULT([$guile_effective_version])
 # Guile has three directories that don't follow the GNU Filesystem
 # Heirarchy Standards.  If one follows the GNU FHS, files get installed
 # in directories in which Guile does not search for them by default.
-AC_ARG_WITH([guile-install-directories],
-            [AS_HELP_STRING([--with-guile-install-directories],
-                            [Don't follow GNU Filesystem Heirarchy when installing.  Instead install to the directories that Guile expects.])])
+AC_ARG_WITH([gnu-filesystem-hierarchy],
+            [AS_HELP_STRING([--with-gnu-filesystem-hierarchy],
+                            [Strictly follow GNU Filesystem Heirarchy when installing, instead of querying Guile to discover the install directories that it expects.])])
 
-case "x$with_guile_install_directories" in
+case "x$with_gnu_filesystem_hierarchy" in
      xyes)
-       # Get the installation directories from Guile
-       # Installed .scm scheme libraries go here
-       AC_MSG_CHECKING([Guile site directory])
-       guilesitedir="`$PKG_CONFIG guile-$guile_effective_version --variable=sitedir`"
-       AC_MSG_RESULT([$guilesitedir])
-       AC_SUBST(guilesitedir)
-
-       # Compiled libguile-*.so extension libraries go here
-       AC_MSG_CHECKING([Guile extension directory])
-       guileextensiondir="`$PKG_CONFIG guile-$guile_effective_version --variable=extensiondir`"
-       AC_MSG_RESULT([$guileextensiondir])
-       AC_SUBST(guileextensiondir)
-
-       # Compiled .go scheme libraries go here
-       AC_MSG_CHECKING([Guile object directory])
-       guileobjectdir="`$GUILE -c '(display (cadr %load-compiled-path))'`"
-       AC_MSG_RESULT([$guileobjectdir])
-       AC_SUBST(guileobjectdir)
-       ;;
-     *)
        # Follow the GNU Filesystem Heirarchy Standard correctly
        # Installed .scm scheme libraries go here
        AC_MSG_CHECKING([Guile site directory])
@@ -99,6 +79,26 @@ case "x$with_guile_install_directories" in
        # Compiled .go scheme libraries go here
        AC_MSG_CHECKING([Guile object directory])
        guileobjectdir="$libdir/guile/$guile_effective_version/site-ccache"
+       AC_MSG_RESULT([$guileobjectdir])
+       AC_SUBST(guileobjectdir)
+       ;;
+     *)
+       # Get the installation directories from Guile
+       # Installed .scm scheme libraries go here
+       AC_MSG_CHECKING([Guile site directory])
+       guilesitedir="`$PKG_CONFIG guile-$guile_effective_version --variable=sitedir`"
+       AC_MSG_RESULT([$guilesitedir])
+       AC_SUBST(guilesitedir)
+
+       # Compiled libguile-*.so extension libraries go here
+       AC_MSG_CHECKING([Guile extension directory])
+       guileextensiondir="`$PKG_CONFIG guile-$guile_effective_version --variable=extensiondir`"
+       AC_MSG_RESULT([$guileextensiondir])
+       AC_SUBST(guileextensiondir)
+
+       # Compiled .go scheme libraries go here
+       AC_MSG_CHECKING([Guile object directory])
+       guileobjectdir="`$GUILE -c '(display (cadr %load-compiled-path))'`"
        AC_MSG_RESULT([$guileobjectdir])
        AC_SUBST(guileobjectdir)
        ;;
@@ -461,15 +461,21 @@ AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([tools/uninstalled-env], [chmod +x tools/uninstalled-env])
 AC_OUTPUT
 
-if test "$with_guile_install_directories" != "yes"; then
+if test "$with_gnu_filesystem_hierarchy" = "yes"; then
    # Guile has a different prefix than this module
    AC_MSG_WARN([]
    [The Guile modules will be installed in $guilesitedir.]
    [The Guile extension libraries will be installed in $guileextensiondir.]
    [The compiled modules will be installed in $guileobjectdir.]
-   [You should probably re-run `configure' with]
-   [`--with-guile-install-directories]
-   [Otherwise, you will have to adjust the `GUILE_LOAD_PATH' environment]
+   [This is because you ran configure with the `--with-gnu-filesystem-hierarchy' flag]
+   []
+   [Remember that you will have to adjust the `GUILE_LOAD_PATH' environment]
    [variable.])
+else
+   AC_MSG_NOTICE([]
+   [The Guile modules will be installed in $guilesitedir.]
+   [The Guile extension libraries will be installed in $guileextensiondir.]
+   [The compiled modules will be installed in $guileobjectdir.]
+   [These directories are the ones expected by $GUILE])
 fi
 AC_SUBST([guilesitedir])

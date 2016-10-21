@@ -7,13 +7,25 @@ The NEWS file for GNU Guile-NCurses
   notice and this notice are preserved.
 
 Release 2.0
-- guile 2.0 is expected. guile 1.8 is not tested.
-- the configure flag --with-guile-install-directories is available
-  to install the libraries and scheme files into directories that
-  Guile expects, instead of in /usr/local/lib/guile-ncurses, etc.
-- the "wide" version of the ncurses libraries is now used by default.
-  The configure option '--without-ncursesw' can be used to explicitly
-  compile with the 8-bit-only "narrow" ncurses libraries.
+
+- The new default behavior of the install is to put the scheme
+  and compiled libraries into the directories expected by the
+  current Guile.
+
+  Previously, the libraries and scheme files would be installed under
+  $prefix (usually /usr/local) unless with the --with-guilesitedir
+  configure flag was set.
+
+  A new configure flag --with-gnu-filesystem-hierarchy is available if
+  the old default behavior of installing under $prefix is desired.
+
+- Guile 2.0 is expected. Guile 1.6, 1.8 and 2.1 are not tested.
+
+- the "wide" UTF-8-capable version of the ncurses libraries is now
+  used by default.  The configure option '--without-ncursesw' can be
+  used to explicitly compile with the 8-bit-only "narrow" ncurses
+  libraries.
+  
 - changes to the base library
   - new procedures 'use-extended-names', 'getdelay'
   - new panel iterator functions 'panels-map' and 'panels-for-each'
@@ -32,7 +44,9 @@ Release 2.0
   - it is now built by default
   - the API is completely re-written, and incompatible with the
     previous version
-- the test suite has be reworked. tests are more specific.
+
+- the test suite has be reworked. tests are more specific and
+  informative. the test-suite.log output file is easier to read.
 
 Release 1.7
 - the previously undocumented (ncurses curses) procedure 'window?' is
