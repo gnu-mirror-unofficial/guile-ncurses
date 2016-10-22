@@ -68,6 +68,10 @@ pkgguileobjectdir = $(guileobjectdir)/ncurses
 pkgguileobject_DATA = $(dist_pkgguilesite_DATA:%.scm=%.go)
 
 $(pkgguileobject_DATA): libguile-ncurses.la
+extra.go: curses.go
+form.go: eti.go
+menu.go: eti.go
+
 
 GUILEC_FLAGS = -Warity-mismatch -Wformat -Wunused-variable
 
