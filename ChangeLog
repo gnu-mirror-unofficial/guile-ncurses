@@ -1,3 +1,1612 @@
+Michael Gran <spk121@yahoo.com>	2016-10-21
+
+    Add some ordering in .go compilation
+    
+    Automake doesn't intuit the scm->go compilation ordering
+    
+    * src/ncurses/Makefile.am: updated
+
+Mike Gran <spk121@yahoo.com>	2016-10-21
+
+    compile Guile scm files to go files
+    
+    * src/ncurses/Makefile.am: add functionality to compile and install
+            go files.
+
+Mike Gran <spk121@yahoo.com>	2016-10-20
+
+    Default install will use the directories expected by Guile
+    
+    It won't be strictly following the GNU Filesystem Hierarchy
+    
+    * Makefile.am (AM_DISTCHECK_CONFIGURE_FLAGS): new
+    * NEWS: updated
+    * README: updated
+    * configure.ac (--with-guile-install-directories): option removed
+      (--with-gnu-filesystem-hierarchy): new option
+
+Mike Gran <spk121@yahoo.com>	2016-10-20
+
+    More NEWS and README
+    
+    * NEWS: updated
+    * README: updated
+
+Mike Gran <spk121@yahoo.com>	2016-10-20
+
+    More work on README
+
+Mike Gran <spk121@yahoo.com>	2016-10-20
+
+    Bump library interface version
+    
+    * configure.ac (LIBGUILE_NCURSES_INTERFACE): incremented
+
+Mike Gran <spk121@yahoo.com>	2016-10-20
+
+    Update NEWS and THANKS
+    
+    * NEWS: updated
+    * THANKS: updated
+
+Mike Gran <spk121@yahoo.com>	2016-10-20
+
+    Add uname to output of test setup
+    
+    * test/curs_test_setup.scm: modified
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Assume wchar_t == ucs4 if wchar conversion fails
+    
+    * src/ncurses/unicode.c (wchar_to_codepoint): modified
+      (codepoint_to_wchar): modified
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Remove termios-line function
+    
+    Not portable to bsd
+    
+    * src/ncurses/extra_func.c (gucu_termios_line): removed
+    * src/ncurses/extra_func.h: declaration for gucu_termios_line removed
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Distribute README.openbsd
+    
+    * Makefile.am (EXTRA_DIST): add README.openbsd
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Update README.mingw
+    
+    * README.mingw: updated
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Skip tests that fail on MinGW
+    
+    * test/curs_color_assume_default_colors.scm: modified
+    * test/curs_color_use_default_colors.scm: modified
+    * test/slk_attributes_bold.scm
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Add README.openbsd
+    
+    * README.openbsd: new file
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Disable test that ungetch wide characters for old ncurses
+    
+    * test/curs_getch_getch_unicode.scm: only for ncurses 6.0+
+    * test/curs_getstr_getnstr_unicode.scm: only with ncurses 6.0+
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    use utf8 locale for wide getch and form tests
+    
+    * test/curs_getch_getch_unicode.scm: use utf8 locale
+    * test/curs_getstr_getnstr_unicode.scm: use utf8 locale
+    * test/form_new_unicode.scm: use utf8 locale
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    overly strict test for menu gc refcount
+    
+    * test/menu_gc_refcount_3.scm: reduce refcount test strictness
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    Run wide border tests in a utf8 locale
+    
+    * test/automake-test-lib.scm (with-utf8-locale*): new procedure
+    * test/curs_border_border_unicode.scm: use utf8 locale
+    * test/curs_border_hline_unicode.scm: use utf8 locale
+    * test/curs_border_vline_unicode.scm: use utf8 locale
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    automake test driver shouldn't throw 'skipped on missing latin1 locale
+    
+    returning 'skipped is sufficient
+    
+    * test/automake-test-lib.scm (with-latin1-locale*): modified
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    typo in curs_resizeterm_bad test
+    
+    * test/curs/resizeterm_bad.scm: modified
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    return value unit test for resizeterm require recent ncurses
+    
+    * test/curs_resizeterm_bad.scm: skip on old ncurses
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    unit test error in curs_opaque_is_subwin_pad
+    
+    * test/curs_opaque_is_subwin_pad.scm: bad procedure name
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    make getdelay conditional on support from underlying ncurses
+    
+    * configure.ac: check for wgetdelay
+    * doc/guile-ncurses.text (getdelay): document update
+    * src/ncurses/curs_func.c (gucu_getdelay): now conditional on HAVE_WGETDELAY
+    * src/ncurses/curs_func.c: gucu_getdelay declaration is conditional on HAVE_WGETDELAY
+    * src/ncurses/curses.scm: conditional export of getdelay
+    * test/curs_inopts_timeout.scm: skip when getdelay not present
+    * test/curs_opaque_getdelay.scm: skip when getdelay not present
+
+Michael Gran <spk121@yahoo.com>	2016-10-19
+
+    support for has-mouse? not present in older ncurses
+    
+    * configure.ac: check for has_mouse function
+    * doc/guile-ncurses.texi (has-mouse?): note that it is conditionally present
+    * src/ncurses/curs_func.c (gucu_has_mouse_p): now conditional on HAVE_HAS_MOUSE
+    * src/ncurses/curs_func.c: declaration of gucu_has_mouse_p conditional on HAVE_HAS_MOUSE
+    * src/ncurses/curses.scm: has-mouse? is only conditionally included
+    * test/curs_mouse_getmouse.scm: skip when has-mouse? not present
+    * test/curs_mouse_has_mouse.scm: skip when has-mouse? not present
+    * test/curs_mouse_mousemask.scm: skip when has-mouse? not present
+
+Michael Gran <spk121@yahoo.com>	2016-10-18
+
+    Add more files to autoconfigury
+    
+    * m4/lib-ld.m4: new
+    * m4/lib-link.m4: new
+    * m4/lib-prefix.m4: new
+
+Michael Gran <spk121@yahoo.com>	2016-10-18
+
+    Add more autoconfigury to match updated guile.m4
+    
+    * build_aux/.gitignore: remove config.rpath
+    * build_aux/Makefile.am: distribute config.rpath
+    * build_aux/config.rpath: new file
+    * configure.ac (GUILD): remove redundant check
+    * m4/guile.m4 (GUILD): typo
+    * m4/.gitignore: remove ld-*.m4
+    * m4/lib-ld.m4: new file
+    * m4/lib-link.m4: new file
+    * m4/lib-prefix.m4: new file
+
+Michael Gran <spk121@yahoo.com>	2016-10-18
+
+    Have autoconfigury check for guile2, guile2-config etc
+    
+    * m4/guile.m4 (GUILE, GUILD, GUILE_CONFIG, GUILE_TOOLS): check for guile2
+
+Michael Gran <spk121@yahoo.com>	2016-10-18
+
+    Rebase guile.m4 to Guile 2.0.x guile.m4
+    
+    * m4/guile.m4: rebased with upstream
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Update README.mingw
+    
+    * README.mingw: updated
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Bad function definition in guile-ncurses.texi
+    
+    * doc/guile-ncurses.text: remove function definition
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Some README updates
+    
+    * README: modified
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Remove termios_speed_bps
+    
+    The API it tests has changed
+    
+    * test/Makefile.am (TERMIOSTESTS): remove termios_speed_bps.scm
+    * test/termios_speed_bps.scm: removed
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Remove eval-when in menu.scm
+    
+    I should start using eval-when, but, need to do it completely and logically
+    
+    * src/ncurses/menu.scm: remove eval-when
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Declaration typos in termios library functions
+    
+    * src/ncurses/extra_func.c (gucu_cfsetospeed_x): missing declaration
+      (gucu_ptsmakeraw): missing declaration
+      (gucu_tigetsid)[HAVE_TCGETSID]: bad HAVE_ protection
+      (gucu_unlockpt): missing declaration
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Terminfo functions require the term.h header
+    
+    * configure.ac: add checks to search for term.h
+    * src/ncurses/curs_spec.c: add term.h include
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    Prefer ncursesw headers in configuration
+    
+    * configure.ac: reorder curses.h location logic
+
+Michael Gran <spk121@yahoo.com>	2016-10-16
+
+    update README.mingw
+    
+    * README.mingw: updated
+
+Michael Gran <spk121@yahoo.com>	2016-10-15
+
+    Update README.cygwin
+    
+    * READMY.cygwin: modified
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    Add test for termios type functions
+    
+    * test/Makefile.am (TERMIOSTESTS): add new test
+    * test/termios_type.scm: new test
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    have new-termios create 8-bit raw termios
+    
+    * src/ncurses/extra_type.c (gucu_new_termios): initialize to 8-bit
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    Export new termios and pty interface
+    
+    * src/ncurses/extra.scm: new export list for module
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    Document termios and pty procedures
+    
+    * doc/guile-ncurses.texi: document termios and pty
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    Let pty procedres operate on ports
+    
+    * src/ncurses/extra_func.c (gucu_grantpt, gucu_ptsmakeraw, gucu_ptsname, gucu_unlockpt): now expects port or file descriptor
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    Remove cfsetspeed
+    
+    * configure.ac: remove test for cfsetspeed
+    * src/ncurses/extra.scm: don't export cfsetspeed
+    * src/ncurses/extra_func.c (gucu_cfsetspeed_x): removed
+      (gucu_extra_init-function): remove declaration for cfsetspeed
+
+Mike Gran <spk121@yahoo.com>	2016-10-09
+
+    Remove some termios options that are seldom used
+    
+    * configure.ac: modified
+    * src/ncurses/extra_const.c: removed seldom used termios options
+
+Mike Gran <spk121@yahoo.com>	2016-10-08
+
+    Restrict termios constants to commonly available set
+    
+    * configure.ac: check for termios defines
+    * src/ncurses/extra.scm: remove some uncommon termios constants
+    * src/ncurses/extra_const.c: remove some uncommon termios constants
+
+Mike Gran <spk121@yahoo.com>	2016-10-08
+
+    Add more termios bps constants and conversion
+    
+    * configure.ac (HAVE_B7200, HAVE_B14400): check for rarer termios baud rate defines
+    * doc/guile-ncurses.texi (Standard termios functions): document B7200 et al, speed->bps, bps->speed
+    * src/ncurses/extra.scm (B115200 B14400 B230400 B28800 B57600 B7200 B76800)
+      (speed->bps): use new constants
+      (bps->speed): new procedure
+    * src/ncurses/extra_const.c (D): modify to be conditional on ENABLE_TERMIOS
+      (gucu_extra_init_const): initialize B115200 B14400 B230400 B28800 B57600 B7200 B76800
+      new globals gucu_B115200 gucu_B14400 gucu_B230400 gucu_B28800 gucu_B57600 gucu_B7200 gucu_B76800
+
+Mike Gran <spk121@yahoo.com>	2016-10-08
+
+    Add speed/bps termios tests
+    
+    * configure.ac (TERMIOS): new AM conditional
+    * test/Makefile.am (TERMIOSTESTS): new test category
+    * test/termios_speed_bps.scm: new test
+
+Mike Gran <spk121@yahoo.com>	2016-10-08
+
+    Add %has-termios constant
+    
+    * doc/guile-ncurses.texi (The termios and miscellaneous functions): new section
+    * src/ncurses/extra.scm: export %has-termios
+    * src/ncurses/extra_const.c (gucu_has_termios): new global
+      (gucu_extra_init_const): declare gucu_has_termios
+
+Mike Gran <spk121@yahoo.com>	2016-10-08
+
+    Fix over-strict form_gc_refcount test
+    
+    * test/form_gc_refcount.scm: modified
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Fix doc error for field-index
+    
+    * doc/guile-ncurses.text (field-index): incorrect documentation
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Add helper script to run gdb for tests
+    
+    * tools/Makefile.am (EXTRA_DIST): add gdb help script to dist
+    * tools/gdb-test.sh: new script
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Document current-field procedure
+    
+    * doc/guile-ncurses.text: document current-field
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Fix mandelbug in form_gc_refcount unit test
+    
+    * test/form_gc_refcount.scm
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Add current-field function
+    
+    * src/ncurses/form.scm (current-field): export procedure
+    * src/ncurses/form_func.c (gucu_current_field): new procedure
+      (gucu_form_init_function): export gucu_current_field
+    * src/ncurses/form_func.h: declare gucu_current_field
+    * src/ncurses/form_type.h: declare gc_free_form and gc_free field
+    * test/Makefile.am: add new test form_fc_form_alone
+    * test/form_gc_form_alone.scm: new test
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Update copyright date for menu_const.c
+    
+    * src/ncurses/menu_const.c: update copyright
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Uninstalled env script has wrong paths
+    
+    * tools/uninstalled-env.in (GUILE_LOAD_PATH): modified
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    menu-item gc test has incorrect expectation of gc behavior
+    
+    * test/menu_gc_menu_alone.scm: refcount may still be 3 after gc
+      (show-one-item-menu-get-refcount): remove unused func
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Whitespace
+    
+    * src/ncurses/menu_type.c
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Fix GC of menu items blocked by unused items linking one-another
+    
+    * src/ncurses/menu_type.c (gc_free_menu): detach unused menu items from one-another
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Conditionally add O_MOUSE_EVENT constant to menu lib
+    
+    * configure.ac [HAVE_O_MOUSE_MENU]: new config.h constant
+    * src/ncurses/menu.scm [O_MOUSE_MENU]: conditionally export new var
+    * src/ncurses/menu_const.c [O_MOUSE_MENU]: new conditionally exported const
+    * test/menu_options_default.scm: test for O_MOUSE_MENU when available
+
+Mike Gran <spk121@yahoo.com>	2016-10-02
+
+    Fix KEY_EVENT constant
+    
+    * configure.ac [HAVE_KEY_EVENT]: config.h define renamed from KEY_EVENT and HAS_KEY_EVENT
+    * src/ncurses/curs_const.c: use HAVE_KEY_EVENT
+
+Mike Gran <spk121@yahoo.com>	2016-07-09
+
+    Missing parentheses in curses.scm
+    
+    * src/ncurses/curses.scm (BUTTON5_PRESSED): missing parentheses
+
+Mike Gran <spk121@yahoo.com>	2016-07-04
+
+    make NCURSES_MOUSE_VERSION available to curses
+    
+    * src/ncurses/curs_const.c (gucu_NCURSES_MOUSE_VERSION): new const
+      (gucu_init_constant): export gucu_NCURSES_MOUSE_VERSION
+    * src/ncurses/curses.scm (NCURSES_MOUSE_VERSION): new export
+
+Mike Gran <spk121@yahoo.com>	2016-07-04
+
+    When curses is already initialized, return stdscr for initscr
+    
+    * src/ncurses/curses.scm (initscr): return stdscr if already
+      initialized
+
+Mike Gran <spk121@yahoo.com>	2016-06-24
+
+    Add KEY_EVENT and BUTTON5 constants when available
+    
+    This may or may not exist depending on curses version and
+    compile flags
+    
+    * configure.ac: add checks for KEY_EVENT and BUTTON5_* constants
+    * m4/Makefile.am: add in ax_check_define.m4
+    * m4/ax_check_define.m4: new file to check defines
+    * src/ncurses/curs_const.c (KEY_EVENT, BUTTON5_CLICKED)
+      (BUTTON5_DOUBLE_CLICKED, BUTTON5_TRIPLE_CLICKED): new consts
+    * tools/ncurses-keyboard-test: use new BUTTON5 constants
+
+Mike Gran <spk121@yahoo.com>	2016-06-16
+
+    typo
+
+Mike Gran <spk121@yahoo.com>	2016-06-16
+
+    Add termios demo
+    
+    * test/termios_demo.scm: new demo
+    * test/Makefile.am (STRESS_TESTS): rename to DEMOS
+      (DEMOS): add termios_demo.scm and panel_gc_demo.scm
+    * test/stress_001_derwin_panel.scm: renamed to panel_gc_demo.scm
+
+Michael Gran <spk121@yahoo.com>	2016-06-16
+
+    Add panel iteration procedures panels-map, panels-for-each
+    
+    * src/ncurses/panel.scm (panels-map, panels-for-each): new procedures
+    * src/ncurses.panel_type.c (free_panel): clear userptr to parent
+      (gucu_make_panel_x): use userptr to reference parent #<window>
+    * src/ncurses/panel_spec.c (gucu_panels_list): new enumeration procedure
+      (gucu_panel_init_special): export %panels-list
+    * src/ncurses/panel_spec.h: declare gucu_panels_list
+    * src/ncurses/type.c (free_window): clear userptr to parent
+    * test/panel_panels_map.scm: new unit test
+    * test/Makefile.am: add new unit test
+
+Michael Gran <spk121@yahoo.com>	2016-06-16
+
+    Improper type checking in termios-iflag-set!, termios-oflag-set!, termios-cflag-set!, termios-lflag-set!
+    
+    * src/ncurses/extra_func.c (gucu_termios_iflag_set_x): bad typecheck
+      (gucu_termios_oflag_set_x, gucu_termios_cflag_set_x): bad typecheck
+      (gucu_termios_lflag_set_x): bad typecheck
+
+Michael Gran <spk121@yahoo.com>	2016-06-16
+
+    Add more detail to %termios-debug
+    
+    * src/ncurses/extra.scm (speed->bps): new procedure
+      (%termios-debug): add more debug
+
+Michael Gran <spk121@yahoo.com>	2016-06-16
+
+    Add panel=? procedure
+    
+    * doc/guile-ncurses.texi: document panel=?
+    * src/ncurses/curses.scm: export panel=?
+    * src/ncurses/panel_type.c (gucu_panel_init_type): modified
+    * src/ncurses/panel_type.h: make equalp_panel public
+
+Mike Gran <spk121@yahoo.com>	2016-06-11
+
+    install guile library in the guileextensiondir
+    
+    * src/ncurses/Makefile.am: move lib target to guile extension dir
+
+Mike Gran <spk121@yahoo.com>	2016-06-10
+
+    Modify install directory infrastructure in configure
+    
+    Removed --with-guilesitedir because it only worked on one of the three
+    special install directories that Guile 2.0+ expects.
+    
+    Add new --with-guile-install-directories option to query Guile where
+    it would like files to be installed.
+    
+    * configure.ac (--with-guilesitedir): removed this option
+      (--with-guile-install-directories): new option
+
+Mike Gran <spk121@yahoo.com>	2016-06-10
+
+    Fix obvious type error in gucu_resize
+    
+    * src/ncurses/curs_func.c (gucu_resize): bad type for c_win
+
+Mike Gran <spk121@yahoo.com>	2016-06-10
+
+    Add 'resize' procedure
+    
+    * doc/guile-ncurses.texi: document resize
+    * src/ncurses/curs_func.c (gucu_resize): new procedure
+    * src/ncurses/curs_func.h: add declaration for gucu_resize
+    * src/ncurses/curses.scm: export resize
+
+Michael Gran <spk121@yahoo.com>	2016-06-03
+
+    Adjust build system for new src path
+    
+    * Makefile.am (SUBDIRS): add src/ncurses
+    * configure.ac (AC_CONFIG_FILES): add src/ncurses/Makefile
+    * test/Makefile.am (AC_SCM_LOG_FLAGS, SCM_LOG_COMPILER): updated
+    * tools/uninstalled-env.in (subdirs_with_ltlibs): modified
+
+Mike Gran <spk121@yahoo.com>	2016-06-03
+
+    Make src directory
+
+Mike Gran <spk121@yahoo.com>	2016-06-01
+
+    New function string-split-at-line-endings
+    
+    * test/extra_func.c (gucu_string_split_at_line_endings): new function
+    * test/extra_func.h: add declaration
+    * test/extra.scm: add declaration
+
+Michael Gran <spk121@yahoo.com>	2016-05-30
+
+    gc_free_field should use weaker assert
+    
+    the pointer can be null if free-field was explicitly called
+    
+    * ncurses/form_type.c (gc_free_field): change assert
+
+Michael Gran <spk121@yahoo.com>	2016-05-30
+
+    have free-field and free-form return unspecified
+    
+    * ncurses/form_func.c (gucu_free_field, gucu_free_form): return unspecified
+
+Michael Gran <spk121@yahoo.com>	2016-05-30
+
+    Manage garbage collection of fields with refcounting
+    
+    * ncurses/form_spec.c (gucu_dup_field): typo
+    * ncurses/form_type.h (gc_free_field): use refcount to free
+      (_scm_is_list_of_fields, _scm_is_list_of_unattached_fields): new utility functions
+      (mark_form): no longer have SCM fields to mark
+      (gc_free_form): use refcount to free
+      (gucu_new_form): use new utility functions, use refcounting
+      (gucu_form_fields): use refcounting on returned fields list
+      (gucu_set_form_fields_x): use refcounting to manage fields
+    * ncurses/form_type.h (struct gucu_form): remove old fields guardian
+      add declarations for _scm_is_list_of_fields, _scm_is_list_of_unattached_fields
+
+Michael Gran <spk121@yahoo.com>	2016-05-30
+
+    boolean error in form-sub and form-win
+    
+    * ncurses/form_func.c (gucu_form_sub, gucu_form_win): test for #F, not NULL
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    Add a reference-counting framework for fields.
+    
+    * ncurses/form.scm: declare %field-refcount
+    * ncurses/form_spec.c (gucu_dup_field): init refcount on new field
+    * ncurses/form_type.c (field_init_refcoutn, field_increase_refcount): new funcs
+      (field_decrease_refcount, field_get_refcount): new functions
+      (gucu_field_refcount): new functions
+      (gucu_form_init_type): declare %field-refcount
+    * ncurses/form_type.h: declare these functions
+    * test/form_gc_refcount.scm: new test
+    * test/Makefile.am (NARROWTESTS): add new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    Remove link-field
+    
+    The memory management involved in making link-field correct is too difficult.
+    
+    * doc/guile-ncurses.texi: remove documentation for link-field
+    * ncurses/form.scm: remove link-field declaration
+    * ncurses/form_spec.c (gucu_link_field): removed
+      (gucu_form_init_special): remove reference to link-field
+    * ncurses/form_spec.h: remove reference to gucu_link_field
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    Replace form window and subwin guardians with simple references
+    
+    This will merge the two struct gucu_form fields 'sub' and 'sub_guard',
+    and likewise 'win' and 'win_guard'.
+    
+    * ncurses/form_type.h (struct gucu_form): merge win and win_guard fields,
+      and the sub and sub_guard fields.
+    * ncurses/form_func.c (gucu_form_sub, gucu_form_win): use new fields
+      (gucu_free_form): remove guardians
+      (gucu_set_form_sub_x, gucu_set_form_win_x): remove guardians
+    * ncurses/form_type.c (gc_free_form): remove guardians
+      (gucu_new_form): remove guardians
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    remove the infrastructure for the old-style test suite
+    
+    * test/Makefile.am (TEST_LOG_COMPILER, AM_TEST_LOG_FLAGS): removed
+      (TEST_EXTENSIONS): modified
+      (TESTLIB): remove old test lib scripts
+    * test/lib.scm: removed
+    * test/lib2.scm: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    make the color content test fail more gracefully on BW terminals
+    
+    * test/curs_color_color_content_red.scm: modified
+    * test/curs_color_color_content_green.scm: modified
+    * test/curs_color_color_content_blue.scm: modified
+    * test/curs_color_color_content_cyan.scm: modified
+    * test/curs_color_color_content_magenta.scm: modified
+    * test/curs_color_color_content_yellow.scm: modified
+    * test/curs_color_color_content_black.scm: modified
+    * test/curs_color_color_content_white.scm: modified
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    replace all remaining test with new style tests
+    
+    * test/Makefile.am: modified
+    * test/curs_border_border_unicode.scm: new test
+    * test/curs_border_border_hline_unicode.scm: new test
+    * test/curs_border_vline_unicode.scm: new test
+    * test/curs_getch_getch_unicode.scm: new test
+    * test/curs_getstr_getnstr_unicode.scm: new test
+    * test/curses_032_termattrs.test: removed
+    * test/curses_033_touch.test: removed
+    * test/curses_049_resizeterm.test: removed
+    * test/f009_form_wide.test: removed
+    * test/form_new_unicode.scm: new test
+    * test/r037_border_set.scm: removed
+    * test/r038_get_wch.test: removed
+    * test/r039_get_wstr.test: removed
+    * test/r040_term_attrs.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    port slk tests to new-style subtests
+    
+    * test/Makefile.am: modified
+    * test/slk_001_init.test: removed
+    * test/slk_002_init.test: removed
+    * test/slk_003_init.test: removed
+    * test/slk_004_init.test: removed
+    * test/slk_005_demo.test: removed
+    * test/slk_006_attributes.test: removed
+    * test/slk_323_format.scm: new test
+    * test/slk_44_format.scm: new test
+    * test/slk_444_format.scm: new test
+    * test/slk_attributes_bold.scm: new test
+    * test/slk_demo.scm: new demo
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    git split remainig narrow form tests into new style subtests
+    
+    * test/Makefile.am: updated
+    * test/f006_form_field_just.test: removed
+    * test/f007_form_field_opts.test: removed
+    * test/f008_form_field_buffer.test: removed
+    * test/form_field_buffer_set_field_buffer.scm: new test
+    * test/form_field_buffer_set_field_status.scm: new test
+    * test/form_field_buffer_set_field_status_2.scm: new test
+    * test/form_field_just.scm: new test
+    * test/form_field_opts_default.scm: new test
+    * test/form_field_opts_off.scm: new test
+    * test/form_field_opts_on.scm: new test
+    * test/form_field_opts_set.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-29
+
+    split f004_form_field.test and f005_form_page.test into new style subtests
+    
+    * test/Makefile.am: modified
+    * test/f004_form_field.test: removed
+    * test/f005_form_field.test: removed
+    * test/form_field_attributes_set_field_fore.scm: new test
+    * test/form_field_field_count_one.scm: new test
+    * test/form_field_move_field.scm: new test
+    * test/form_field_set_form_fields.scm: new test
+    * test/form_page_field_index.scm: new test
+    * test/form_page_set_new_page.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-28
+
+    split f003_field_attributes.test into new-style subtests
+    
+    * test/Makefile.am: modified
+    * test/f003_field_attributes.test: removed
+    * test/form_field_attributes_set.scm: new test
+    * test/form_field_attributes_set_back.scm: new test
+    * test/form_field_attributes_set_pad.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-28
+
+    split f001_new_form.test into new-style subtests
+    
+    * test/Makefile.am: modified
+    * test/f001_new_form.test: removed
+    * test/form_new_no_fields.scm: new test
+    * test/form_new_one_field.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-28
+
+    change m005_mitem_value.test and m006_mitem_visible.test to new style tests
+    
+    * test/Makefile.am: modified
+    * test/m005_mitem_value.test: removed
+    * test/m006_mitem_visible.test: removed
+    * test/mitem_value_item_value.scm: new test
+    * test/mitem_visible_item_visible.scm: new test
+
+Mike Gran <spk121@yahoo.com>	2016-05-27
+
+    split several menu tests into new-style subtests
+    
+    * test/Makefile.am: updated
+    * test/m007_menu_attributes.test: removed
+    * test/m009_menu_format.test: removed
+    * test/m010_menu_mark.test: removed
+    * test/m009_menu_cursor.test: renamed to menu_cursor.scm
+    * test/menu_attributes_defaults:new test
+    * test/menu_attributes_set: new test
+    * test/menu_cursor.scm: updated
+    * test/menu_format.scm: new test
+    * test/menu_mark_default.scm: new test
+    * test/menu_mark_set.scm: new test
+    * test/menu_options_default.scm: new test
+    * test/menu_options_set: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-27
+
+    Split m003_item_name.test and m004_item_opts.test into new style subtests
+    
+    * test/Makefile.am: updated
+    * test/m003_mitem_name.test: removed
+    * test/m004_mitem_opts.test: removed
+    * test/mitem_item_item_name.scm: new test
+    * test/mitem_opts_item_opts_on.scm: new test
+    * test/mitem_opts_item_opts_off.scm: new test
+    * test/mitem_opts_set_item_opts.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    tests for meta require a latin1 locale
+    
+    * test/curs_inopts_meta.scm: do test in latin1 locale
+    * test/curs_inopts_meta_false.scm: do test in latin1 locale
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    Split m002_mitem_current.test into new-style sub tests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/m002_mitem_current.test: removed
+    * test/mitem_current_item.index.scm: new test
+    * test/mitem_current_set_current_item.scm: new test
+    * test/mitem_current_set_top_row.scm: new test
+    * test/mitem_current_top_row.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    Add latin1-locale testing into the automake test library
+    
+    * test/automake-test-lib (with-latin1-locale*, with-locale*): copied from test/lib.scm
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    %ungetch should return #f when given a non character or integer
+    
+    This is actually an unreachable case because it is tested in 'ungetch',
+    but, for the sake of readability, I'll change it.
+    
+    * ncurses/curs_func.c (gucu_ungetch): return #f on wrong type
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    ungetch should handle codepoints when wide ncurses is enabled
+    
+    * ncurses/curs_func.c (gucu_ungetch) [HAVE_NCURSESW]: accept codepoints
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    more .gitignore
+    
+    * .gitignore: modified
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    split m001_new_menu.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/m001_new_menu.test: removed
+    * test/menu_new_zero_items.scm: new test
+    * test/menu_new_one_item.scm: new test
+    * test/menu_new_item_in_two_menus.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    Add nominal bootstrap script, remove aclocal.m4, config.h.in
+    
+    * bootstrap: new file
+    * aclocal.m4: removed
+    * config.h.in: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-26
+
+    Avoid declarations in for loops
+    
+    * ncurses/menu_type.c (gc_free_menu): modified
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    More outopts, print, resizeterm, termattrs, and touch tests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curs_outopts_clearok.scm: new test
+    * test/curs_outopts_setscrreg.scm: new test
+    * test/curs_print_mcprint.scm: new test
+    * test/curs_resizeterm_bad.scm: new test
+    * test/curs_resizeterm_default.scm: new test
+    * test/curs_resizeterm_values.scm: new test
+    * test/curs_termattrs_baudrate.scm: new test
+    * test/curs_termattrs_erasechar.scm: new test
+    * test/curs_termattrs_has_ic.scm: new test
+    * test/curs_termattrs_has_il.scm: new test
+    * test/curs_termattrs_killchar.scm: new test
+    * test/curs_termattrs_longname.scm: new test
+    * test/curs_termattrs_term_attrs.scm: new test
+    * test/curs_termattrs_termname.scm: new test
+    * test/curs_touch_touchline.scm: new test
+    * test/curs_touch_untouchline.scm: new test
+    * test/curs_touch_untouchwin.scm: new test
+
+Mike Gran <spk121@yahoo.com>	2016-05-25
+
+    Add tests for terminfo functions
+    
+    * test/Makefile.am (NARROWTESTS): update
+    * test/curs_terminfo_setupterm.scm: new test
+    * test/curs_terminfo_setupterm_bad: new test
+    * test/curs_terminfo_tiget_bool.scm: new test
+    * test/curs_terminfo_tiget_num.scm: new test
+    * test/curs_terminfo_tiget_string.scm: new test
+    * test/curs_terminfo_tiget_unknown: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Add debugging names to newwin and subwin
+    
+    They don't do anything but show up when writing the smob
+    
+    * ncurses/curs_func.c (gucu_initscr): add debugging name to initscr
+      (gucu_newwin): now take 5 args, including name for debugging
+      (gucu_subwin): new takes 6 args, including name for debugging
+      (gucu_init_function): add new optional args indo %subwin and %newwin
+    * ncurses/curs_func.h: update declaration for gucu_newwin, gucu_subwin
+    * ncurses/curses.scm (newwin): new optional keyword argument #:name
+      (subwin): new optional keyword argument #:name
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Add some garbage collection tests for menus
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/menu_gc_menu_alone.scm: new test
+    * test/menu_gc_menu_alone_2.scm: new test
+    * test/menu_gc_menu_still_posted.scm: new test
+    * test/menu_gc_menu_with_win.scm: new test
+    * test/menu_gc_menu_with_win_2.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    menu-win and menu-sub shouldn't create unnecessary copies of window
+    
+    * ncurses/menu_func.c (gucu_menu_win, gucu_menu_sub): return guarded windows
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Have garbage collector unpost menus if necessary when freeing them
+    
+    * ncurses/menu_type.c (gc_free_menu): try to recover from E_POSTED error
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Fix order of operations in freeing menus
+    
+    The return of menu_items is not valid after the free_menu is called
+    
+    * ncurses/menu_type (gc_free_menu): reorder freeing logic
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Sign error in menu item refcounting
+    
+    * ncurses/menu_type.c (item_decrease_refcount): fix sign error
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Add test for menu item refcounting
+    
+    * test/Makefile.am (NARROWTEST): modifed
+    * test/menu_gc_refcount.scm: new test
+    * test/menu_gc_refcount_2.scm: new test
+    * test/menu_gc_refcount_3.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Replace window guardians in #<menu> with simple references
+    
+    Simple references are enough for a properly working GC
+    
+    * ncurses/menu_type.c (mark_menu): avoid dereference null
+      (gc_free_menu): use simple references
+      (gc_new_menu): use simple references
+    * ncurses/menu_func.c (gucu_set_menu_win): use simple reference
+      (gucu_set_menu_sub): use simple reference
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    item guardians in #<menu>
+    
+    replace with ITEM* refcounting
+    
+    * ncurses/menu_type.h (struct gucu_menu): remove items_guard
+    * ncurses/menu_type.c (mark_menu, gc_free_menu): remove items_guard
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Avoid dereferencing a null pointer from freed menus
+    
+    * ncurses/menu_type.c (_scm_to_menu): modified
+      (print_menu): modified
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    use refcounting to prevent premature freeing of ITEM *
+    
+    * ncurses/menu.scm: export new proc %item-refcount
+    * ncurses/menu_type.h: new declarations item_init_refcount,
+        item_increase_refcount, item_decrease_refcount, item_get_refcount
+    * ncurses/menu_type.c (item_init_refcount, item_increase_refcount): new functions
+      (item_decrease_refcount, item_get_refcount): new functions
+      (gc_free_item): only free ITEM on zero refcount
+      (gucu_item_refcount): new procedure for guile
+      (gc_free_menu): free associated ITEM on zero refcount
+      (gucu_new_menu): increase refcount on attached ITEM
+      (gucu_menu_init_type): declare %item-refcount
+    * ncurses/menu_func.c (gucu_current_item): increase refcount on ITEM
+    
+    Based on a similar patch by John Darrington
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Item's with free'd contents are usable items
+    
+    * ncurses/menu_type.c (_scm_is_item): return false when smob contents are null
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Remove some C89 braces
+    
+    * ncurses/menu_func.c (gucu_item_name, gucu_item_description): modified
+
+Michael Gran <spk121@yahoo.com>	2016-05-25
+
+    Add the menu's item to smob printing procedure for #<menu> types
+    
+    * ncurses/menu_type.c (print_item): add menu_item to smob printer
+
+Mike Gran <spk121@yahoo.com>	2016-05-24
+
+    split f002_data.test into new style subtests
+    
+    * test/Makefile.am: modified
+    * test/f002_data.test: removed
+    * test/form_data_ahead.scm: new test
+    * test/form_data_behind.scm: new test
+
+Mike Gran <spk121@yahoo.com>	2016-05-24
+
+    split p001_panel.test into new style subtests
+    
+    * test/Makefile.am: updated
+    * test/p001_panel.test: removed
+    * test/panel_p_del_panel.scm: new test
+    * test/panel_p_make_panel.scm: new test
+    * test/panel_p_panel.scm: new test
+    * test/panel_p_window.scm: new test
+    * test/panel_update_demo.scm: new demo
+
+Michael Gran <spk121@yahoo.com>	2016-05-24
+
+    new style tests for mouse and for opaque properties
+    
+    * test/Makefile.am: new file
+    * test/curses_038_mouse.test: removed
+    * test/curses_039_properties.test: removed
+    * test/curs_mouse_getmouse.scm: new test
+    * test/curs_mouse_has_mouse.scm: new test
+    * test/curs_mouse_mouseinterval_default.scm: new test
+    * test/curs_mouse_mouseinterval_set.scm: new test
+    * test/curs_mouse_mousemask.scm: new test
+    * test/curs_mouse_mouse_trafo_from.scm: new test
+    * test/curs_mouse_mouse_trafo_out.scm: new test
+    * test/curs_mouse_mouse_trafo.scm: new test
+    * test/curs_mouse_wenclose_false.scm: new test
+    * test/curs_mouse_wenclose.scm: new test
+    * test/curs_opaque_getdelay.scm: new test
+    * test/curs_opaque_getparent_false.scm: new test
+    * test/curs_opaque_getparent.scm: new test
+    * test/curs_opaque_getscrreg.scm: new test
+    * test/curs_opaque_is_cleared_false.scm: new test
+    * test/curs_opaque_is_cleared.scm: new test
+    * test/curs_opaque_is_idcok_false.scm: new test
+    * test/curs_opaque_is_idcok.scm: new test
+    * test/curs_opaque_is_idlok_false.scm: new test
+    * test/curs_opaque_is_idlok.scm: new test
+    * test/curs_opaque_is_immedok_false.scm: new test
+    * test/curs_opaque_is_immedok.scm: new test
+    * test/curs_opaque_is_keypad_false.scm: new test
+    * test/curs_opaque_is_keypad.scm: new test
+    * test/curs_opaque_is_leaveok_false.scm: new test
+    * test/curs_opaque_is_leaveok.scm: new test
+    * test/curs_opaque_is_nodelay_false.scm: new test
+    * test/curs_opaque_is_nodelay.scm: new test
+    * test/curs_opaque_is_notimeout_false.scm: new test
+    * test/curs_opaque_is_notimeout.scm: new test
+    * test/curs_opaque_is_pad_false.scm: new test
+    * test/curs_opaque_is_pad.scm: new test
+    * test/curs_opaque_is_scrollok_false.scm: new test
+    * test/curs_opaque_is_scrollok.scm: new test
+    * test/curs_opaque_is_subwin_false.scm: new test
+    * test/curs_opaque_is_subwin_pad.scm: new test
+    * test/curs_opaque_is_subwin.scm: new test
+    * test/curs_opaque_is_syncok_false.scm: new test
+    * test/curs_opaque_is_syncok.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-23
+
+    split curses_036_ports.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curses_036_ports.test: removed
+    * test/curs_initscr_newterm_multiple_screens.scm: new test
+    * test/curs_initscr_newterm_screen.scm: new test
+    * test/curs_initscr_newterm_stdscr.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-23
+
+    split curses_035_attributes.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curses_035_attributes.test: removed
+    * test/curs_attributes.scm: new test
+    * test/curs_attributes_strings.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Split curses_034_util.test
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curs_extend_curses_version.scm: new test
+    * test/curs_extend_use_extended_names.scm: new test
+    * test/curs_util_delay_output.scm: new test: new test
+    * test/curs_util_keyname_1.scm: new test
+    * test/curs_util_keyname_2.scm: new test
+    * test/curs_util_keyname_3.scm: new test
+    * test/curs_util_putwin_getwin.scm: new test
+    * test/curs_util_putwin.scm: new test
+    * test/curs_util_unctrl_1.scm: new test
+    * test/curs_util_unctrl_2.scm: new test
+    * test/curs_util_unctrl_3.scm: new test
+    * test/curses_034_util.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_030_scr_dump.test and curses_031_scroll.test into subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curs_scr_dump.scm: new test
+    * test/curs_scroll_scrl.scm: new test
+    * test/curs_scroll_scrl_positive.scm: new test
+    * test/curses_030_scr_dump.test: removed
+    * test/curs_scroll_scrl_scroll.scm: new test
+    * test/curses_031_scroll.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    splits tests for curses_028_pad.test and curses_029_refresh.test
+    
+    * test/Makefile.am (NARROWTESTS): updated
+     * test/curses_028_pad.test: removed
+    * test/curses_029_refresh.test: removed
+    * test/curses_021_insch.test:removed
+    * test/curses_026_outputs.test:removed
+    * test/curs_pad_newpad_prefresh.scm: new test
+    * test/curs_pad_newpad_pechochar.scm: new test
+    * test/curs_pad_newpad_subpad_pnoutrefresh.scm: new test
+    * test/curs_pad_refresh_redrawwin.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Add in insch tests
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_027_overlay.test into new style subtests
+    
+    * test/Makefile.am (NARROWTEST): Modified
+    * test/curs_overlay_copywin.scm: new test
+    * test/curs_overlay_overlay.scm: new test
+    * test/curs_overlay_overwrite.scm: new test
+    * test/curses_027_overlay.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_024_kernel.test and curses_025_move.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curses_024_kernel.test: removed
+    * test/curses_025_move.test: removed
+    * test/curs_kernel_curs_set.scm: new test
+    * test/curs_kernel_def_prog_mode.scm: new test
+    * test/curs_kernel_def_shell_mode.scm: new test
+    * test/curs_kernel_getsyx.scm: new test
+    * test/curs_kernel_napms.scm: new test
+    * test/curs_kernel_savetty.scm: new test
+    * test/curs_move.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_022_insstr.test and curses_023_instr.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curses_022_insstr.test: removed
+    * test/curses_023_instr.test: removed
+    * test/curs_insstr_insstr.scm: new test
+    * test/curs_insstr_insstr_n.scm: new test
+    * test/curs_insstr_insstr_yx.scm: new test
+    * test/curs_instr_instr.scm: new test
+    * test/curs_instr_instr_n.scm: new test
+    * test/curs_instr_instr_yxn.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_020_inopts.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curses_020_inopts.test: removed
+    * test/curs_inopts_cbreak.scm: new test
+    * test/curs_inopts_echo.scm: new test
+    * test/curs_inopts_halfdelay.scm: new test
+    * test/curs_inopts_intrflush_false.scm: new test
+    * test/curs_inopts_intrflush.scm: new test
+    * test/curs_inopts_meta_false.scm: new test
+    * test/curs_inopts_meta.scm: new test
+    * test/curs_inopts_nocbreak.scm: new test
+    * test/curs_inopts_noecho.scm: new test
+    * test/curs_inopts_noqiflush.scm: new test
+    * test/curs_inopts_notimeout.scm: new test
+    * test/curs_inopts_qiflush.scm: new test
+    * test/curs_inopts_timeout.scm: new test
+    * test/curs_inopts_typeahead.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    move curses_018_inch.test and curses_019_inchstr.test to new style test
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curs_inch.scm: new test
+    * test/curs_inchstr_inchnstr.scm: new test
+    * test/curses_018_inch.test: removed
+    * test/curses_019_inchstr.test:removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_017_getyx.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curses_017_getyx.test: removed
+    * test/curs_getyx_getbegyx.scm: new test
+    * test/curs_getyx_getmaxyx.scm: new test
+    * test/curs_getyx_getparyx.scm: new test
+    * test/curs_getyx_getyx.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_016_getstr.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curses_016_getstr.test: removed
+    * test/curs_getstr_getnstr.scm: new test
+    * test/curs_getstr_getnstr_yx.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_015_getch.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curses_015_getch.test: removed
+    * test/curs_getch_getch.scm: new test
+    * test/curs_getch_getch_yx.scm: new test
+    * test/curs_getch_haskey_invalid.scm: new test
+    * test/curs_getch_haskey.scm: new test
+    * test/curs_getch_key_defined.scm: new test
+    * test/curs_getch_ungetch.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_014_deleteln.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curses_014_deleteln.test: removed
+    * test/curs_deleteln_deleteln.scm: new test
+    * test/curs_deleteln_insdelln_negative.scm: new test
+    * test/curs_deleteln_insdelln_positive.scm: new test
+    * test/curs_deleteln_insertln.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    split curses_013_delch.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curs_delch_delch.scm: new test
+    * test/curs_delch_delch_yx.scm: new test
+    * test/curses_031_delch.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    change curses_012_clear.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curs_clear.scm: new test
+    * test/curs_clear_clrtobot.scm: new test
+    * test/curs_clear_clrtoeol.scm: new test
+    * test/curs_clear_erase.scm: new test
+    * test/curses_012_clear.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Split curses_011_border.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): modified
+    * test/curs_border_custom.scm: new test
+    * test/curs_border_default.scm: new test
+    * test/curs_border_hline.scm: new test
+    * test/curs_border_hline_yx.scm: new test
+    * test/curs_border_vline.scm: new test
+    * test/curs_border_vline_yx.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Change curses_010_bkgd.test to new-style subtests
+    
+    * test/Makefile.am: updated
+    * test/curses_010_bkgd.test: removed
+    * test/curs_bkgd_bkgd.scm: new test
+    * test/curs_bkgd_bkgdset.scm: new test
+
+Merge: 46bda8d 1efe737
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Merge branch 'master' of ssh://git.sv.gnu.org/srv/git/guile-ncurses
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Split curses_008_attr.test iand curses_009_beep.test nto new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curses_008_attr.test: removed
+    * test/curs_attr_attr_get.scm: new file
+    * test/curs_attr_attr_off_underline.scm: new file
+    * test/curs_attr_attr_on_blink.scm: new file
+    * test/curs_attr_attr_on_bold.scm: new file
+    * test/curs_attr_attr_on_dim.scm: new file
+    * test/curs_attr_attr_on_invis.scm: new file
+    * test/curs_attr_attr_on_protect.scm: new file
+    * test/curs_attr_attr_on_reverse.scm: new file
+    * test/curs_attr_attr_on_standout.scm: new file
+    * test/curs_attr_attr_on_underline.scm: new file
+    * test/curs_attr_attr_set_normal.scm: new file
+    * test/curs_attr_attr_set.scm: new file
+    * test/curs_attr_chgat.scm: new file
+    * test/curs_attr_chgat_yx.scm: new file
+    * test/curs_attr_color_set.scm: new file
+    * test/curs_attr_standend.scm: new file
+    * test/curs_attr_standout.scm: new file
+
+Michael Gran <spk121@yahoo.com>	2016-05-22
+
+    Split curses_008_attr.test into new style subtests
+    
+    * test/Makefile.am (NARROWTESTS): updated
+    * test/curses_008_attr.test: removed
+    * test/curs_attr_attr_get.scm: new file
+    * test/curs_attr_attr_off_underline.scm: new file
+    * test/curs_attr_attr_on_blink.scm: new file
+    * test/curs_attr_attr_on_bold.scm: new file
+    * test/curs_attr_attr_on_dim.scm: new file
+    * test/curs_attr_attr_on_invis.scm: new file
+    * test/curs_attr_attr_on_protect.scm: new file
+    * test/curs_attr_attr_on_reverse.scm: new file
+    * test/curs_attr_attr_on_standout.scm: new file
+    * test/curs_attr_attr_on_underline.scm: new file
+    * test/curs_attr_attr_set_normal.scm: new file
+    * test/curs_attr_attr_set.scm: new file
+    * test/curs_attr_chgat.scm: new file
+    * test/curs_attr_chgat_yx.scm: new file
+    * test/curs_attr_color_set.scm: new file
+    * test/curs_attr_standend.scm: new file
+    * test/curs_attr_standout.scm: new file
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    split curses_007_addstr.test into new style subtests
+    
+    * test/Makefile.am: add new tests
+    * test/curses_007_addstr.test: removed
+    * test/curses_addstr.scm: new test
+    * test/curses_addstr_yx.scm: new test
+    * test/curses_addstr_yxn.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    split curses_006_addchstr.test into new style tests
+    
+    * test/Makefile.am (NARROWTESTS): add new tests
+    * test/curses_006_addchstr.test: removed
+    * test/curs_addchstr.scm: new test
+    * test/curs_addchstr_n.scm: new test
+    * test/curs_addchstr_yx.scm: new test
+    * test/curs_addchstr_yxn.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    move curses_005_addch.test to new style test
+    
+    * test/Makefile.am: modified
+    * test/curs_addch_ascii.scm: new file
+    * test/curses_005_addch.test: removed
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    move curses_004_characters.test to new style test
+    
+    * test/curses_004_characters.test: removed
+    * test/curs_addch_acs.scm: new file
+    * test/Makefile.acm (NARROWTESTS): add new test file
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    split curses_003_color.test into new style tests
+    
+    * test/Makefile.am (NARROWTESTS): add new tests
+    * test/curses_003_color.test: removed
+    * test/curs_color_assume_default_colors.scm: new test
+    * test/curs_color_attr_get_color.scm: new test
+    * test/curs_color_can_change_color.scm: new test
+    * test/curs_color_color_content_black.scm: new test
+    * test/curs_color_color_content_blue.scm: new test
+    * test/curs_color_color_content_cyan.scm: new test
+    * test/curs_color_color_content_green.scm: new test
+    * test/curs_color_color_content_magenta.scm: new test
+    * test/curs_color_color_content_red.scm: new test
+    * test/curs_color_color_content_white.scm: new test
+    * test/curs_color_color_content_yellow.scm: new test
+    * test/curs_color_color_pairs.scm: new test
+    * test/curs_color_colors.scm: new test
+    * test/curs_color_has_colors.scm: new test
+    * test/curs_color_init_color.scm: new test
+    * test/curs_color_init_pair.scm: new test
+    * test/curs_color_pair_number.scm: new test
+    * test/curs_color_start_color.scm: new test
+    * test/curs_color_use_default_colors.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    split curses_002_initscr.test into new-style tests
+    
+    * test/curses_002_initscr.test: split into subtests
+    * test/curs_initscr_endwin.scm: new test
+    * test/curs_initscr_initscr.scm: new test
+    * test/curs_initscr_isendwin_negative.scm: new test
+    * test/curs_initscr_isendwin_positive.scm: new test
+    * test/curs_initscr_isendwin_negative_after_refresh.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    convert char conversion tests to new lib
+    
+    * test/curses_001_char_conversion.test: split into subtests
+    * test/curs_char_conversion.scm: new file
+    * test/curs_char_wchar_conversion.scm: new file
+    * test/Makefile.am (NOTERMTESTS): use new test files
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    convert test setup tests to new framework
+    
+    * test/curses_000_test_setup.test: renamed to test/curs_test_setup.scm
+      test/curs_test_setup.scm
+    * test/curs_test_setup.scm: use automake-test-lib
+    * test/Makefile.am (NOTERMTESTS): use curs_test_setup.scm
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    Add new test framework for automake parallel tests
+    
+    * test/Makefile.am (TEST_ENVIROMNENT): removed
+     (AM_TESTS_ENVIRONMENT): new
+     (TEST_EXTENSIONS): add .scm
+     (SCM_LOG_COMPILER, AM_SCM_LOG_FLAGS): new
+    * test/automake-test-lib.scm: new file
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    Add missing public declaration for use-extended-names
+    
+    * ncurses/curses.scm: add declaration for use-extended-names
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    getparent should not create a new scheme window object
+    
+    It already has one ready.  No need to make another.
+    
+    * ncurses/curs_spec.c (gucu_getparent): use existing parent
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    setupterm shouldn't take symbol argument
+    
+    * ncurses/curs_spec.c (gucu_setupterm): remove symbol argument
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    Add getdelay procedure
+    
+    * ncurses/curs_func.c (gucu_getdelay): new procedure
+      (gucu_init_function): add %getdelay
+    * ncurses/curs_func.h: add declaration for gucu_getdelay
+    * ncurses/curses.scm (getdelay): new procedure
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    Whitespace and copyright date
+    
+    * ncurses/curs_const.c: modified
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    Add stubs for the fifth mouse button
+    
+    Disabled for now because they only exist in some compilations of ncurses
+    
+    * ncurses/curs_const (gucu_BUTTON5_PRESSED, gucu_BUTTON5_RELEASED)
+      (gucu_BUTTON5_CLICKED, gucu_BUTTON5_DOUBLE_CLICKED, gucu_BUTTON5_TRIPPLE_CLICKED):
+      added in but stubbed out
+
+Michael Gran <spk121@yahoo.com>	2016-05-21
+
+    Allow call of setupterm without param
+    
+    If called without param, just assume env TERM is the param.
+    
+    * doc/guile-ncurses.text: update docs for setupterm
+    * ncurses/curses.scm (setupterm): make param optional
+
+Mike Gran <spk121@yahoo.com>	2016-05-13
+
+    Add functions to query the terminfo database
+    
+    New procedures 'setupterm' and 'tiget'
+    
+    * doc/guile-ncurses.texi: document setupterm and tiget
+    * ncurses/curs_spec.c (gucu_setupterm, gucu_tiget): new procedures
+    * ncurses/curs_spec.h: new declarations for gucu_setupterm and gucu_tiget
+    * ncurses/curses.scm (setupterm, tiget): new procedures
+
+Mike Gran <spk121@yahoo.com>	2016-05-11
+
+    Fix abort in ungetmouse when passed valid mouse event
+    
+    * ncurses/type.c (_scm_is_mevent): updated
+
+Mike Gran <spk121@yahoo.com>	2016-05-11
+
+    Remove any reference to ripoffline in the docs
+    
+    ripoffline was too difficult to implement in the code
+    
+    * doc/guile-ncurses.texi: modified
+
+Mike Gran <spk121@yahoo.com>	2016-05-10
+
+    has-key? incorrectly always returned #t
+    
+    has-key? should return #t only when a terminal has
+    the indicated key
+    
+    * ncurses/curs_func.c (gucu_has_key_p): modified
+
+Mike Gran <spk121@yahoo.com>	2016-05-08
+
+    Make stress test work w/o color
+    
+    * test/stress_001_derwin_panel.scm: test for color:
+
+Michael Gran <spk121@yahoo.com>	2016-05-08
+
+    gucu_panel_init_type has to be public
+    
+    All init functions called by load-library need to be public.
+    
+    * ncurses/panel_type.h (gucu_panel_init_type): make GUCU_API
+
+Michael Gran <spk121@yahoo.com>	2016-05-08
+
+    Prepare for 1.7 release
+    
+    * ChangeLog: updated from git
+    * THANKS: update
+    * configure.ac: bump version and library version
+    * doc/guile-ncurses.texi: update copyright
+
 Michael Gran <spk121@yahoo.com>	2016-05-07
 
     Add stress test for derwin panel fault
