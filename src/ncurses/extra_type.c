@@ -1,7 +1,7 @@
 /*
   extra_type.c
 
-  Copyright 2009, 2010, 2011 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2016 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -117,8 +117,6 @@ size_t
 gc_free_termios (SCM x)
 {
   struct termios *gp;
-
-  scm_assert_smob_type (termios_tag, x);
 
   gp = (struct termios *) SCM_SMOB_DATA (x);
 
