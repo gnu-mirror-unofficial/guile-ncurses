@@ -56,13 +56,12 @@ static scm_t_bits screen_tag;
 scm_t_bits window_tag;
 
 static size_t gc_free_screen (SCM x);
-int print_screen (SCM x, SCM port, scm_print_state * pstate);
+static int print_screen (SCM x, SCM port, scm_print_state * pstate);
 
-SCM equalp_window (SCM x1, SCM x2);
-size_t free_window (SCM x);
-SCM mark_window (SCM x);
-int print_window (SCM x, SCM port, scm_print_state * pstate);
+static SCM equalp_window (SCM x1, SCM x2);
 static size_t gc_free_window (SCM x);
+static SCM mark_window (SCM x);
+static int print_window (SCM x, SCM port, scm_print_state * pstate);
 
 
 /* attr -- character attributes, bit flags packed into an unsigned:
@@ -965,7 +964,7 @@ gc_free_screen (SCM x)
   return 0;
 }
 
-int
+static int
 print_screen (SCM x, SCM port, scm_print_state * pstate UNUSED)
 {
   struct screen_and_ports *sp;
@@ -1072,7 +1071,7 @@ _scm_from_window (WINDOW * x)
 }
 
 // Windows are equal if they point to the same C structures
-SCM
+static SCM
 equalp_window (SCM x1, SCM x2)
 {
   WINDOW *win1, *win2;
@@ -1094,7 +1093,7 @@ equalp_window (SCM x1, SCM x2)
     return SCM_BOOL_T;
 }
 
-SCM
+static SCM
 mark_window (SCM x)
 {
   struct gucu_window *wp;
