@@ -55,12 +55,14 @@
 static scm_t_bits screen_tag;
 scm_t_bits window_tag;
 
+static size_t gc_free_screen (SCM x);
+int print_screen (SCM x, SCM port, scm_print_state * pstate);
+
 SCM equalp_window (SCM x1, SCM x2);
 size_t free_window (SCM x);
 SCM mark_window (SCM x);
 int print_window (SCM x, SCM port, scm_print_state * pstate);
 
-int print_screen (SCM x, SCM port, scm_print_state * pstate);
 
 /* attr -- character attributes, bit flags packed into an unsigned:
    probably uint32 */
@@ -929,23 +931,38 @@ _scm_free_screen (SCM x)
     }
 }
 
-size_t
-free_screen (SCM x)
+/*  This procedure frees a screen without checking its type. In GC
+ *  free procedures, the smob may have already forgotten its type. */
+static size_t
+gc_free_screen (SCM x)
 {
-  assert (SCM_SMOB_PREDICATE (screen_tag, x));
   struct screen_and_ports *sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
 
   /* Screens should already be null if delwin has been called on them */
   if (sp != NULL)
     {
-      _scm_free_screen (x);
+      if (sp->screen)
+        {
+          delscreen (sp->screen);
+          /* delscreen returns void */
+          sp->screen = NULL;
+        }
+      if (sp->ifp)
+        {
+          fclose (sp->ifp);
+          sp->ifp = NULL;
+        }
+      if (sp->ofp)
+        {
+          fclose (sp->ofp);
+          sp->ofp = NULL;
+        }
       free (sp);
       SCM_SET_SMOB_DATA (x, 0);
     }
 
   return 0;
 }
-
 
 int
 print_screen (SCM x, SCM port, scm_print_state * pstate UNUSED)
@@ -954,9 +971,8 @@ print_screen (SCM x, SCM port, scm_print_state * pstate UNUSED)
   SCREEN *screen;
   char str[SIZEOF_VOID_P * 2 + 3];
 
-  /* Don't use _scm_is_screen in this assert, because it says freed screens aren't
-     screens.  */
-  assert (SCM_SMOB_PREDICATE (screen_tag, x));
+  /* A function that may operated on GC'd #<screens>
+   * shouldn't typecheck them, so no typecheck assert here. */
 
   sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
   screen = sp->screen;
@@ -1200,7 +1216,7 @@ gucu_init_type ()
 
       screen_tag = scm_make_smob_type ("screen", sizeof (SCREEN *));
       scm_set_smob_print (screen_tag, print_screen);
-      scm_set_smob_free (screen_tag, free_screen);
+      scm_set_smob_free (screen_tag, gc_free_screen);
       scm_c_define_gsubr ("screen?", 1, 0, 0, gucu_is_screen_p);
 
       window_tag = scm_make_smob_type ("window", sizeof (WINDOW *));
