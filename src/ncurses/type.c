@@ -62,6 +62,7 @@ SCM equalp_window (SCM x1, SCM x2);
 size_t free_window (SCM x);
 SCM mark_window (SCM x);
 int print_window (SCM x, SCM port, scm_print_state * pstate);
+static size_t gc_free_window (SCM x);
 
 
 /* attr -- character attributes, bit flags packed into an unsigned:
@@ -1106,13 +1107,11 @@ mark_window (SCM x)
   return SCM_BOOL_F;
 }
 
-size_t
-free_window (SCM x)
+static size_t
+gc_free_window (SCM x)
 {
   struct gucu_window *wp;
   WINDOW *win;
-
-  assert (SCM_SMOB_PREDICATE (window_tag, x));
 
   wp = (struct gucu_window *) SCM_SMOB_DATA (x);
   /* Windows should already be null if delwin has been called on them */
@@ -1147,13 +1146,18 @@ free_window (SCM x)
   return 0;
 }
 
-int
+size_t
+free_window (SCM x)
+{
+  assert (SCM_SMOB_PREDICATE (window_tag, x));
+  return gc_free_window (x);
+}
+
+static int
 print_window (SCM _win, SCM port, scm_print_state * pstate UNUSED)
 {
   struct gucu_window *wp = (struct gucu_window *) SCM_SMOB_DATA (_win);
   char str[SIZEOF_VOID_P * 2 + 3];
-
-  assert (SCM_SMOB_PREDICATE (window_tag, _win));
 
   scm_puts ("#<window ", port);
 
@@ -1221,7 +1225,7 @@ gucu_init_type ()
 
       window_tag = scm_make_smob_type ("window", sizeof (WINDOW *));
       scm_set_smob_mark (window_tag, mark_window);
-      scm_set_smob_free (window_tag, free_window);
+      scm_set_smob_free (window_tag, gc_free_window);
       scm_set_smob_print (window_tag, print_window);
       scm_set_smob_equalp (window_tag, equalp_window);
       scm_c_define_gsubr ("window?", 1, 0, 0, gucu_is_window_p);
