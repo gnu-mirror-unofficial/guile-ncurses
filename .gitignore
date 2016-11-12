@@ -6,6 +6,7 @@
 *.exe
 *.fn
 *.fns
+*.go
 *.html
 *.info
 *.info-[0-9]*
