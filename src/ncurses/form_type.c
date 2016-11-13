@@ -207,8 +207,6 @@ mark_field (SCM x UNUSED)
 size_t
 gc_free_field (SCM field)
 {
-  scm_assert_smob_type (field_tag, field);
-
   FIELD *f = _scm_to_field (field);
 
   if (f != NULL)
@@ -357,8 +355,6 @@ mark_form (SCM x)
 {
   struct gucu_form *gf;
 
-  scm_assert_smob_type (form_tag, x);
-
   gf = (struct gucu_form *) SCM_SMOB_DATA (x);
   if (gf != NULL)
     {
@@ -374,8 +370,6 @@ gc_free_form (SCM x)
 {
   struct gucu_form *form;
   int retval;
-
-  scm_assert_smob_type (form_tag, x);
 
   form = (struct gucu_form *) SCM_SMOB_DATA (x);
 
@@ -428,7 +422,9 @@ print_form (SCM x, SCM port, scm_print_state * pstate UNUSED)
 
   scm_puts ("#<form ", port);
 
-  if (snprintf (str, sizeof(str), "%p", (void *) frm->form) < 0)
+  if (frm == NULL)
+    scm_puts ("(freed)", port);
+  else if (snprintf (str, sizeof(str), "%p", (void *) frm->form) < 0)
     scm_puts ("???", port);
   else
     scm_puts (str, port);
