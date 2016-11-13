@@ -195,8 +195,6 @@ mark_item (SCM x UNUSED)
 size_t
 gc_free_item (SCM item)
 {
-  SCM_ASSERT (_scm_is_item (item), item, SCM_ARG1, "free-item");
-
   ITEM *m = _scm_to_item (item);
   if (m != NULL)
     {
@@ -325,8 +323,6 @@ mark_menu (SCM x)
 {
   struct gucu_menu *gm;
 
-  scm_assert_smob_type (menu_tag, x);
-
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
   if (gm != NULL)
     {
@@ -344,8 +340,6 @@ gc_free_menu (SCM x)
   struct gucu_menu *gm;
   int retval;
   int i;
-
-  scm_assert_smob_type (menu_tag, x);
 
   gm = (struct gucu_menu *) SCM_SMOB_DATA (x);
   if (gm != NULL && gm->menu != NULL)
