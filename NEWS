@@ -6,6 +6,22 @@ The NEWS file for GNU Guile-NCurses
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+Release 2.1
+
+This build is all about dealing with now, in Guile 2.0.11+,
+SMOB's can forget their own type during the freeing process.
+
+- changes to the configuration and build process
+  - none
+- changes to the (ncurses curses) base library
+  - don't typecheck #<screen> and #<window> smob functions
+- changes to the (ncurses menu) library
+  - don't typecheck #<menu> and #<item> smob functions
+- changes to the (ncurses form) library
+  - don't typecheck #<form> and #<field> smob functions
+- changes to the (ncurses extra) library
+  - don't typecheck #<termios>  smob functions
+
 Release 2.0
 - changes to the configuration and build process
   - Compiled scheme files (.go files) are created
@@ -47,7 +63,7 @@ Release 2.0
 - changes to the (ncurses menu) library
   - new constant O_MOUSE_EVENT
 
-- changest to the (ncurses form) library
+- changes to the (ncurses form) library
   - new procedure 'current-field'
 
 - changes to the (ncurses extra) library

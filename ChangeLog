@@ -1,3 +1,64 @@
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Don't typecheck #<item> and #<menu> SMOB functions
+    
+    * src/ncurses/menu_type.c (mark_item, equalp_menu, mark_menu, gc_free_menu): no typecheck
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Don't typecheck #<form> and #<field> SMOB procedures
+    
+    * src/ncurses/form_type.c (gc_free_field, equalp_form, gc_free_form): don't typecheck
+      (print_form): check for freed form
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Don't typecheck #<termios> SMOB functions
+    
+    * src/ncurses/extra_type.c (gc_free_termios): no typecheck
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Make #<screen> and #<window> smob procedures static
+    
+    * src/ncurses/type.c (print_screen, equalp_window, mark_window, print_window):
+        now static
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Don't check #<window> type in SMOB functions
+    
+    * src/ncurses/type.c (gc_free_window): new typecheck-free procedure
+      (free_window): use gc_free_window
+      (print_window); don't typecheck
+      (gucu_init_type): use gc_free_window
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Add compiled guile files to gitignore
+    
+    * .gitignore: modified
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Don't check #<screen> type in SMOB functions
+    
+    * src/ncurses/type.c (free_screen): renamed to gc_free_screen
+      (gc_free_screen): remove typechecks
+      (print_screen): remove typechecks
+      (gucu_init_type): use gc_free_screen
+
+Michael Gran <spk121@yahoo.com>	2016-10-21
+
+    Tag 2.0 release
+
+Michael Gran <spk121@yahoo.com>	2016-10-21
+
+    More NEWS and ChangeLog
+    
+    * NEWS: updated
+    * ChangeLog: updated
+
 Michael Gran <spk121@yahoo.com>	2016-10-21
 
     Add some ordering in .go compilation
