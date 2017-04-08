@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script
 
-# Copyright (C) 2009, 2010, 2011, 2013, 2014, 2016 Free Software Foundation, Inc.
+# Copyright (C) 2009, 2010, 2011, 2013, 2014, 2016, 2017 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 ##################
 # Package info
-AC_INIT([GNU Guile-Ncurses],[2.1],[bug-guile-ncurses@gnu.org])
+AC_INIT([GNU Guile-Ncurses],[2.2],[bug-guile-ncurses@gnu.org])
 
 AC_CONFIG_AUX_DIR([build_aux])
 AM_INIT_AUTOMAKE([gnu std-options -Wall])
@@ -49,6 +49,7 @@ AM_PROG_AR
 GUILE_PKG([2.2 2.0])
 GUILE_PROGS
 GUILE_FLAGS
+GUILE_SITE_DIR
 
 AC_MSG_CHECKING([the Guile effective version])
 guile_effective_version="`$GUILE -c '(display (effective-version))'`"
@@ -87,19 +88,19 @@ case "x$with_gnu_filesystem_hierarchy" in
        # Get the installation directories from Guile
        # Installed .scm scheme libraries go here
        AC_MSG_CHECKING([Guile site directory])
-       guilesitedir="`$PKG_CONFIG guile-$guile_effective_version --variable=sitedir`"
+       guilesitedir=$GUILE_SITE
        AC_MSG_RESULT([$guilesitedir])
        AC_SUBST(guilesitedir)
 
        # Compiled libguile-*.so extension libraries go here
        AC_MSG_CHECKING([Guile extension directory])
-       guileextensiondir="`$PKG_CONFIG guile-$guile_effective_version --variable=extensiondir`"
+       guileextensiondir=$GUILE_EXTENSION
        AC_MSG_RESULT([$guileextensiondir])
        AC_SUBST(guileextensiondir)
 
        # Compiled .go scheme libraries go here
        AC_MSG_CHECKING([Guile object directory])
-       guileobjectdir="`$GUILE -c '(display (cadr %load-compiled-path))'`"
+       guileobjectdir=$GUILE_SITE_CCACHE
        AC_MSG_RESULT([$guileobjectdir])
        AC_SUBST(guileobjectdir)
        ;;
