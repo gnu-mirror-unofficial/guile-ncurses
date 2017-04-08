@@ -1,3 +1,48 @@
+Mike Gran <spk121@yahoo.com>	2017-04-08
+
+    make config.rpath executable
+    
+    * build_aux/config.rpath
+
+Mike Gran <spk121@yahoo.com>	2017-04-08
+
+    Revert to official guile.m4
+    
+    * m4/guile.m4: updated
+
+Mike Gran <spk121@yahoo.com>	2017-04-08
+
+    Add dircategory for docs
+    
+    * doc/guile-ncurses.texi: add dircategory
+
+Mike Gran <spk121@yahoo.com>	2017-04-08
+
+    Prep for 2.2
+    
+    * NEWS: Updated
+    * README: Updated
+    * README.cygwin: Updated
+    * THANKS: Updated
+    * TODO: Updated
+    * configure.ac (AC_INIT): bump to 2.2
+
+Mike Gran <spk121@yahoo.com>	2017-03-09
+
+    Prep configure.ac to use guile-2.2
+    
+    * configure.ac: add GUILE_PKG for 2.0 and 2.2
+
+Mike Gran <spk121@yahoo.com>	2016-11-12
+
+    Prep for release
+    
+    * ChangeLog: updated
+    * NEWS: updated
+    * README: updated
+    * THANKS:updated
+    * configure.ac: bump version to 2.1, libtool version to 11.1.0
+
 Mike Gran <spk121@yahoo.com>	2016-11-12
 
     Don't typecheck #<item> and #<menu> SMOB functions
@@ -2324,7 +2369,7 @@ Michael Gran <spk121@yahoo.com>	2014-09-23
     Merge branch 'master' of git.sv.gnu.org:/srv/git/guile-ncurses
     
     Conflicts:
-ncurses/extra_func.c           
+            ncurses/extra_func.c
 
 Michael Gran <spk121@yahoo.com>	2014-09-23
 
@@ -3088,8 +3133,8 @@ Michael Gran <spk121@yahoo.com>	2011-01-03
     Merge remote branch 'remotes/origin/1.2' into 1.2
     
     Conflicts:
-doc/guile-ncurses.texi           
-ncurses/curses.scm           
+            doc/guile-ncurses.texi
+            ncurses/curses.scm
 
 Michael Gran <spk121@yahoo.com>	2011-01-03
 
@@ -4416,7 +4461,7 @@ Michael Gran <spk121@yahoo.com>	2010-05-05
     Missing declarations
     
     * gucu/curs_spec.h: add decl for gucu_grantpt, gucu_ptsname, gucu_ptsmakeraw
-and gucu_unlockpt           
+            and gucu_unlockpt
 
 Michael Gran <spk121@yahoo.com>	2010-05-05
 
@@ -4492,7 +4537,7 @@ Michael Gran <spk121@yahoo.com>	2010-05-04
     export conditionally-compiled functions
     
     * gucu/curses.scm (grantpt, ptsname, ptsraw, ptsmakeraw, unlockpt): export
-if available           
+            if available
 
 Michael Gran <spk121@yahoo.com>	2010-05-04
 
@@ -4512,7 +4557,7 @@ Michael Gran <spk121@yahoo.com>	2010-05-04
     
     * configure.ac: add function tests
     * gucu/curs_spec.c: new functions gucu_grantpt, gucu_ptsname,
-gucu_ptsmakeraw, gucu_unlockpt           
+            gucu_ptsmakeraw, gucu_unlockpt
 
 Michael Gran <spk121@yahoo.com>	2010-05-04
 
@@ -4833,7 +4878,7 @@ Mike <mike@cain.my.domain>	2009-12-08
 Mike <mike@cain.my.domain>	2009-12-08
 
     Add test for char attribute procedures
-    a	tools/uninstalled-env.in~
+    a       tools/uninstalled-env.in~
 
 Merge: bdf0a66 6481459
 Mike <mike@cain.my.domain>	2009-12-08
