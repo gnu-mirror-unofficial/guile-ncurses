@@ -52,6 +52,11 @@ authorization.
 @end quotation
 @end copying
 
+@dircategory The Algorithmic Language Scheme
+@direntry
+* Guile Ncurses: (guile-ncurses).     A TUI library for Guile.
+@end direntry
+
 @titlepage
 @title GUILE NCURSES
 @subtitle For version @value{VERSION}, @value{UPDATED}
