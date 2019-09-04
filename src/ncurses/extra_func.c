@@ -108,6 +108,23 @@ SCM gucu_cfsetospeed_x (SCM s_termios, SCM s_speed)
   return SCM_UNSPECIFIED;
 }
 
+#ifdef HAVE_POSIX_OPENPT
+/* Returns the file descriptor of a new master pseudo-terminal. */
+SCM
+gucu_openpt (SCM s_flags)
+{
+  int flags;
+  int fd;
+
+  SCM_ASSERT (scm_is_integer (s_flags), s_flags, SCM_ARG1, "openpt");
+  flags = scm_to_int(s_flags);
+  fd = posix_openpt (flags);
+  if (fd == -1)
+    scm_syserror ("openpt");
+  return scm_fdopen(scm_from_int (fd), scm_from_latin1_string ("rw0"));
+}
+#endif
+
 #ifdef HAVE_GRANTPT
 /* If FD is the file descriptor of a master pseudo-terminal, this
    changes the mode and permissions of the slave pseudo-terminal
@@ -521,7 +538,8 @@ gucu_unlockpt (SCM s_fd_or_port)
   else
     scm_wrong_type_arg ("unlockpt", SCM_ARG1, s_fd_or_port);
 
-  ret = unlockpt (scm_to_int (s_fd));
+  c_fd = scm_to_int(s_fd);
+  ret = unlockpt (c_fd);
   if (ret == -1)
     scm_syserror ("unlockpt");
 
@@ -609,7 +627,6 @@ gucu_string_split_at_line_endings (SCM str)
   return res;
 }
 
-
 void
 gucu_extra_init_function ()
 {
@@ -619,6 +636,9 @@ gucu_extra_init_function ()
   scm_c_define_gsubr ("cfmakeraw!", 1, 0, 0, gucu_cfmakeraw_x);
   scm_c_define_gsubr ("cfsetispeed!", 2, 0, 0, gucu_cfsetispeed_x);
   scm_c_define_gsubr ("cfsetospeed!", 2, 0, 0, gucu_cfsetospeed_x);
+#ifdef HAVE_POSIX_OPENPT
+  scm_c_define_gsubr ("openpt", 1, 0, 0, gucu_openpt);
+#endif
 #ifdef HAVE_GRANTPT
   scm_c_define_gsubr ("grantpt", 1, 0, 0, gucu_grantpt);
 #endif

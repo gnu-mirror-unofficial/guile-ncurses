@@ -1,7 +1,7 @@
 /*
   extra_const.c
 
-  Copyright 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -26,6 +26,8 @@
 #if HAVE_TERMIOS_H
 #include <termios.h>
 #endif
+#include <stdlib.h>
+#include <fcntl.h>
 
 #if HAVE_CURSES_H
 #include <curses.h>
@@ -131,6 +133,8 @@ SCM gucu_B57600;
 SCM gucu_B7200;
 SCM gucu_B76800;
 
+SCM gucu_O_RDWR;
+SCM gucu_O_NOCTTY;
 
 #ifdef ENABLE_TERMIOS
 #define D(x) gucu_ ## x = scm_permanent_object(scm_c_define(#x, scm_from_int(x)))
@@ -286,5 +290,15 @@ gucu_extra_init_const ()
   D(B76800);
 #else
   F(B76800);
+#endif
+#if HAVE_DECL_O_RDWR
+  D(O_RDWR);
+#else
+  F(O_RDWR);
+#endif
+#if HAVE_DECL_O_NOCTTY
+  D(O_NOCTTY);
+#else
+  F(O_NOCTTY);
 #endif
 }

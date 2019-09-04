@@ -20,7 +20,7 @@ This manual is for the GNU Guile-NCurses library, (version
 ncurses library, which provides functionality for updating character
 screens.
 
-Copyright @copyright{} 1998-2010,2011,2013,2014,2016 Free Software Foundation, Inc. @*
+Copyright @copyright{} 1998-2010,2011,2013,2014,2016,2019 Free Software Foundation, Inc. @*
 Copyright @copyright{} 2001-2005 Pradeep Padala @*
 
 @quotation
@@ -7848,8 +7848,9 @@ Termios functions form the bulk of the @code{(ncurses extra)} library.
 These are procedures that can query and modify the terminal attributes,
 line control, and baud rate of scheme ports that use file descriptors.
 
-There is a constant @code{%has-termios} that can be use to check if,
-at configure time, the library was compiled to include the termios capabilities.
+There is a constant @code{%has-termios} that can be use to check if, at
+configure time, the library was compiled to include the termios
+capabilities.
 
 @defvr Constant %has-termios
 Is @code{#t} if the termios functionality is present.
@@ -8193,8 +8194,56 @@ data written but not transmitted.
 @node Pseudoterminal helper procedures,  , Termios port interface, The termios and miscellaneous library
 @subsection Pseudoterminal helper procedures
 
+A pseudoterminal is a bidirectional communication channel similar to a
+pipe, but, with kernel support to add the properties of terminals to
+communication on that channel.  The channel is asynchronous: a character
+written to one port of the channel will be made available to be read the
+from the other port on the channel, but, perhaps not immediately.  When
+implementing terminal emulators and remote-login programs, one may need
+get pseudoterminal master and slave devices from the kernel.
+
+A standard usage of these procedures could be as follows:
+@itemize
+@item
+Create a new master pseudoterminal port with @code{openpt}.  This master
+terminal has an associated slave pseudoterminal.
+@item
+Initialize the UID and mode of the slave pseudoterminal by calling
+@code{grantpt} on the master pseudoterminal.
+@item
+Unlock the slave terminal so that it can be opened by calling
+@code{unlockpt} on the master pseudoterminal.
+@item
+Get the filename of the slave pseudoterminal by calling @code{ptsname}
+on the master pseudoterminal.
+@item
+Create a file port for @code{ptsname}, which should probably be
+unbuffered.
+@item
+Use @code{ptsmakeraw} on each pseudoterminal to set its communcation to
+raw mode, or use @code{tcsetattr!} to modify the communication behavior
+between master and slave if something other than raw mode is expected.
+@end itemize
+
+@deffn Procedure openpt flags
+Returns a unbuffered read/write port for a new master pseudoterminal.
+The @var{flags} is a @code{logior} of zero or more of @code{O_RDWR} and
+@code{O_NOCTTY}.  Usually @code{O_RDWR} is expected.
+
+It will throw an error is no new pseudoterminal is available.
+@end deffn
+
+@defvr Constant O_RDWR
+Open the pseudoterminal device for both reading and writing.
+@end defvr
+
+@defvr Constant O_NOCTTY
+Do not make this pseudoterminal the controlling terminal for the
+process.
+@end defvr
+
 @deffn Procedure ptsmakeraw fd-or-port
-Given a file descriptor or file port a pseudo-terminal device,
+Given a file descriptor or file port a pseudoterminal device,
 this sets that pseudoterminal to RAW mode.
 @end deffn
 
