@@ -1,7 +1,7 @@
 /*
   extra_func.c
 
-  Copyright 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -188,15 +188,14 @@ gucu_ptsname (SCM s_fd_or_port)
   else
     scm_wrong_type_arg ("ptsname", SCM_ARG1, s_fd_or_port);
 
+  c_fd = scm_to_int (s_fd);
   name = ptsname (c_fd);
   if (name == NULL)
-    return SCM_BOOL_F;
+    scm_syserror ("ptsname");
 
   return scm_from_locale_string (name);
 }
 #endif
-
-
 
 SCM gucu_tcdrain (SCM s_fd_or_port)
 {
