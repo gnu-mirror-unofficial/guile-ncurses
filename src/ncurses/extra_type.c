@@ -33,25 +33,22 @@
 
 #ifdef ENABLE_TERMIOS
 
-scm_t_bits termios_tag;
+SCM termios_fo_type;
 
-SCM equalp_termios (SCM x1, SCM x2);
-size_t gc_free_termios (SCM x);
-SCM mark_termios (SCM x);
-int print_termios (SCM x, SCM port, scm_print_state * pstate);
+void gc_free_termios (SCM x);
 
-
-/* termios -- in C, a TERMIOS.  In Scheme, a smob that contains the pointer */
+/* termios -- in C, a TERMIOS.  In Scheme, a foreign object that
+ * contains the pointer */
 
 int
 _scm_is_termios (SCM x)
 {
-  if (SCM_SMOB_PREDICATE (termios_tag, x))
+  if (SCM_IS_A_P (x, termios_fo_type))
     {
-      if (SCM_SMOB_DATA (x) == 0)
-	return 0;
+      if (scm_foreign_object_ref (x, 0) == NULL)
+        return 0;
       else
-	return 1;
+        return 1;
     }
   else
     return 0;
@@ -62,9 +59,9 @@ _scm_to_termios (SCM x)
 {
   struct termios *gp;
 
-  scm_assert_smob_type (termios_tag, x);
+  scm_assert_foreign_object_type (termios_fo_type, x);
 
-  gp = (struct termios *) SCM_SMOB_DATA (x);
+  gp = (struct termios *) scm_foreign_object_ref (x, 0);
 
   return gp;
 }
@@ -76,48 +73,26 @@ _scm_from_termios (struct termios *x)
 
   assert (x != NULL);
 
-  SCM_NEWSMOB (s_termios, termios_tag, x);
+  s_termios = scm_make_foreign_object_1 (termios_fo_type, x);
 
-  assert (x == (struct termios *) SCM_SMOB_DATA (s_termios));
+  assert (x == (struct termios *) scm_foreign_object_ref (s_termios, 0));
 
 #if 0
   if (0)
     {
-      fprintf (stderr, "Making smob from termios based on *%p\n", x);
+      fprintf (stderr, "Making foreign object from termios based on *%p\n", x);
     }
 #endif
 
   return (s_termios);
 }
 
-// Termioss are equal if they point to the same C structure
-SCM
-equalp_termios (SCM x1, SCM x2)
-{
-  struct termios *termios1 = _scm_to_termios (x1);
-  struct termios *termios2 = _scm_to_termios (x2);
-
-  if ((termios1 == NULL) || (termios2 == NULL))
-    return SCM_BOOL_F;
-  else if ((termios1 != termios2))
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
-}
-
-SCM
-mark_termios (SCM x)
-{
-  // No SCMs in the window type: nothing to do here.
-  return (SCM_BOOL_F);
-}
-
-size_t
+void
 gc_free_termios (SCM x)
 {
   struct termios *gp;
 
-  gp = (struct termios *) SCM_SMOB_DATA (x);
+  gp = (struct termios *) scm_foreign_object_ref (x, 0);
 
   assert (gp != NULL);
   if (0)
@@ -133,33 +108,7 @@ gc_free_termios (SCM x)
 
   scm_gc_free (gp, sizeof (struct termios), "termios");
 
-  SCM_SET_SMOB_DATA (x, NULL);
-
-  return 0;
-}
-
-int
-print_termios (SCM x, SCM port, scm_print_state * pstate)
-{
-  struct termios *pnl = _scm_to_termios (x);
-  char *str;
-
-  scm_puts ("#<termios ", port);
-
-  if (pnl == NULL)
-    scm_puts ("(freed)",  port);
-  else
-    {
-      if (asprintf (&str, "%p", (void *) pnl) < 0)
-	scm_puts ("???", port);
-      else
-	scm_puts (str, port);
-    }
-
-  scm_puts (">", port);
-
-  // non-zero means success
-  return 1;
+  scm_foreign_object_set_x (x, 0, NULL);
 }
 
 SCM
@@ -168,12 +117,11 @@ gucu_is_termios_p (SCM x)
   return scm_from_bool (_scm_is_termios (x));
 }
 
-
 SCM
 gucu_new_termios (void)
 {
   struct termios *gp;
-  SCM smob;
+  SCM fo;
 
   /* Step 1: Allocate memory */
   gp = scm_gc_malloc (sizeof (struct termios), "termios");
@@ -182,11 +130,11 @@ gucu_new_termios (void)
   memset (gp, 0, sizeof(struct termios));
   gp->c_cflag = CS8;
 
-  /* Step 3: create the smob */
-  SCM_NEWSMOB (smob, termios_tag, gp);
+  /* Step 3: create the foreign object */
+  fo = scm_make_foreign_object_1 (termios_fo_type, gp);
 
   /* Step 4: finish the initialization */
-  return smob;
+  return fo;
 }
 #endif /* ENABLE_TERMIOS */
 
@@ -194,11 +142,9 @@ void
 gucu_extra_init_type ()
 {
 #ifdef ENABLE_TERMIOS
-  termios_tag = scm_make_smob_type ("termios", sizeof (struct termios *));
-  scm_set_smob_mark (termios_tag, mark_termios);
-  scm_set_smob_free (termios_tag, gc_free_termios);
-  scm_set_smob_print (termios_tag, print_termios);
-  scm_set_smob_equalp (termios_tag, equalp_termios);
+  termios_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("termios"),
+                                                  scm_list_1 (scm_from_utf8_symbol ("data")),
+                                                  gc_free_termios);
   scm_c_define_gsubr ("termios?", 1, 0, 0, gucu_is_termios_p);
 
   scm_c_define_gsubr ("new-termios", 0, 0, 0, gucu_new_termios);
