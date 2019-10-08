@@ -1,7 +1,7 @@
 /*
   curs_port.c
 
-  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -38,7 +38,6 @@
 
 #include "type.h"
 #include "curs_port.h"
-#include "compat.h"
 
 #ifdef GUCU_USE_COOKIE
 
@@ -69,7 +68,7 @@ port_read (void *cookie, char *buf, size_t siz)
         buf[0] = c;
 
       if (siz > 1)
-	buf[1] = '\0';
+        buf[1] = '\0';
       return 1;
     }
   else

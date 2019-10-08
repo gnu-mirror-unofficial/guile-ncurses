@@ -1,7 +1,7 @@
 /*
   menu_type.c
 
-  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -38,7 +38,6 @@
 #error "No menu.h file included"
 #endif
 
-#include "compat.h"
 #include "menu_type.h"
 #include "type.h"
 
@@ -186,7 +185,7 @@ equalp_item (SCM x1, SCM x2)
 }
 
 SCM
-mark_item (SCM x UNUSED)
+mark_item (SCM x)
 {
   // No SCMs in the item type: nothing to do here.
   return (SCM_BOOL_F);
@@ -220,7 +219,7 @@ gc_free_item (SCM item)
 }
 
 int
-print_item (SCM x, SCM port, scm_print_state * pstate UNUSED)
+print_item (SCM x, SCM port, scm_print_state * pstate)
 {
   ITEM *item = (ITEM *) SCM_SMOB_DATA (x);
   char str[SIZEOF_VOID_P*2+3];
@@ -442,7 +441,7 @@ gc_free_menu (SCM x)
 }
 
 int
-print_menu (SCM x, SCM port, scm_print_state * pstate UNUSED)
+print_menu (SCM x, SCM port, scm_print_state * pstate)
 {
   MENU *menu = _scm_to_menu (x);
   char str[SIZEOF_VOID_P*2+3];

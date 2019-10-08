@@ -1,7 +1,7 @@
 /*
   extra_type.c
 
-  Copyright 2009, 2010, 2011, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -29,7 +29,6 @@
 #include <termios.h>
 #endif
 
-#include "compat.h"
 #include "extra_type.h"
 
 #ifdef ENABLE_TERMIOS
@@ -140,7 +139,7 @@ gc_free_termios (SCM x)
 }
 
 int
-print_termios (SCM x, SCM port, scm_print_state * pstate UNUSED)
+print_termios (SCM x, SCM port, scm_print_state * pstate)
 {
   struct termios *pnl = _scm_to_termios (x);
   char *str;

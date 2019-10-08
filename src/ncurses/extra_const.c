@@ -42,7 +42,6 @@
 #error "No curses.h file included"
 #endif
 
-#include "compat.h"
 #include "extra_const.h"
 
 SCM gucu_has_termios;

@@ -40,7 +40,6 @@
 #error "No curses.h file included"
 #endif
 
-#include "compat.h"
 #include "gucuconfig.h"
 #include "type.h"
 #include "unicode.h"

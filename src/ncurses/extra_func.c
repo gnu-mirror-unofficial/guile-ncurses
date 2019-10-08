@@ -36,7 +36,6 @@
 #include <termios.h>
 #endif
 
-#include "compat.h"
 #include "extra_func.h"
 #include "extra_type.h"
 #include "type.h"
