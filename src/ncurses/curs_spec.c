@@ -874,7 +874,7 @@ gucu_getparent (SCM win)
   struct gucu_window *wp = NULL;
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "%getparent");
 
-  wp = (struct gucu_window *) SCM_SMOB_DATA (win);
+  wp = (struct gucu_window *) scm_foreign_object_ref (win, 0);
   if (wp != (struct gucu_window *) NULL)
     if (wp->parent != NULL)
       return wp->parent;
