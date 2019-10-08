@@ -1,7 +1,7 @@
 /*
   type.h
 
-  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -143,6 +143,8 @@ GUCU_LOCAL void _scm_free_screen (SCM x);
 
 GUCU_API SCM gucu_is_screen_p (SCM x);
 
+extern SCM window_fo_type;
+// FIXME: delete
 extern scm_t_bits window_tag;
 
 struct gucu_window

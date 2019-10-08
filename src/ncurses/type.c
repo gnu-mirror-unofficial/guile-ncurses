@@ -1,7 +1,7 @@
 /*
   type.c
 
-  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -52,17 +52,15 @@
 #define GUCU_CCHARW_MAX (5)
 #endif
 
-static scm_t_bits screen_tag;
-scm_t_bits window_tag;
+static SCM screen_fo_type;
+SCM window_fo_type;
+// FIXME: delete this
+scm_t_bits window_tag = 0;
 
-static size_t gc_free_screen (SCM x);
-static int print_screen (SCM x, SCM port, scm_print_state * pstate);
+static void gc_free_screen (SCM x);
 
 static SCM equalp_window (SCM x1, SCM x2);
-static size_t gc_free_window (SCM x);
-static SCM mark_window (SCM x);
-static int print_window (SCM x, SCM port, scm_print_state * pstate);
-
+static void gc_free_window (SCM x);
 
 /* attr -- character attributes, bit flags packed into an unsigned:
    probably uint32 */
@@ -858,9 +856,9 @@ struct screen_and_ports
 int
 _scm_is_screen (SCM x)
 {
-  if (SCM_SMOB_PREDICATE (screen_tag, x))
+  if (SCM_IS_A_P (x, screen_fo_type))
     {
-      if (SCM_SMOB_DATA (x) != 0)
+      if (scm_foreign_object_ref (x, 0) != 0)
         return 1;
       else
         return 0;
@@ -873,7 +871,7 @@ SCREEN *
 _scm_to_screen (SCM x)
 {
   assert (_scm_is_screen (x));
-  struct screen_and_ports *sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
+  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
   return sp->screen;
 }
 
@@ -884,7 +882,7 @@ _scm_to_screen_and_ports (SCM x, SCREEN ** screen, FILE ** ofp, FILE ** ifp)
   assert (screen != NULL);
   assert (ofp != NULL);
   assert (ifp != NULL);
-  struct screen_and_ports *sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
+  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
   *screen = sp->screen;
   *ofp = sp->ofp;
   *ifp = sp->ifp;
@@ -903,7 +901,7 @@ _scm_from_screen_and_ports (SCREEN * x, FILE * ofp, FILE * ifp)
   sp->screen = x;
   sp->ofp = ofp;
   sp->ifp = ifp;
-  SCM_NEWSMOB (s_screen, screen_tag, sp);
+  s_screen = scm_make_foreign_object_1 (screen_fo_type, sp);
   return s_screen;
 }
 
@@ -911,7 +909,7 @@ void
 _scm_free_screen (SCM x)
 {
   assert (_scm_is_screen (x));
-  struct screen_and_ports *sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
+  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
 
   if (sp->screen)
     {
@@ -932,11 +930,12 @@ _scm_free_screen (SCM x)
 }
 
 /*  This procedure frees a screen without checking its type. In GC
- *  free procedures, the smob may have already forgotten its type. */
-static size_t
+ *  free procedures, the foreign object may have already forgotten its
+ *  type. */
+static void
 gc_free_screen (SCM x)
 {
-  struct screen_and_ports *sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
+  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
 
   /* Screens should already be null if delwin has been called on them */
   if (sp != NULL)
@@ -958,42 +957,8 @@ gc_free_screen (SCM x)
           sp->ofp = NULL;
         }
       free (sp);
-      SCM_SET_SMOB_DATA (x, 0);
+      scm_foreign_object_set_x (x, 0, NULL);
     }
-
-  return 0;
-}
-
-static int
-print_screen (SCM x, SCM port, scm_print_state * pstate UNUSED)
-{
-  struct screen_and_ports *sp;
-  SCREEN *screen;
-  char str[SIZEOF_VOID_P * 2 + 3];
-
-  /* A function that may operated on GC'd #<screens>
-   * shouldn't typecheck them, so no typecheck assert here. */
-
-  sp = (struct screen_and_ports *) SCM_SMOB_DATA (x);
-  screen = sp->screen;
-  scm_puts ("#<screen ", port);
-
-  if (screen == NULL)
-    {
-      scm_puts ("(freed)", port);
-    }
-  else
-    {
-      if (snprintf (str, sizeof (str), "%p", (void *) screen) < 0)
-        scm_puts ("???", port);
-      else
-        scm_puts (str, port);
-    }
-
-  scm_puts (">", port);
-
-  // non-zero means success
-  return 1;
 }
 
 SCM
@@ -1002,14 +967,15 @@ gucu_is_screen_p (SCM x)
   return scm_from_bool (_scm_is_screen (x));
 }
 
-// window -- in C, a struct gucu_window *.  In Scheme, a smob that contains the pointer
+// window -- in C, a struct gucu_window *.  In Scheme, a foreign
+// object that contains the pointer
 
 int
 _scm_is_window (SCM x)
 {
-  if (SCM_SMOB_PREDICATE (window_tag, x))
+  if (SCM_IS_A_P (x, window_fo_type))
     {
-      if (SCM_SMOB_DATA (x) != 0)
+      if (scm_foreign_object_ref (x, 0) != 0)
         return 1;
       else
         return 0;
@@ -1025,7 +991,7 @@ _scm_to_window (SCM x)
   struct gucu_window *wp = NULL;
   assert (_scm_is_window (x));
 
-  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
+  wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
   if (wp != (struct gucu_window *) NULL)
     return wp->window;
 
@@ -1044,7 +1010,7 @@ _scm_from_window_full (SCM parent, SCM name, WINDOW * win)
 
   wp = scm_gc_malloc (sizeof (struct gucu_window), "_scm_from_window_full");
 
-  SCM_NEWSMOB (s_win, window_tag, wp);
+  s_win = scm_make_foreign_object_1 (window_fo_type, wp);
 
   wp->parent = parent;
   wp->name = name;
@@ -1054,9 +1020,9 @@ _scm_from_window_full (SCM parent, SCM name, WINDOW * win)
   if (0)
     {
 #ifdef NCURSES_OPAQUE
-      fprintf (stderr, "Making smob from window\n");
+      fprintf (stderr, "Making foreign object from window\n");
 #else
-      fprintf (stderr, "Making smob from window at %d, %d\n", x->_begx,
+      fprintf (stderr, "Making foreign object from window at %d, %d\n", x->_begx,
                x->_begy);
 #endif
     }
@@ -1093,26 +1059,13 @@ equalp_window (SCM x1, SCM x2)
     return SCM_BOOL_T;
 }
 
-static SCM
-mark_window (SCM x)
-{
-  struct gucu_window *wp;
-  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
-  if (wp != (struct gucu_window *) NULL)
-    {
-      scm_gc_mark (wp->parent);
-      scm_gc_mark (wp->name);
-    }
-  return SCM_BOOL_F;
-}
-
-static size_t
+static void
 gc_free_window (SCM x)
 {
   struct gucu_window *wp;
   WINDOW *win;
 
-  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
+  wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
   /* Windows should already be null if delwin has been called on them */
   if (wp != NULL)
     {
@@ -1121,7 +1074,7 @@ gc_free_window (SCM x)
       if (wp->panel != (PANEL *) NULL)
         {
           int retval;
-	  set_panel_userptr (wp->panel, NULL);
+          set_panel_userptr (wp->panel, NULL);
           retval = del_panel (wp->panel);
           if (retval != OK)
             {
@@ -1139,65 +1092,16 @@ gc_free_window (SCM x)
           delwin (wp->window);
           wp->window = (WINDOW *) NULL;
         }
-      SCM_SET_SMOB_DATA (x, NULL);
+      scm_foreign_object_set_x (x, 0, NULL);
     }
-
-  return 0;
 }
 
 size_t
 free_window (SCM x)
 {
-  assert (SCM_SMOB_PREDICATE (window_tag, x));
-  return gc_free_window (x);
-}
-
-static int
-print_window (SCM _win, SCM port, scm_print_state * pstate UNUSED)
-{
-  struct gucu_window *wp = (struct gucu_window *) SCM_SMOB_DATA (_win);
-  char str[SIZEOF_VOID_P * 2 + 3];
-
-  scm_puts ("#<window ", port);
-
-  if (wp == (struct gucu_window *) NULL)
-    scm_puts ("(freed)", port);
-  else
-    {
-      if (wp->name != SCM_BOOL_F)
-        {
-          scm_write (wp->name, port);
-          scm_puts (" ", port);
-        }
-
-      if (wp->window == 0)
-        scm_puts ("(windowless)", port);
-      else
-	{
-	  int y, x;
-
-	  if (wp->panel != (PANEL *) NULL)
-	    scm_puts ("panel ", port);
-	  getmaxyx (wp->window, y, x);
-	  snprintf (str, sizeof (str), "%d by %d ", y, x);
-	  scm_puts (str, port);
-	  if (wp->window == stdscr)
-	    scm_puts ("stdscr ", port);
-	  if (wp->window == newscr)
-	    scm_puts ("newscr ", port);
-	  if (wp->window == curscr)
-	    scm_puts ("curscr ", port);
-
-	  if (snprintf (str, sizeof (str), "%p", (void *) wp->window) < 0)
-	    scm_puts ("???", port);
-	  else
-	    scm_puts (str, port);
-	}
-    }
-  scm_puts (">", port);
-
-  // non-zero means success
-  return 1;
+  assert (SCM_IS_A_P (x, window_fo_type));
+  gc_free_window (x);
+  return 0;
 }
 
 SCM
@@ -1205,7 +1109,6 @@ gucu_is_window_p (SCM x)
 {
   return scm_from_bool (_scm_is_window (x));
 }
-
 
 void
 gucu_init_type ()
@@ -1217,28 +1120,26 @@ gucu_init_type ()
 
       scm_c_define_gsubr ("mevent?", 1, 0, 0, gucu_is_mevent_p);
 
-      screen_tag = scm_make_smob_type ("screen", sizeof (SCREEN *));
-      scm_set_smob_print (screen_tag, print_screen);
-      scm_set_smob_free (screen_tag, gc_free_screen);
+      screen_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("screen"),
+                                                     scm_list_1 (scm_from_utf8_symbol ("data")),
+                                                     gc_free_screen);
       scm_c_define_gsubr ("screen?", 1, 0, 0, gucu_is_screen_p);
 
-      window_tag = scm_make_smob_type ("window", sizeof (WINDOW *));
-      scm_set_smob_mark (window_tag, mark_window);
-      scm_set_smob_free (window_tag, gc_free_window);
-      scm_set_smob_print (window_tag, print_window);
-      scm_set_smob_equalp (window_tag, equalp_window);
+      window_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("window"),
+                                                     scm_list_1 (scm_from_utf8_symbol ("data")),
+                                                     gc_free_window);
       scm_c_define_gsubr ("window?", 1, 0, 0, gucu_is_window_p);
 
       scm_c_define_gsubr ("%scheme-char-to-c-char", 1, 0, 0,
-			  gucu_schar_to_char);
+              gucu_schar_to_char);
       scm_c_define_gsubr ("%scheme-char-to-c-wchar", 1, 0, 0,
-			  gucu_schar_to_wchar);
+              gucu_schar_to_wchar);
       scm_c_define_gsubr ("%scheme-char-from-c-char", 1, 0, 0,
-			  gucu_schar_from_char);
+              gucu_schar_from_char);
       scm_c_define_gsubr ("%scheme-char-from-c-wchar", 1, 0, 0,
-			  gucu_schar_from_wchar);
+              gucu_schar_from_wchar);
       scm_c_define_gsubr ("%xchar-from-chtype", 1, 0, 0,
-			  gucu_xchar_from_chtype);
+              gucu_xchar_from_chtype);
       scm_c_define_gsubr ("%xchar-to-chtype", 1, 0, 0, gucu_xchar_to_chtype);
 
       first = 0;
