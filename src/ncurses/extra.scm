@@ -2,7 +2,7 @@
 
 ;; extra.scm
 
-;; Copyright 2010, 2011, 2016 Free Software Foundation, Inc.
+;; Copyright 2010, 2011, 2016, 2019 Free Software Foundation, Inc.
 
 ;; This file is part of GNU Guile-Ncurses.
 
@@ -276,8 +276,12 @@
 (define (termios-vstart-get term) (termios-cc term VSTART))
 (define (termios-vstop-get term) (termios-cc term VSTOP))
 (define (termios-vsusp-get term) (termios-cc term VSUSP))
-(define (termios-vtime-get term) (* 0.1 (char->integer (termios-cc term VTIME))))
-(define (termios-vmin-get term) (char->integer (termios-cc term VTIME)))
+(define (termios-vtime-get term)
+  "Returns the maximum time between input bytes."
+  (* 0.1 (char->integer (termios-cc term VTIME))))
+(define (termios-vmin-get term)
+  "Returns the minimum number of bytes required."
+  (char->integer (termios-cc term VMIN)))
 
 (define (termios-veof-set! term c) (termios-cc-set! term VEOF c))
 (define (termios-veol-set! term c) (termios-cc-set! term VEOL c))
@@ -289,12 +293,16 @@
 (define (termios-vstop-set! term c) (termios-cc-set! term VSTOP c))
 (define (termios-vsusp-set! term c) (termios-cc-set! term VSUSP c))
 (define (termios-vtime-set! term t)
+  "Set the maximum allowed time between bytes in seconds.  The valid
+range for T is 0 to 25.5, with a useful resolution of 0.1 seconds."
   (termios-cc-set! term VTIME
                    (integer->char
-                    (inexact->exact
-                     (round
-                      (* t 10.0))))))
+		    (min 0 (max 255
+				(inexact->exact
+				 (round
+				  (* t 10.0))))))))
 (define (termios-vmin-set! term n)
+  "Sets the minimum number of bytes to be accepted as valid input."
   (termios-cc-set! term VMIN (integer->char n)))
 
 
