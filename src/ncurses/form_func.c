@@ -40,8 +40,8 @@
 #include "form_type.h"
 #include "type.h"
 
-extern scm_t_bits form_tag;
-extern scm_t_bits field_tag;
+extern SCM form_fo_type;
+extern SCM field_fo_type;
 
 /* Errors */
 
@@ -54,7 +54,8 @@ form_bad_state_error (const char *funcname)
 void
 form_connected_error (const char *funcname)
 {
-  scm_misc_error (funcname, "field is already connected to a form", SCM_BOOL_F);
+  scm_misc_error (funcname, "field is already connected to a form",
+                  SCM_BOOL_F);
 }
 
 void
@@ -73,13 +74,14 @@ void
 form_no_room_error (const char *funcname)
 {
   scm_misc_error (funcname, "the form or field can not fit on this screen",
-		  SCM_BOOL_F);
+                  SCM_BOOL_F);
 }
 
 void
 form_not_connected_error (const char *funcname)
 {
-  scm_misc_error (funcname, "the field is not connected to a form", SCM_BOOL_F);
+  scm_misc_error (funcname, "the field is not connected to a form",
+                  SCM_BOOL_F);
 }
 
 void
@@ -291,7 +293,7 @@ gucu_form_driver (SCM form, SCM c)
 {
   SCM_ASSERT (_scm_is_form (form), form, SCM_ARG1, "form-driver");
   SCM_ASSERT (SCM_CHARP (c) || scm_is_integer (c), c, SCM_ARG2,
-	      "form-driver");
+              "form-driver");
 
   FORM *c_form = _scm_to_form (form);
   int ret;
@@ -445,9 +447,9 @@ gucu_form_sub (SCM form)
 {
   struct gucu_form *gf;
 
-  scm_assert_smob_type (form_tag, form);
+  scm_assert_foreign_object_type (form_fo_type, form);
 
-  gf = (struct gucu_form *) SCM_SMOB_DATA (form);
+  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
 
   /* Return the subwindow, if one has already been assigned */
   if (scm_is_true (gf->sub_guard))
@@ -463,9 +465,9 @@ gucu_form_win (SCM form)
 {
   struct gucu_form *gf;
 
-  scm_assert_smob_type (form_tag, form);
+  scm_assert_foreign_object_type (form_fo_type, form);
 
-  gf = (struct gucu_form *) SCM_SMOB_DATA (form);
+  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
 
   /* Return the window, if one has already been assigned */
   if (scm_is_true (gf->win_guard))
@@ -795,9 +797,9 @@ gucu_set_form_sub_x (SCM form, SCM win)
 {
   struct gucu_form *gf;
 
-  scm_assert_smob_type (form_tag, form);
+  scm_assert_foreign_object_type (form_fo_type, form);
 
-  gf = (struct gucu_form *) SCM_SMOB_DATA (form);
+  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
 
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "set-form-sub!");
 
@@ -830,9 +832,9 @@ gucu_set_form_win_x (SCM form, SCM win)
 {
   struct gucu_form *gf;
 
-  scm_assert_smob_type (form_tag, form);
+  scm_assert_foreign_object_type (form_fo_type, form);
 
-  gf = (struct gucu_form *) SCM_SMOB_DATA (form);
+  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
 
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "set-form-win!");
 
@@ -950,7 +952,7 @@ gucu_form_init_function ()
   scm_c_define_gsubr ("form-opts-off!", 2, 0, 0, gucu_form_opts_off_x);
   scm_c_define_gsubr ("form-page", 1, 0, 0, gucu_form_page);
   scm_c_define_gsubr ("form-request-by-name", 1, 0, 0,
-		      gucu_form_request_by_name);
+                      gucu_form_request_by_name);
   scm_c_define_gsubr ("form-request-name", 1, 0, 0, gucu_form_request_name);
   scm_c_define_gsubr ("form-sub", 1, 0, 0, gucu_form_sub);
   scm_c_define_gsubr ("form-win", 1, 0, 0, gucu_form_win);
@@ -961,7 +963,7 @@ gucu_form_init_function ()
   scm_c_define_gsubr ("pos-form-cursor", 1, 0, 0, gucu_pos_form_cursor);
   scm_c_define_gsubr ("post-form", 1, 0, 0, gucu_post_form);
   scm_c_define_gsubr ("set-current-field!", 2, 0, 0,
-		      gucu_set_current_field_x);
+                      gucu_set_current_field_x);
   scm_c_define_gsubr ("set-field-back!", 2, 0, 0, gucu_set_field_back_x);
   scm_c_define_gsubr ("set-field-buffer!", 3, 0, 0, gucu_set_field_buffer_x);
   scm_c_define_gsubr ("set-field-fore!", 2, 0, 0, gucu_set_field_fore_x);

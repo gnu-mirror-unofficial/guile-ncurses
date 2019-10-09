@@ -55,8 +55,8 @@ GUCU_LOCAL bool field_decrease_refcount (FIELD *item);
 GUCU_LOCAL int field_get_refcount (FIELD *item);
 GUCU_LOCAL int _scm_is_list_of_fields (SCM fields);
 GUCU_LOCAL int _scm_is_list_of_unattached_fields (SCM fields);
-GUCU_LOCAL size_t gc_free_form (SCM field);
-GUCU_LOCAL size_t gc_free_field (SCM field);
+GUCU_LOCAL void gc_free_form (SCM field);
+GUCU_LOCAL void gc_free_field (SCM field);
 
 GUCU_LOCAL int _scm_is_form (SCM x);
 GUCU_LOCAL FORM *_scm_to_form (SCM x);
