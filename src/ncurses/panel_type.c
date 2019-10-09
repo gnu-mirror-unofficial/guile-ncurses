@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -47,25 +47,26 @@ size_t gc_free_panel (SCM x);
 SCM mark_panel (SCM x);
 int print_panel (SCM x, SCM port, scm_print_state * pstate);
 
-
 /* panel -- in C, a gucu_window struct that has a non-NULL panel. In
-   Scheme, a smob that contains a pointer to that structure. */
+   Scheme, a foreign object that contains a pointer to that
+   structure. */
 
 int
 _scm_is_panel (SCM x)
 {
   if (_scm_is_window (x))
     {
-      if (SCM_SMOB_DATA (x) == 0)
-	return 0;
+      if (scm_foreign_object_ref (x, 0) == NULL)
+        return 0;
       else
-	{
-	  struct gucu_window *wp = (struct gucu_window *) SCM_SMOB_DATA (x);
-	  if (wp != NULL && wp->panel != NULL)
-	    return 1;
-	  else
-	    return 0;
-	}
+        {
+          struct gucu_window *wp =
+            (struct gucu_window *) scm_foreign_object_ref (x, 0);
+          if (wp != NULL && wp->panel != NULL)
+            return 1;
+          else
+            return 0;
+        }
     }
   else
     return 0;
@@ -77,7 +78,7 @@ _scm_to_panel (SCM x)
   struct gucu_window *wp;
 
   assert (_scm_is_window (x));
-  wp = (struct gucu_window *) SCM_SMOB_DATA (x);
+  wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
   assert (wp->panel != NULL);
 
   return wp->panel;
@@ -109,24 +110,24 @@ free_panel (SCM x)
   struct gucu_window *wp;
   int retval;
 
-  scm_assert_smob_type (window_tag, x);
+  scm_assert_foreign_object_type (window_fo_type, x);
   if (_scm_is_panel (x))
     {
       // Window has an associated panel
-      wp = (struct gucu_window *) SCM_SMOB_DATA (x);
+      wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
       if (wp && wp->window && wp->panel)
-	{
-	  set_panel_userptr (wp->panel, NULL);
-	  int retval = del_panel (wp->panel);
-	  if (retval != OK)
-	    {
-	      scm_error_scm (scm_from_locale_symbol ("ncurses"),
-			     scm_from_locale_string ("freeing panel"),
-			     scm_from_locale_string ("bad argument"),
-			     SCM_BOOL_F, SCM_BOOL_F);
-	    }
-	  wp->panel = (PANEL *) NULL;
-	}
+        {
+          set_panel_userptr (wp->panel, NULL);
+          int retval = del_panel (wp->panel);
+          if (retval != OK)
+            {
+              scm_error_scm (scm_from_locale_symbol ("ncurses"),
+                             scm_from_locale_string ("freeing panel"),
+                             scm_from_locale_string ("bad argument"),
+                             SCM_BOOL_F, SCM_BOOL_F);
+            }
+          wp->panel = (PANEL *) NULL;
+        }
     }
 
   return 0;
@@ -152,25 +153,25 @@ SCM
 gucu_make_panel_x (SCM win)
 {
   struct gucu_window *wp = NULL;
-  SCM smob;
+  SCM fobj;
 
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "make-panel!");
 
   if (_scm_is_panel (win))
-    scm_misc_error ("make-panel!", "already a panel ~A", scm_list_1(win));
+    scm_misc_error ("make-panel!", "already a panel ~A", scm_list_1 (win));
 
-  wp = (struct gucu_window *) SCM_SMOB_DATA(win);
+  wp = (struct gucu_window *) scm_foreign_object_ref (win, 0);
   if (wp && wp->window)
     {
       wp->panel = new_panel (wp->window);
 
       if (wp->panel == NULL)
-	scm_misc_error ("make-panel!", "bad window ~A", scm_list_1 (win));
+        scm_misc_error ("make-panel!", "bad window ~A", scm_list_1 (win));
       {
-	/* We need a reference back to the parent #<window> so we can
-	   write a panel. */
-	assert (!SCM_IMP (win));
-	set_panel_userptr (wp->panel, SCM2PTR (win));
+        /* We need a reference back to the parent #<window> so we can
+           write a panel. */
+        assert (!SCM_IMP (win));
+        set_panel_userptr (wp->panel, SCM2PTR (win));
       }
     }
   return SCM_UNSPECIFIED;

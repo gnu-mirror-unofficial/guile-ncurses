@@ -53,8 +53,6 @@
 
 static SCM screen_fo_type;
 SCM window_fo_type;
-// FIXME: delete this
-scm_t_bits window_tag = 0;
 
 static void gc_free_screen (SCM x);
 
@@ -525,7 +523,7 @@ _scm_sstring_from_wint_string (const wint_t * x)
 
 #ifdef HAVE_NCURSESW
 SCM
-_scm_sstring_from_wstring (const wchar_t * x)
+_scm_sstring_from_wstring (const wchar_t *x)
 {
   size_t i;
   SCM member, xstring;
@@ -576,7 +574,7 @@ _scm_sstring_to_wstring (SCM x)
 }
 
 SCM
-_scm_xstring_from_chstring (const chtype * x)
+_scm_xstring_from_chstring (const chtype *x)
 {
   size_t i;
   SCM member, xstring;
@@ -870,25 +868,27 @@ SCREEN *
 _scm_to_screen (SCM x)
 {
   assert (_scm_is_screen (x));
-  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
+  struct screen_and_ports *sp =
+    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
   return sp->screen;
 }
 
 void
-_scm_to_screen_and_ports (SCM x, SCREEN ** screen, FILE ** ofp, FILE ** ifp)
+_scm_to_screen_and_ports (SCM x, SCREEN **screen, FILE **ofp, FILE **ifp)
 {
   assert (_scm_is_screen (x));
   assert (screen != NULL);
   assert (ofp != NULL);
   assert (ifp != NULL);
-  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
+  struct screen_and_ports *sp =
+    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
   *screen = sp->screen;
   *ofp = sp->ofp;
   *ifp = sp->ifp;
 }
 
 SCM
-_scm_from_screen_and_ports (SCREEN * x, FILE * ofp, FILE * ifp)
+_scm_from_screen_and_ports (SCREEN *x, FILE *ofp, FILE *ifp)
 {
   SCM s_screen;
 
@@ -908,7 +908,8 @@ void
 _scm_free_screen (SCM x)
 {
   assert (_scm_is_screen (x));
-  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
+  struct screen_and_ports *sp =
+    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
 
   if (sp->screen)
     {
@@ -934,7 +935,8 @@ _scm_free_screen (SCM x)
 static void
 gc_free_screen (SCM x)
 {
-  struct screen_and_ports *sp = (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
+  struct screen_and_ports *sp =
+    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
 
   /* Screens should already be null if delwin has been called on them */
   if (sp != NULL)
@@ -998,7 +1000,7 @@ _scm_to_window (SCM x)
 }
 
 SCM
-_scm_from_window_full (SCM parent, SCM name, WINDOW * win)
+_scm_from_window_full (SCM parent, SCM name, WINDOW *win)
 {
   SCM s_win;
   struct gucu_window *wp;
@@ -1021,8 +1023,8 @@ _scm_from_window_full (SCM parent, SCM name, WINDOW * win)
 #ifdef NCURSES_OPAQUE
       fprintf (stderr, "Making foreign object from window\n");
 #else
-      fprintf (stderr, "Making foreign object from window at %d, %d\n", x->_begx,
-               x->_begy);
+      fprintf (stderr, "Making foreign object from window at %d, %d\n",
+               x->_begx, x->_begy);
 #endif
     }
 
@@ -1030,7 +1032,7 @@ _scm_from_window_full (SCM parent, SCM name, WINDOW * win)
 }
 
 SCM
-_scm_from_window (WINDOW * x)
+_scm_from_window (WINDOW *x)
 {
   return _scm_from_window_full (SCM_BOOL_F, SCM_BOOL_F, x);
 }
@@ -1119,26 +1121,28 @@ gucu_init_type ()
 
       scm_c_define_gsubr ("mevent?", 1, 0, 0, gucu_is_mevent_p);
 
-      screen_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("screen"),
-                                                     scm_list_1 (scm_from_utf8_symbol ("data")),
-                                                     gc_free_screen);
+      screen_fo_type =
+        scm_make_foreign_object_type (scm_from_utf8_symbol ("screen"),
+                                      scm_list_1 (scm_from_utf8_symbol
+                                                  ("data")), gc_free_screen);
       scm_c_define_gsubr ("screen?", 1, 0, 0, gucu_is_screen_p);
 
-      window_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("window"),
-                                                     scm_list_1 (scm_from_utf8_symbol ("data")),
-                                                     gc_free_window);
+      window_fo_type =
+        scm_make_foreign_object_type (scm_from_utf8_symbol ("window"),
+                                      scm_list_1 (scm_from_utf8_symbol
+                                                  ("data")), gc_free_window);
       scm_c_define_gsubr ("window?", 1, 0, 0, gucu_is_window_p);
 
       scm_c_define_gsubr ("%scheme-char-to-c-char", 1, 0, 0,
-              gucu_schar_to_char);
+                          gucu_schar_to_char);
       scm_c_define_gsubr ("%scheme-char-to-c-wchar", 1, 0, 0,
-              gucu_schar_to_wchar);
+                          gucu_schar_to_wchar);
       scm_c_define_gsubr ("%scheme-char-from-c-char", 1, 0, 0,
-              gucu_schar_from_char);
+                          gucu_schar_from_char);
       scm_c_define_gsubr ("%scheme-char-from-c-wchar", 1, 0, 0,
-              gucu_schar_from_wchar);
+                          gucu_schar_from_wchar);
       scm_c_define_gsubr ("%xchar-from-chtype", 1, 0, 0,
-              gucu_xchar_from_chtype);
+                          gucu_xchar_from_chtype);
       scm_c_define_gsubr ("%xchar-to-chtype", 1, 0, 0, gucu_xchar_to_chtype);
 
       first = 0;
