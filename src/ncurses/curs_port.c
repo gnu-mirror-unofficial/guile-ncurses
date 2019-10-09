@@ -115,7 +115,7 @@ port_write (void *cookie, const char *buf, size_t siz)
 
     for (i = 0; i < siz; i++)
       {
-        scm_write_char (scm_integer_to_char (scm_from_char (buf[i])), port);
+        scm_write_char (SCM_MAKE_CHAR (buf[i]), port);
       }
   }
 
