@@ -1,7 +1,7 @@
 /*
   panel_func.c
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -38,7 +38,6 @@
 #error "No panel.h file included"
 #endif
 
-#include "compat.h"
 #include "panel_func.h"
 #include "panel_type.h"
 #include "type.h"

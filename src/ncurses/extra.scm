@@ -88,6 +88,8 @@
             termios-vmin-set!
 
             ptsmakeraw
+            O_RDRW
+            O_NOCTTY
             ))
 
 (define (iflag-symbol->const x)
@@ -573,5 +575,6 @@ it returns the next slower valid value."
 (if (defined? 'tcgetsid)        (export tcgetsid))
 (if (defined? 'unlockpt)        (export unlockpt))
 (if (defined? 'ptsname)         (export ptsname))
+(if (defined? 'openpt)          (export openpt))
 (if (defined? 'grantpt)         (export grantpt))
 (if (defined? '%strwidth)       (export wcwidth))

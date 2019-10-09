@@ -1,7 +1,7 @@
 /*
   type.h
 
-  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -12,7 +12,7 @@
 
   Guile-Ncurses is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -98,11 +98,11 @@ GUCU_LOCAL int _scm_is_xstring (SCM x);
 
 #ifdef HAVE_NCURSESW
 GUCU_LOCAL SCM _scm_sstring_from_wint_string (const wint_t * x);
-GUCU_LOCAL SCM _scm_sstring_from_wstring (const wchar_t * x);
+GUCU_LOCAL SCM _scm_sstring_from_wstring (const wchar_t *x);
 #endif
 GUCU_LOCAL char *_scm_sstring_to_locale_string (SCM x);
 GUCU_LOCAL wchar_t *_scm_sstring_to_wstring (SCM x);
-GUCU_LOCAL SCM _scm_xstring_from_chstring (const chtype * x);
+GUCU_LOCAL SCM _scm_xstring_from_chstring (const chtype *x);
 #ifdef HAVE_NCURSESW
 GUCU_LOCAL SCM _scm_xstring_from_cstring (const cchar_t * x);
 #endif
@@ -123,11 +123,11 @@ GUCU_LOCAL SCM _scm_from_chtype (chtype x);
 
 GUCU_LOCAL int _scm_is_chstring (SCM x);
 GUCU_LOCAL chtype *_scm_to_chstring (SCM x);
-GUCU_LOCAL SCM _scm_from_chstring (chtype * x);
+GUCU_LOCAL SCM _scm_from_chstring (chtype *x);
 
 GUCU_LOCAL int _scm_is_file (SCM x);
 GUCU_LOCAL FILE *_scm_to_file (SCM x);
-GUCU_LOCAL SCM _scm_from_file (FILE * x);
+GUCU_LOCAL SCM _scm_from_file (FILE *x);
 
 GUCU_LOCAL int _scm_is_mevent (SCM x);
 GUCU_LOCAL MEVENT *_scm_to_mevent (SCM x);
@@ -137,13 +137,14 @@ GUCU_API SCM gucu_is_mevent_p (SCM x);
 
 GUCU_LOCAL int _scm_is_screen (SCM x);
 GUCU_LOCAL SCREEN *_scm_to_screen (SCM x);
-GUCU_LOCAL SCM _scm_from_screen_and_ports (SCREEN * x, FILE *ofp, FILE *ifp);
-GUCU_LOCAL void _scm_to_screen_and_ports (SCM x, SCREEN **screen, FILE **ofp, FILE **ifp);
+GUCU_LOCAL SCM _scm_from_screen_and_ports (SCREEN *x, FILE *ofp, FILE *ifp);
+GUCU_LOCAL void _scm_to_screen_and_ports (SCM x, SCREEN **screen,
+                                          FILE **ofp, FILE **ifp);
 GUCU_LOCAL void _scm_free_screen (SCM x);
 
 GUCU_API SCM gucu_is_screen_p (SCM x);
 
-extern scm_t_bits window_tag;
+extern SCM window_fo_type;
 
 struct gucu_window
 {
@@ -168,7 +169,7 @@ GUCU_LOCAL size_t free_window (SCM x);
 
 GUCU_LOCAL int _scm_is_window (SCM x);
 GUCU_LOCAL WINDOW *_scm_to_window (SCM x);
-GUCU_LOCAL SCM _scm_from_window (WINDOW * x);
+GUCU_LOCAL SCM _scm_from_window (WINDOW *x);
 GUCU_LOCAL SCM _scm_from_window_full (SCM parent, SCM name, WINDOW *win);
 
 GUCU_API SCM gucu_is_window_p (SCM x);

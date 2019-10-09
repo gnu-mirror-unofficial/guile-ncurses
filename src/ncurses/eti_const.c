@@ -1,7 +1,7 @@
 /*
 eti_const.c
 
-Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2014, 2019 Free Software Foundation, Inc.
 
 This file is part of GNU Guile-Ncurses.
 
@@ -40,7 +40,6 @@ License along with Guile-Ncurses.  If not, see
 #error "No curses.h file included"
 #endif
 
-#include "compat.h"
 #include "eti_const.h"
 
 SCM gucu_E_OK;

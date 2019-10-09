@@ -1,7 +1,7 @@
 /*
   curs_func.c
 
-  Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -35,7 +35,6 @@
 #error "No curses.h file included"
 #endif
 
-#include "compat.h"
 #include "curs_func.h"
 #include "type.h"
 #include "unicode.h"
@@ -756,8 +755,8 @@ gucu_initscr ()
     return SCM_BOOL_F;
 
   return _scm_from_window_full (SCM_BOOL_F,
-				scm_from_locale_string ("initscr"),
-				ret);
+                scm_from_locale_string ("initscr"),
+                ret);
 }
 
 /* Initialize COLOR as an RGB triple. */

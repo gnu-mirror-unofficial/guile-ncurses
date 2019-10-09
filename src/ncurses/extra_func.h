@@ -1,7 +1,7 @@
 /*
   extra_func.h
 
-  Copyright 2010 Free Software Foundation, Inc.
+  Copyright 2010, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -33,6 +33,9 @@ GUCU_API SCM gucu_cfmakeraw_x (SCM termios);
 GUCU_API SCM gucu_cfsetispeed_x (SCM termios, SCM speed);
 GUCU_API SCM gucu_cfsetospeed_x (SCM termios, SCM speed);
 GUCU_API SCM gucu_cfsetspeed_x (SCM termios, SCM speed);
+#ifdef HAVE_POSIX_OPENPT
+GUCU_API SCM gucu_openpt (SCM flags);
+#endif
 #ifdef HAVE_GRANTPT
 GUCU_API SCM gucu_grantpt (SCM fd);
 #endif

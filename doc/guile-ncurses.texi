@@ -20,7 +20,7 @@ This manual is for the GNU Guile-NCurses library, (version
 ncurses library, which provides functionality for updating character
 screens.
 
-Copyright @copyright{} 1998-2010,2011,2013,2014,2016 Free Software Foundation, Inc. @*
+Copyright @copyright{} 1998-2010,2011,2013,2014,2016,2019 Free Software Foundation, Inc. @*
 Copyright @copyright{} 2001-2005 Pradeep Padala @*
 
 @quotation
@@ -527,7 +527,7 @@ columns minus one.
 Curses has several types specific to how it operates: rendered strings
 and windows, for example.  Some of the curses types are represented by
 standard scheme types, while others are represented as opaque types
-(SMOBs).
+(foreign objects).
 
 @menu
 * Character types::
@@ -551,15 +551,7 @@ applications.
 
 Simple characters are the Guile native character type.
 
-For older versions of Guile, such as the 1.6.x and the 1.8.x versions,
-characters were limited to being 8-bit.  The lower 128 characters were
-ASCII, and the upper 128 characters had a meaning based on the locale
-of the system.  If the locale were set to ISO-8859-1, for example, the
-upper 128 characters would be common accented letters used in western
-European languages.  In almost all cases, each character took up the
-same space on a character cell terminal.
-
-In newer versions of Guile, such as 2.0.x, the native Guile character
+In newer versions of Guile, such as 2.2.x, the native Guile character
 type is a Unicode codepoint, a 32-bit number.  Characters based on
 Unicode include all or most of the glyphs for the most
 languages. There are challenges when using the non-ASCII characters.
@@ -658,11 +650,11 @@ display format of that string
 @node Opaque types,  , Character types, Types and encodings
 @section Opaque types
 
-@cindex SMOBs used in Curses
+@cindex Foreign object types used in Curses
 @cindex Opaque types
 
 These are types from system libraries that are complex or
-system-dependent.  They are implemented as @code{SMOB}s.
+system-dependent.  They are implemented as foreign objects.
 
 @table @code
 
@@ -791,7 +783,7 @@ The procedure @code{initscr} initializes the terminal in curses mode.
 It clears the screen and presents a blank screen.  To do any screen
 manipulation using the curses package, this has to be called first.
 This function initializes the curses system and allocates memory for
-screen handling and some other data structures.  It returns a SMOB
+screen handling and some other data structures.  It returns a foreign object
 that represents the default window: the window that represents the
 entire screen.  By convention, this window is denoted @code{stdscr},
 the @emph{standard screen}.  Under extreme cases, this function might
@@ -1145,10 +1137,8 @@ character.  The guile ncurses library abstracts both the C ncurses
 function @code{addch} and the C ncurses function @code{add-wch} as the
 Guile function @code{addch}.
 
-So, if you version of Guile is capable of Unicode characters (such as
-Guile version 2.0.x), and if you version of NCurses is the wide
-version @code{libncursesw}, then you can use this library to print
-non-Latin characters.
+So, if your version of NCurses is the wide version @code{libncursesw},
+then you can use this library to print non-Latin characters.
 
 First off, if you want to use wide characters, you need to call
 @code{(setlocale LC_ALL "")} before the call to @code{initscr}.  The
@@ -3274,10 +3264,8 @@ is @code{#f}.
 @end defvr
 
 @defvr Constant %ucs4-chars
-This is set to @code{#t} if Guile-Ncurses expects that characters are
-stored as UCS4 codepoints, such as in Guile 2.0.x.  It is @code{#f} if
-Guile-Ncurses expects that characters are 8-bit only and stored
-according to the current 8-bit locale.
+This is always @code{#t} and it represents that Guile-Ncurses expects
+that characters are stored as UCS4 codepoints.
 @end defvr
 
 @node Curses screen initialization and manipulation routines, Errors and Exceptions, Features determined at compile time, The basic curses library
@@ -7848,8 +7836,9 @@ Termios functions form the bulk of the @code{(ncurses extra)} library.
 These are procedures that can query and modify the terminal attributes,
 line control, and baud rate of scheme ports that use file descriptors.
 
-There is a constant @code{%has-termios} that can be use to check if,
-at configure time, the library was compiled to include the termios capabilities.
+There is a constant @code{%has-termios} that can be use to check if, at
+configure time, the library was compiled to include the termios
+capabilities.
 
 @defvr Constant %has-termios
 Is @code{#t} if the termios functionality is present.
@@ -8193,8 +8182,56 @@ data written but not transmitted.
 @node Pseudoterminal helper procedures,  , Termios port interface, The termios and miscellaneous library
 @subsection Pseudoterminal helper procedures
 
+A pseudoterminal is a bidirectional communication channel similar to a
+pipe, but, with kernel support to add the properties of terminals to
+communication on that channel.  The channel is asynchronous: a character
+written to one port of the channel will be made available to be read the
+from the other port on the channel, but, perhaps not immediately.  When
+implementing terminal emulators and remote-login programs, one may need
+get pseudoterminal master and slave devices from the kernel.
+
+A standard usage of these procedures could be as follows:
+@itemize
+@item
+Create a new master pseudoterminal port with @code{openpt}.  This master
+terminal has an associated slave pseudoterminal.
+@item
+Initialize the UID and mode of the slave pseudoterminal by calling
+@code{grantpt} on the master pseudoterminal.
+@item
+Unlock the slave terminal so that it can be opened by calling
+@code{unlockpt} on the master pseudoterminal.
+@item
+Get the filename of the slave pseudoterminal by calling @code{ptsname}
+on the master pseudoterminal.
+@item
+Create a file port for @code{ptsname}, which should probably be
+unbuffered.
+@item
+Use @code{ptsmakeraw} on each pseudoterminal to set its communcation to
+raw mode, or use @code{tcsetattr!} to modify the communication behavior
+between master and slave if something other than raw mode is expected.
+@end itemize
+
+@deffn Procedure openpt flags
+Returns a unbuffered read/write port for a new master pseudoterminal.
+The @var{flags} is a @code{logior} of zero or more of @code{O_RDWR} and
+@code{O_NOCTTY}.  Usually @code{O_RDWR} is expected.
+
+It will throw an error is no new pseudoterminal is available.
+@end deffn
+
+@defvr Constant O_RDWR
+Open the pseudoterminal device for both reading and writing.
+@end defvr
+
+@defvr Constant O_NOCTTY
+Do not make this pseudoterminal the controlling terminal for the
+process.
+@end defvr
+
 @deffn Procedure ptsmakeraw fd-or-port
-Given a file descriptor or file port a pseudo-terminal device,
+Given a file descriptor or file port a pseudoterminal device,
 this sets that pseudoterminal to RAW mode.
 @end deffn
 

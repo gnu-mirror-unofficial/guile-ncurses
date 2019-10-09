@@ -1,7 +1,7 @@
 /*
 curs_const.c
 
-Copyright 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+Copyright 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
 This file is part of GNU Guile-Ncurses.
 
@@ -35,7 +35,6 @@ License along with Guile-Ncurses.  If not, see
 #error "No curses.h file included"
 #endif
 
-#include "compat.h"
 #include "curs_const.h"
 #include "gucuconfig.h"
 #include "type.h"

@@ -1,7 +1,7 @@
 /*
   gucuconfig.h
 
-  Copyright 2009, 2010 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -32,13 +32,6 @@
 #define UNUSED __attribute__ ((unused))
 #else
 #define UNUSED
-#endif
-
-/* For 1.6.x, some compatibility functions are required */
-#if SCM_MAJOR_VERSION == 1 && SCM_MINOR_VERSION == 6
-#define GUILE_1_POINT_6
-#else
-#undef GUILE_1_POINT_6
 #endif
 
 /* After 1.9.4, characters are codepoints.  */

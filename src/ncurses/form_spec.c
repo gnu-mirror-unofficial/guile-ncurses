@@ -1,7 +1,7 @@
 /*
   form_spec.c
 
-  Copyright 2009, 2010, 2014 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -38,7 +38,6 @@
 #error "No curses.h file included"
 #endif
 
-#include "compat.h"
 #include "form_func.h"
 #include "form_spec.h"
 #include "form_type.h"
@@ -64,11 +63,11 @@ gucu_dup_field (SCM field, SCM toprow, SCM leftcol)
   if (c_dup == (FIELD *) NULL)
     {
       if (errno == E_BAD_ARGUMENT)
-	scm_out_of_range ("dup-field", scm_list_2 (toprow, leftcol));
+        scm_out_of_range ("dup-field", scm_list_2 (toprow, leftcol));
       else if (errno == E_SYSTEM_ERROR)
-	scm_syserror ("dup-field");
+        scm_syserror ("dup-field");
       else
-	abort ();
+        abort ();
     }
 
   /* This is a new field, so its refcount should be one. */
@@ -98,7 +97,7 @@ gucu_dynamic_field_info (SCM field)
     abort ();
 
   return scm_list_3 (scm_from_int (c_rows),
-		     scm_from_int (c_cols), scm_from_int (c_max));
+                     scm_from_int (c_cols), scm_from_int (c_max));
 }
 
 // Returns the contents of the field buffer BUFFER.  Only buffer 0 is
@@ -109,7 +108,7 @@ gucu_field_buffer (SCM field, SCM buffer)
 {
   SCM_ASSERT (_scm_is_field (field), field, SCM_ARG1, "field-buffer");
   SCM_ASSERT (SCM_UNBNDP (buffer)
-	      || scm_is_integer (buffer), buffer, SCM_ARG2, "field-buffer");
+              || scm_is_integer (buffer), buffer, SCM_ARG2, "field-buffer");
 
   FIELD *c_field = _scm_to_field (field);
   int c_buffer;
@@ -126,7 +125,7 @@ gucu_field_buffer (SCM field, SCM buffer)
   if (buf == NULL)
     {
       if (errno == E_BAD_ARGUMENT)
-	scm_out_of_range ("field-buffer", field);
+        scm_out_of_range ("field-buffer", field);
     }
 
   return (scm_from_locale_string (buf));
@@ -144,7 +143,7 @@ gucu_field_info (SCM field)
 
   c_field = _scm_to_field (field);
   ret = field_info (c_field, &c_rows, &c_cols,
-		    &c_frow, &c_fcol, &c_nrow, &c_nbuf);
+                    &c_frow, &c_fcol, &c_nrow, &c_nbuf);
 
   if (ret == E_BAD_ARGUMENT)
     scm_out_of_range ("field-info", field);
@@ -154,11 +153,11 @@ gucu_field_info (SCM field)
     abort ();
 
   return scm_list_n (scm_from_int (c_rows),
-		     scm_from_int (c_cols),
-		     scm_from_int (c_frow),
-		     scm_from_int (c_fcol),
-		     scm_from_int (c_nrow),
-		     scm_from_int (c_nbuf), SCM_UNDEFINED);
+                     scm_from_int (c_cols),
+                     scm_from_int (c_frow),
+                     scm_from_int (c_fcol),
+                     scm_from_int (c_nrow),
+                     scm_from_int (c_nbuf), SCM_UNDEFINED);
 
 }
 
@@ -267,34 +266,34 @@ gucu_set_field_type_x (SCM field, SCM type, SCM a, SCM b, SCM c)
       size_t i;
 
       SCM_ASSERT (scm_is_true (scm_list_p (a)), a, SCM_ARG3,
-		  "set-field-type!");
+                  "set-field-type!");
       SCM_ASSERT (scm_is_integer (b), b, SCM_ARG4, "set-field-type!");
       SCM_ASSERT (scm_is_integer (c), c, SCM_ARG5, "set-field-type!");
 
       len = scm_to_size_t (scm_length (a));
       c_str_list =
-	scm_gc_malloc (sizeof (char *) * (len + 1), "set-field-type!");
+        scm_gc_malloc (sizeof (char *) * (len + 1), "set-field-type!");
       for (i = 0; i < len; i++)
-	{
-	  c_str_list[i] = (scm_to_locale_string
-			   (scm_list_ref (a, scm_from_int (i))));
-	}
+        {
+          c_str_list[i] = (scm_to_locale_string
+                           (scm_list_ref (a, scm_from_int (i))));
+        }
       c_str_list[len - 1] = (char *) 0;
       c_case_sensitivity = scm_to_int (b);
       c_partial = scm_to_int (c);
 
       ret =
-	set_field_type (c_field, TYPE_ENUM, c_str_list, c_case_sensitivity,
-			c_partial);
+        set_field_type (c_field, TYPE_ENUM, c_str_list, c_case_sensitivity,
+                        c_partial);
 
       for (i = 0; i < len; i++)
-	{
-	  free (c_str_list[i]);
-	}
+        {
+          free (c_str_list[i]);
+        }
       free (c_str_list);
     }
   else if (scm_is_true (scm_eq_p (type,
-				  scm_from_locale_symbol ("TYPE_NUMERIC"))))
+                                  scm_from_locale_symbol ("TYPE_NUMERIC"))))
     {
       int c_precision;
       double c_min;

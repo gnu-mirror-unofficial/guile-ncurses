@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script
 
-# Copyright (C) 2009, 2010, 2011, 2013, 2014, 2016, 2017 Free Software Foundation, Inc.
+# Copyright (C) 2009, 2010, 2011, 2013, 2014, 2016, 2017, 2019 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
@@ -377,7 +377,7 @@ AC_CHECK_SIZEOF([wint_t], ,[#include <wchar.h>])
 
 ##################
 # Check for C library functions
-AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname grantpt unlockpt tcgetsid wcwidth])
+AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname posix_openpt grantpt unlockpt tcgetsid wcwidth])
 
 # Check for ncurses library functions
 AC_CHECK_FUNCS([key_defined term_attrs set_tabsize is_pad is_subwin form_driver_w setupterm wgetdelay has_mouse])
@@ -440,6 +440,12 @@ AC_CHECK_DECLS([IXANY], [], [],
        [[
        #include <termios.h>
        ]])])
+
+AC_CHECK_DECLS([O_RDWR, O_NOCTTY], [], [],
+                [[
+                  #include <stdlib.h>
+                  #include <fcntl.h>
+                ]])
 
 ##################
 # Check for system services
