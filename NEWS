@@ -12,7 +12,7 @@ The only change in this release is to search for Guile 2.2.
 
 Release 2.1
 
-This build is all about dealing with now, in Guile 2.0.11+,
+This build is all about dealing with how, in Guile 2.0.11+,
 SMOB's can forget their own type during the freeing process.
 
 - changes to the configuration and build process
