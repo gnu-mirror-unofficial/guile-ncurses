@@ -527,7 +527,7 @@ columns minus one.
 Curses has several types specific to how it operates: rendered strings
 and windows, for example.  Some of the curses types are represented by
 standard scheme types, while others are represented as opaque types
-(SMOBs).
+(foreign objects).
 
 @menu
 * Character types::
@@ -658,11 +658,11 @@ display format of that string
 @node Opaque types,  , Character types, Types and encodings
 @section Opaque types
 
-@cindex SMOBs used in Curses
+@cindex Foreign object types used in Curses
 @cindex Opaque types
 
 These are types from system libraries that are complex or
-system-dependent.  They are implemented as @code{SMOB}s.
+system-dependent.  They are implemented as foreign objects.
 
 @table @code
 
@@ -791,7 +791,7 @@ The procedure @code{initscr} initializes the terminal in curses mode.
 It clears the screen and presents a blank screen.  To do any screen
 manipulation using the curses package, this has to be called first.
 This function initializes the curses system and allocates memory for
-screen handling and some other data structures.  It returns a SMOB
+screen handling and some other data structures.  It returns a foreign object
 that represents the default window: the window that represents the
 entire screen.  By convention, this window is denoted @code{stdscr},
 the @emph{standard screen}.  Under extreme cases, this function might
