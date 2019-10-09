@@ -551,15 +551,7 @@ applications.
 
 Simple characters are the Guile native character type.
 
-For older versions of Guile, such as the 1.6.x and the 1.8.x versions,
-characters were limited to being 8-bit.  The lower 128 characters were
-ASCII, and the upper 128 characters had a meaning based on the locale
-of the system.  If the locale were set to ISO-8859-1, for example, the
-upper 128 characters would be common accented letters used in western
-European languages.  In almost all cases, each character took up the
-same space on a character cell terminal.
-
-In newer versions of Guile, such as 2.0.x, the native Guile character
+In newer versions of Guile, such as 2.2.x, the native Guile character
 type is a Unicode codepoint, a 32-bit number.  Characters based on
 Unicode include all or most of the glyphs for the most
 languages. There are challenges when using the non-ASCII characters.
@@ -1145,10 +1137,8 @@ character.  The guile ncurses library abstracts both the C ncurses
 function @code{addch} and the C ncurses function @code{add-wch} as the
 Guile function @code{addch}.
 
-So, if you version of Guile is capable of Unicode characters (such as
-Guile version 2.0.x), and if you version of NCurses is the wide
-version @code{libncursesw}, then you can use this library to print
-non-Latin characters.
+So, if your version of NCurses is the wide version @code{libncursesw},
+then you can use this library to print non-Latin characters.
 
 First off, if you want to use wide characters, you need to call
 @code{(setlocale LC_ALL "")} before the call to @code{initscr}.  The
@@ -3274,10 +3264,8 @@ is @code{#f}.
 @end defvr
 
 @defvr Constant %ucs4-chars
-This is set to @code{#t} if Guile-Ncurses expects that characters are
-stored as UCS4 codepoints, such as in Guile 2.0.x.  It is @code{#f} if
-Guile-Ncurses expects that characters are 8-bit only and stored
-according to the current 8-bit locale.
+This is always @code{#t} and it represents that Guile-Ncurses expects
+that characters are stored as UCS4 codepoints.
 @end defvr
 
 @node Curses screen initialization and manipulation routines, Errors and Exceptions, Features determined at compile time, The basic curses library
