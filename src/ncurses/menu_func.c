@@ -217,7 +217,7 @@ gucu_menu_driver (SCM mnu, SCM c)
 {
   SCM_ASSERT (_scm_is_menu (mnu), mnu, SCM_ARG1, "menu-driver");
   SCM_ASSERT (scm_is_integer (c) || SCM_CHARP (c), c, SCM_ARG2,
-	      "menu-driver");
+              "menu-driver");
 
   int ret;
   SCM s_ret;
@@ -442,7 +442,7 @@ gucu_menu_request_name (SCM request)
   int c_request;
 
   SCM_ASSERT (scm_is_integer (request), request, SCM_ARG1,
-	      "menu-request-name");
+              "menu-request-name");
 
   c_request = scm_to_int (request);
 
@@ -505,7 +505,7 @@ gucu_set_menu_win (SCM menu, SCM win)
     menu_posted_error ("set-menu-win!");
 
   /* Protect the window from GC */
-  gm = (struct gucu_menu *) SCM_SMOB_DATA (menu);
+  gm = (struct gucu_menu *) scm_foreign_object_ref (menu, 0);
   gm->win_guard = win;
 
   return SCM_UNSPECIFIED;
@@ -531,7 +531,7 @@ gucu_set_menu_sub (SCM menu, SCM win)
     menu_posted_error ("set-menu-sub!");
 
   /* Protect the window from GC */
-  gm = (struct gucu_menu *) SCM_SMOB_DATA (menu);
+  gm = (struct gucu_menu *) scm_foreign_object_ref (menu, 0);
   gm->subwin_guard = win;
 
   return SCM_UNSPECIFIED;
@@ -542,7 +542,8 @@ gucu_menu_win (SCM arg1)
 {
   SCM_ASSERT (_scm_is_menu (arg1), arg1, SCM_ARG1, "menu-win");
 
-  struct gucu_menu *gm = (struct gucu_menu *) SCM_SMOB_DATA (arg1);
+  struct gucu_menu *gm =
+    (struct gucu_menu *) scm_foreign_object_ref (arg1, 0);
 
   if (gm == NULL)
     return SCM_BOOL_F;
@@ -555,7 +556,8 @@ gucu_menu_sub (SCM arg1)
 {
   SCM_ASSERT (_scm_is_menu (arg1), arg1, SCM_ARG1, "menu-sub");
 
-  struct gucu_menu *gm = (struct gucu_menu *) SCM_SMOB_DATA (arg1);
+  struct gucu_menu *gm =
+    (struct gucu_menu *) scm_foreign_object_ref (arg1, 0);
 
   if (gm == NULL)
     return SCM_BOOL_F;
@@ -588,7 +590,8 @@ gucu_current_item (SCM arg1)
   ITEM *ret = current_item (c_arg1);
   if (ret != (ITEM *) 0)
     if (!item_increase_refcount (ret))
-      scm_misc_error ("gucu-current-item", "too many references to item", NULL);
+      scm_misc_error ("gucu-current-item", "too many references to item",
+                      NULL);
   SCM s_ret = _scm_from_item (ret);
 
   return s_ret;
@@ -787,7 +790,7 @@ gucu_menu_init_function ()
   scm_c_define_gsubr ("unpost-menu", 1, 0, 0, gucu_unpost_menu);
   scm_c_define_gsubr ("menu-request-name", 1, 0, 0, gucu_menu_request_name);
   scm_c_define_gsubr ("menu-request-by-name", 1, 0, 0,
-		      gucu_menu_request_by_name);
+                      gucu_menu_request_by_name);
   scm_c_define_gsubr ("set-menu-spacing!", 4, 0, 0, gucu_set_menu_spacing);
   scm_c_define_gsubr ("set-menu-win!", 2, 0, 0, gucu_set_menu_win);
   scm_c_define_gsubr ("set-menu-sub!", 2, 0, 0, gucu_set_menu_sub);
