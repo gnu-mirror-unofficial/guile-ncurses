@@ -375,6 +375,42 @@ AM_CONDITIONAL(HAVE_O_MOUSE_MENU, test "x$HAVE_O_MOUSE_MENU" = "x1")
 AC_CHECK_SIZEOF([wchar_t], ,[#include <stddef.h>])
 AC_CHECK_SIZEOF([wint_t], ,[#include <wchar.h>])
 
+m4_define([hardening_flags],[ dnl
+ -D_FORTIFY_SOURCE=2 dnl
+ -DSCM_DEBUG_TYPING_STRICTNESS=2 dnl
+ -O2 dnl
+ -pipe dnl
+ -g dnl
+ -grecord-gcc-switches dnl
+ -Wall dnl
+ -Werror=format-security dnl
+ -Werror=implicit-function-declaration dnl
+ -Werror=shadow dnl
+ -fno-omit-frame-pointer dnl
+ -fasynchronous-unwind-tables dnl
+ -fexceptions dnl
+ -fvar-tracking dnl
+ -fstack-protector-strong dnl
+ -fstack-clash-protection dnl
+ -fcf-protection dnl
+ -fplugin=annobin dnl
+ -Wl,--dynamic-list-data dnl
+ -Wl,-z,defs dnl
+ -Wl,-z,now dnl
+ -Wl,-z,relro dnl
+ -Wsuggest-attribute=format dnl
+ -Wsuggest-attribute=malloc dnl
+ -Wsuggest-attribute=noreturn dnl
+ -Wsuggest-attribute=pure dnl
+ -fdiagnostics-color=auto dnl
+])
+
+AC_ARG_ENABLE([hardening],
+              [AS_HELP_STRING([--enable-hardening],
+                              [compile with common hardening flags])])
+AS_IF([test "x$enable_hardening" = xyes],
+      [CC_CHECK_CFLAGS_APPEND([hardening_flags])])
+
 ##################
 # Check for C library functions
 AC_CHECK_FUNCS([cfmakeraw fopencookie ptsname posix_openpt grantpt unlockpt tcgetsid wcwidth])
