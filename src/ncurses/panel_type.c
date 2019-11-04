@@ -108,7 +108,6 @@ size_t
 free_panel (SCM x)
 {
   struct gucu_window *wp;
-  int retval;
 
   scm_assert_foreign_object_type (window_fo_type, x);
   if (_scm_is_panel (x))
@@ -153,7 +152,6 @@ SCM
 gucu_make_panel_x (SCM win)
 {
   struct gucu_window *wp = NULL;
-  SCM fobj;
 
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "make-panel!");
 
