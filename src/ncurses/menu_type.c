@@ -194,6 +194,12 @@ gucu_is_item_p (SCM x)
 }
 
 SCM
+gucu_item_equal_p (SCM item1, SCM item2)
+{
+  return scm_from_bool (_scm_to_item (item1) == _scm_to_item (item2));
+}
+
+SCM
 gucu_item_refcount (SCM x)
 {
   SCM_ASSERT (_scm_is_item (x), x, SCM_ARG1, "%item-refcount");
@@ -235,6 +241,12 @@ _scm_to_menu (SCM x)
     return NULL;
 
   return gm->menu;
+}
+
+SCM
+gucu_menu_equal_p (SCM menu1, SCM menu2)
+{
+  return scm_from_bool (_scm_to_menu (menu1) == _scm_to_menu (menu2));
 }
 
 // There is no _scm_from_menu since we need its items as a list to do
@@ -457,6 +469,7 @@ gucu_menu_init_type ()
                                                (scm_from_utf8_symbol
                                                 ("data")), gc_free_item);
   scm_c_define_gsubr ("item?", 1, 0, 0, gucu_is_item_p);
+  scm_c_define_gsubr ("item=?", 2, 0, 0, gucu_item_equal_p);
   scm_c_define_gsubr ("new-item", 2, 0, 0, gucu_new_item);
   scm_c_define_gsubr ("%item-refcount", 1, 0, 0, gucu_item_refcount);
 
@@ -465,5 +478,6 @@ gucu_menu_init_type ()
                                                (scm_from_utf8_symbol
                                                 ("data")), gc_free_menu);
   scm_c_define_gsubr ("menu?", 1, 0, 0, gucu_is_menu_p);
+  scm_c_define_gsubr ("menu=?", 2, 0, 0, gucu_menu_equal_p);
   scm_c_define_gsubr ("new-menu", 1, 0, 0, gucu_new_menu);
 }

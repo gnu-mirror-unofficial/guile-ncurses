@@ -265,6 +265,7 @@ NARROWTESTS = \
  form_field_buffer_set_field_buffer.scm \
  form_field_buffer_set_field_status.scm \
  form_field_buffer_set_field_status_2.scm \
+ menu_equal.scm \
  menu_gc_refcount.scm \
  menu_gc_refcount_2.scm \
  menu_gc_refcount_3.scm \

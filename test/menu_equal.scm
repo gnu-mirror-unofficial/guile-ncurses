@@ -1,4 +1,8 @@
-;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
+;;;; -*- Mode: scheme; -*-
+
+;;;; menu_equal.scm
+
+;; Copyright 2019 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -15,23 +19,27 @@
 ;; You should have received a copy of the GNU Lesser General Public
 ;; License along with Guile-Ncurses.  If not, see
 ;; <http://www.gnu.org/licenses/>.
+
 (use-modules (test automake-test-lib)
-	     (ncurses curses)
-	     (ncurses menu))
+             (ice-9 format)
+             (srfi srfi-1)
+             (ncurses curses)
+             (ncurses menu))
 
 (automake-test
  (let* ((win (initscr))
-	(item1 (new-item "item1" "description1"))
-	(item2 (new-item "item2" "description2"))
-	(m (false-if-exception (new-menu (list item1 item2)))))
-   (post-menu m)
-   (set-current-item! m item2)
+	(item1 (new-item "item1" "unselected"))
+	(item2 (new-item "item2" "unselectable"))
+	(item3 (new-item "item3" "selected"))
+	(item4 (new-item "item4" "unselected"))
+	(menu (new-menu (list item1 item2 item3 item4))))
+   (post-menu menu)
    (refresh win)
-   (let ((cur (current-item m)))
-     (unpost-menu m)
-     (refresh win)
+   (let ((test1 (menu=? menu menu))
+         (test2 (item=? item1 item1))
+         (test3 (not (item=? item1 item2))))
      (endwin)
-     (format #t "item1: ~s~%" item1)
-     (format #t "item2: ~s~%" item2)
-     (format #t "current-item: ~s~%" cur)
-     (item=? cur item2))))
+     (newline)
+     (format #t "menu: ~s~%" menu)
+     (format #t "test: ~s ~s ~s ~%" test1 test2 test3)
+     (and test1 test2 test3))))
