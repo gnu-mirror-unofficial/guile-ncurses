@@ -126,8 +126,7 @@ gucu_panels_list ()
   SCM lst = SCM_EOL;
   while (p_cur != (PANEL *) NULL)
     {
-      void *uptr = panel_userptr (p_cur);
-      if (uptr != NULL)
+      if (panel_userptr (p_cur) != NULL)
         {
           SCM win = PTR2SCM (panel_userptr (p_cur));
           lst = scm_append (scm_list_2 (lst, scm_list_1 (win)));
