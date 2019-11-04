@@ -1006,8 +1006,8 @@ _scm_from_window_full (SCM parent, SCM name, WINDOW *win)
   struct gucu_window *wp;
 
   assert (win != NULL);
-  assert (_scm_is_window (parent) || parent == SCM_BOOL_F);
-  assert (scm_is_string (name) || name == SCM_BOOL_F);
+  assert (_scm_is_window (parent) || scm_is_false (parent));
+  assert (scm_is_string (name) || scm_is_false (name));
 
   wp = scm_gc_malloc (sizeof (struct gucu_window), "_scm_from_window_full");
 
