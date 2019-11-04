@@ -6163,11 +6163,16 @@ curses to a single line, instead of the to the entire screen.
 @subsection Window creation
 
 @deffn Procedure window? win
-
 Returns @code{#t} if @var{win} is a window, and @code{#f} otherwise.
 
 Note that panel windows also return @code{#t}.
+@end deffn
 
+@deffn Procedure window=? win1 win2
+Returns @code{#t} if @var{win1} and @var{win2} hold information
+about the same window, and @code{#f} otherwise.
+
+May throw an error if the arguments are not windows.
 @end deffn
 
 @deffn Procedure newwin nlines ncols begin-y begin-x #:key panel

@@ -422,6 +422,7 @@
             cursyncup
             wenclose?
             window?
+            window=?
             syncdown
             syncup
 

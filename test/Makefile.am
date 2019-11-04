@@ -36,6 +36,7 @@ NOTERMTESTS = \
 
 NARROWTESTS = \
  curs_initscr_endwin.scm \
+ curs_initscr_equal.scm \
  curs_initscr_initscr.scm \
  curs_initscr_isendwin_negative_after_refresh.scm \
  curs_initscr_isendwin_negative.scm \

@@ -56,7 +56,7 @@ SCM window_fo_type;
 
 static void gc_free_screen (SCM x);
 
-static SCM equalp_window (SCM x1, SCM x2);
+static SCM gucu_window_equalp (SCM x1, SCM x2);
 static void gc_free_window (SCM x);
 
 /* attr -- character attributes, bit flags packed into an unsigned:
@@ -1039,15 +1039,12 @@ _scm_from_window (WINDOW *x)
 
 // Windows are equal if they point to the same C structures
 static SCM
-equalp_window (SCM x1, SCM x2)
+gucu_window_equalp (SCM x1, SCM x2)
 {
   WINDOW *win1, *win2;
 
-  /* This assert is thrown if x1 or x2 are already freed, as if by
-     delwin.  I'm not sure if one should be able to compare windows if
-     one has been freed.  */
-  assert (_scm_is_window (x1));
-  assert (_scm_is_window (x2));
+  SCM_ASSERT (_scm_is_window (x1), x1, SCM_ARG1, "window=?");
+  SCM_ASSERT (_scm_is_window (x2), x1, SCM_ARG2, "window=?");
 
   win1 = _scm_to_window (x1);
   win2 = _scm_to_window (x2);
@@ -1132,6 +1129,7 @@ gucu_init_type ()
                                       scm_list_1 (scm_from_utf8_symbol
                                                   ("data")), gc_free_window);
       scm_c_define_gsubr ("window?", 1, 0, 0, gucu_is_window_p);
+      scm_c_define_gsubr ("window=?", 2, 0, 0, gucu_window_equalp);
 
       scm_c_define_gsubr ("%scheme-char-to-c-char", 1, 0, 0,
                           gucu_schar_to_char);
