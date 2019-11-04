@@ -359,10 +359,10 @@ gucu_copywin (SCM srcwin, SCM dstwin, SCM sminrow, SCM smincol, SCM dminrow,
   c_dmaxcol = scm_to_int (dmaxcol);
 
   if (scm_is_true (_overlay))
-    ret = copywin ((const WINDOW *)c_srcwin, c_dstwin, c_sminrow, c_smincol,
+    ret = copywin ((const WINDOW *) c_srcwin, c_dstwin, c_sminrow, c_smincol,
                    c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol, 1);
   else
-    ret = copywin ((const WINDOW *)c_srcwin, c_dstwin, c_sminrow, c_smincol,
+    ret = copywin ((const WINDOW *) c_srcwin, c_dstwin, c_sminrow, c_smincol,
                    c_dminrow, c_dmincol, c_dmaxrow, c_dmaxcol, 0);
 
   /* copywin fails if the windows are NULL, the rectangle doesn't fit
@@ -755,8 +755,7 @@ gucu_initscr ()
     return SCM_BOOL_F;
 
   return _scm_from_window_full (SCM_BOOL_F,
-                scm_from_locale_string ("initscr"),
-                ret);
+                                scm_from_locale_string ("initscr"), ret);
 }
 
 /* Initialize COLOR as an RGB triple. */
@@ -1526,12 +1525,12 @@ gucu_resize (SCM win, SCM lines, SCM columns)
   c_columns = scm_to_int (columns);
   ret = wresize (c_win, c_lines, c_columns);
 
-  RETURNTF(ret);
+  RETURNTF (ret);
 }
 
 /* Resize the standard and current windows. */
 SCM
-gucu_resizeterm(SCM lines, SCM columns)
+gucu_resizeterm (SCM lines, SCM columns)
 {
   int c_lines, c_columns, ret;
 
@@ -1541,7 +1540,7 @@ gucu_resizeterm(SCM lines, SCM columns)
   c_columns = scm_to_int (columns);
   ret = resizeterm (c_lines, c_columns);
 
-  RETURNTF(ret);
+  RETURNTF (ret);
 }
 
 /* Save the state of the terminal modes */
@@ -1717,7 +1716,8 @@ gucu_subpad (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x)
 /* Return a pointer to a new window that is within and shares memory with
    and enclosing window */
 SCM
-gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x, SCM name)
+gucu_subwin (SCM orig, SCM nlines, SCM ncols, SCM begin_y, SCM begin_x,
+             SCM name)
 {
   int c_nlines, c_ncols, c_begin_y, c_begin_x;
   WINDOW *c_orig, *ret;
@@ -2118,7 +2118,7 @@ gucu_wgetch (SCM win)
 #ifdef HAVE_NCURSESW
   {
     wint_t wch = 0;
-    ret = wget_wch (_scm_to_window (win), &wch);
+    ret = wget_wch (c_win, &wch);
 
     if (ret == OK)
       {
@@ -2539,7 +2539,8 @@ gucu_init_function ()
   scm_c_define_gsubr ("%ungetch", 1, 0, 0, gucu_ungetch);
   scm_c_define_gsubr ("use-default-colors", 0, 0, 0, gucu_use_default_colors);
   scm_c_define_gsubr ("use-env", 1, 0, 0, gucu_use_env);
-  scm_c_define_gsubr ("%use-extended-names", 1, 0, 0, gucu_use_extended_names);
+  scm_c_define_gsubr ("%use-extended-names", 1, 0, 0,
+                      gucu_use_extended_names);
   scm_c_define_gsubr ("%waddch", 2, 0, 0, gucu_waddch);
   scm_c_define_gsubr ("%waddchnstr", 3, 0, 0, gucu_waddchnstr);
   scm_c_define_gsubr ("%waddnstr", 3, 0, 0, gucu_waddnstr);

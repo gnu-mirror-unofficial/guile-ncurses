@@ -535,9 +535,9 @@ gucu_form_init_type ()
 
 
   form_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("form"),
-                                                scm_list_1
-                                                (scm_from_utf8_symbol
-                                                 ("data")), gc_free_form);
+                                               scm_list_1
+                                               (scm_from_utf8_symbol
+                                                ("data")), gc_free_form);
   scm_c_define_gsubr ("form?", 1, 0, 0, gucu_is_form_p);
 
   scm_c_define_gsubr ("new-field", 6, 0, 0, gucu_new_field);

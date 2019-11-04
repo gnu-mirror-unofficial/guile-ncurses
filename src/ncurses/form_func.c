@@ -54,8 +54,7 @@ form_bad_state_error (const char *funcname)
 void
 form_connected_error (const char *funcname)
 {
-  scm_misc_error (funcname, "field is already connected to a form",
-                  SCM_EOL);
+  scm_misc_error (funcname, "field is already connected to a form", SCM_EOL);
 }
 
 void
@@ -80,8 +79,7 @@ form_no_room_error (const char *funcname)
 void
 form_not_connected_error (const char *funcname)
 {
-  scm_misc_error (funcname, "the field is not connected to a form",
-                  SCM_EOL);
+  scm_misc_error (funcname, "the field is not connected to a form", SCM_EOL);
 }
 
 void
@@ -106,7 +104,8 @@ gucu_current_field (SCM form)
   FIELD *c_field = current_field (c_form);
   if (c_field != (FIELD *) 0)
     if (!field_increase_refcount (c_field))
-      scm_misc_error ("current-field", "too many references to field", SCM_EOL);
+      scm_misc_error ("current-field", "too many references to field",
+                      SCM_EOL);
   SCM s_field = _scm_from_field (c_field);
 
   return s_field;

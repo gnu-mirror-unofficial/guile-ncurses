@@ -140,7 +140,7 @@ GUCU_API SCM gucu_reset_prog_mode (void);
 GUCU_API SCM gucu_reset_shell_mode (void);
 GUCU_API SCM gucu_resetty (void);
 GUCU_API SCM gucu_resize (SCM win, SCM lines, SCM columns);
-GUCU_API SCM gucu_resizeterm(SCM lines, SCM columns);
+GUCU_API SCM gucu_resizeterm (SCM lines, SCM columns);
 GUCU_API SCM gucu_savetty (void);
 GUCU_API SCM gucu_scr_dump (SCM arg1);
 GUCU_API SCM gucu_scr_init (SCM arg1);
@@ -156,7 +156,7 @@ GUCU_API SCM gucu_standout_x (SCM arg1);
 GUCU_API SCM gucu_start_color (void);
 GUCU_API SCM gucu_subpad (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5);
 GUCU_API SCM gucu_subwin (SCM arg1, SCM arg2, SCM arg3, SCM arg4, SCM arg5,
-			  SCM name);
+                          SCM name);
 GUCU_API SCM gucu_syncok_x (SCM arg1, SCM arg2);
 GUCU_API SCM gucu_term_attrs (void);
 GUCU_API SCM gucu_termname (void);

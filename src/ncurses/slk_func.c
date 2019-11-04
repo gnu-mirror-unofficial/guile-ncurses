@@ -54,7 +54,7 @@ gucu_slk_attr ()
   color_pair_number = PAIR_NUMBER (rendition & A_COLOR);
 
   return scm_list_2 (_scm_from_attr (attributes),
-		     scm_from_short (color_pair_number));
+                     scm_from_short (color_pair_number));
 }
 
 SCM
@@ -84,7 +84,7 @@ gucu_slk_attr_set_x (SCM attrs, SCM color_pair_number)
 {
   SCM_ASSERT (_scm_is_attr (attrs), attrs, SCM_ARG1, "slk-attr-set!");
   SCM_ASSERT (scm_is_integer (color_pair_number), color_pair_number, SCM_ARG2,
-	      "slk-attr-set!");
+              "slk-attr-set!");
 
   const attr_t c_attrs = _scm_to_attr (attrs);
   short c_color_pair_number = scm_to_short (color_pair_number);
@@ -104,7 +104,7 @@ SCM
 gucu_slk_color_x (SCM color_pair_number)
 {
   SCM_ASSERT (scm_is_integer (color_pair_number), color_pair_number, SCM_ARG1,
-	      "slk-color!");
+              "slk-color!");
 
   short c_color_pair_number = scm_to_short (color_pair_number);
 

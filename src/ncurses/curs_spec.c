@@ -68,7 +68,7 @@ _nc_acs_map (void);
 
 static void curs_bad_state_error (const char *funcname)
 {
-  scm_misc_error (funcname, "bad curses internal state", SCM_BOOL_F);
+  scm_misc_error (funcname, "bad curses internal state", SCM_EOL);
 }
 
 /* Set the attributes and color pair for a given window */
@@ -107,7 +107,7 @@ gucu_color_content (SCM s_color)
   if (ret == OK)
     {
       return scm_list_3 (scm_from_short (c_red),
-			 scm_from_short (c_green), scm_from_short (c_blue));
+                         scm_from_short (c_green), scm_from_short (c_blue));
     }
   else
     return SCM_BOOL_F;
@@ -194,9 +194,9 @@ gucu_setupterm (SCM term)
   if (ret == ERR)
     {
       if (errret == 1)
-	return scm_from_locale_symbol ("hardcopy");
+        return scm_from_locale_symbol ("hardcopy");
       else
-	return SCM_BOOL_F;
+        return SCM_BOOL_F;
     }
 
   return scm_from_locale_symbol ("terminal");
@@ -283,12 +283,12 @@ gucu_wgetnstr (SCM win, SCM n)
     c_wstr[c_n] = 0;
     if (ret == OK)
       {
-	s_str = _scm_sstring_from_wint_string (c_wstr);
-	free (c_wstr);
+        s_str = _scm_sstring_from_wint_string (c_wstr);
+        free (c_wstr);
       }
     else if (ret == KEY_RESIZE)
       {
-	s_str = scm_from_int (KEY_RESIZE);
+        s_str = scm_from_int (KEY_RESIZE);
       }
     else
       abort ();
@@ -301,12 +301,12 @@ gucu_wgetnstr (SCM win, SCM n)
     c_str[c_n] = '\0';
     if (ret == OK)
       {
-	s_str = scm_from_locale_string (c_str);
-	free (c_str);
+        s_str = scm_from_locale_string (c_str);
+        free (c_str);
       }
     else if (ret == KEY_RESIZE)
       {
-	s_str = scm_from_int (KEY_RESIZE);
+        s_str = scm_from_int (KEY_RESIZE);
       }
     else
       abort ();
@@ -348,8 +348,8 @@ gucu_winchnstr (SCM win, SCM n)
     ret = winchnstr (c_win, c_chstr, scm_to_int (n));
     if (ret != ERR)
       {
-	s_str = _scm_xstring_from_chstring (c_chstr);
-	free (c_chstr);
+        s_str = _scm_xstring_from_chstring (c_chstr);
+        free (c_chstr);
       }
     else
       abort ();
@@ -382,8 +382,8 @@ gucu_winnstr (SCM win, SCM n)
     ret = winnwstr (_scm_to_window (win), c_wstr, c_n);
     if (ret != ERR)
       {
-	c_wstr[c_n] = 0;
-	s_str = _scm_sstring_from_wstring (c_wstr);
+        c_wstr[c_n] = 0;
+        s_str = _scm_sstring_from_wstring (c_wstr);
       }
     else
       abort ();
@@ -395,9 +395,9 @@ gucu_winnstr (SCM win, SCM n)
     ret = winnstr (_scm_to_window (win), c_str, c_n + 1);
     if (ret != ERR)
       {
-	c_str[c_n] = 0;
-	s_str = scm_from_locale_string (c_str);
-	free (c_str);
+        c_str[c_n] = 0;
+        s_str = scm_from_locale_string (c_str);
+        free (c_str);
       }
     else
       abort ();
@@ -876,7 +876,7 @@ gucu_getparent (SCM win)
 
   wp = (struct gucu_window *) scm_foreign_object_ref (win, 0);
   if (wp != (struct gucu_window *) NULL)
-    if (wp->parent != NULL)
+    if (SCM_UNPACK_POINTER (wp->parent) != NULL)
       return wp->parent;
 
   return SCM_BOOL_F;

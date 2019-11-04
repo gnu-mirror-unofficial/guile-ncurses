@@ -1061,7 +1061,6 @@ static void
 gc_free_window (SCM x)
 {
   struct gucu_window *wp;
-  WINDOW *win;
 
   wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
   /* Windows should already be null if delwin has been called on them */

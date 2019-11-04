@@ -173,6 +173,8 @@ gc_free_item (SCM item)
         {
           // Since no other #<menu> or #<item> is using the underlying
           // ITEM *, we can free it.
+
+          // Discarding this const qualifier below is intentional
           free (item_name (m));
           free (item_description (m));
           free_item (m);

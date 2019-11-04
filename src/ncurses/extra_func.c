@@ -47,7 +47,8 @@ gucu_cfgetispeed (SCM s_termios)
   struct termios *c_termios;
   speed_t c_ret;
 
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, "cfgetispeed");
+  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
+              "cfgetispeed");
   c_termios = _scm_to_termios (s_termios);
   c_ret = cfgetispeed (c_termios);
   return scm_from_uint (c_ret);
@@ -59,13 +60,15 @@ gucu_cfgetospeed (SCM s_termios)
   struct termios *c_termios;
   speed_t c_ret;
 
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, "cfgetospeed");
+  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
+              "cfgetospeed");
   c_termios = _scm_to_termios (s_termios);
   c_ret = cfgetospeed (c_termios);
   return scm_from_uint (c_ret);
 }
 
-SCM gucu_cfmakeraw_x (SCM s_termios)
+SCM
+gucu_cfmakeraw_x (SCM s_termios)
 {
   struct termios *c_termios;
 
@@ -75,13 +78,15 @@ SCM gucu_cfmakeraw_x (SCM s_termios)
   return SCM_UNSPECIFIED;
 }
 
-SCM gucu_cfsetispeed_x (SCM s_termios, SCM s_speed)
+SCM
+gucu_cfsetispeed_x (SCM s_termios, SCM s_speed)
 {
   struct termios *c_termios;
   speed_t c_speed;
   int c_ret;
 
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, "cfsetispeed!");
+  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
+              "cfsetispeed!");
   SCM_ASSERT (scm_is_integer (s_speed), s_speed, SCM_ARG2, "cfsetispeed!");
   c_termios = _scm_to_termios (s_termios);
   c_speed = scm_to_uint (s_speed);
@@ -91,13 +96,15 @@ SCM gucu_cfsetispeed_x (SCM s_termios, SCM s_speed)
   return SCM_UNSPECIFIED;
 }
 
-SCM gucu_cfsetospeed_x (SCM s_termios, SCM s_speed)
+SCM
+gucu_cfsetospeed_x (SCM s_termios, SCM s_speed)
 {
   struct termios *c_termios;
   speed_t c_speed;
   int c_ret;
 
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, "cfsetospeed!");
+  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
+              "cfsetospeed!");
   SCM_ASSERT (scm_is_integer (s_speed), s_speed, SCM_ARG2, "cfsetospeed!");
   c_termios = _scm_to_termios (s_termios);
   c_speed = scm_to_uint (s_speed);
@@ -116,11 +123,11 @@ gucu_openpt (SCM s_flags)
   int fd;
 
   SCM_ASSERT (scm_is_integer (s_flags), s_flags, SCM_ARG1, "openpt");
-  flags = scm_to_int(s_flags);
+  flags = scm_to_int (s_flags);
   fd = posix_openpt (flags);
   if (fd == -1)
     scm_syserror ("openpt");
-  return scm_fdopen(scm_from_int (fd), scm_from_latin1_string ("rw0"));
+  return scm_fdopen (scm_from_int (fd), scm_from_latin1_string ("rw0"));
 }
 #endif
 
@@ -213,7 +220,8 @@ gucu_ptsname (SCM s_fd_or_port)
 }
 #endif
 
-SCM gucu_tcdrain (SCM s_fd_or_port)
+SCM
+gucu_tcdrain (SCM s_fd_or_port)
 {
   SCM s_fd;
   int c_fd, c_ret;
@@ -234,7 +242,8 @@ SCM gucu_tcdrain (SCM s_fd_or_port)
   return SCM_UNSPECIFIED;
 }
 
-SCM gucu_tcflow (SCM s_fd_or_port, SCM s_action)
+SCM
+gucu_tcflow (SCM s_fd_or_port, SCM s_action)
 {
   SCM s_fd;
   int c_fd, c_action, c_ret;
@@ -257,7 +266,8 @@ SCM gucu_tcflow (SCM s_fd_or_port, SCM s_action)
   return SCM_UNSPECIFIED;
 }
 
-SCM gucu_tcflush (SCM s_fd_or_port, SCM s_queue)
+SCM
+gucu_tcflush (SCM s_fd_or_port, SCM s_queue)
 {
   SCM s_fd;
   int c_fd, c_queue, c_ret;
@@ -280,7 +290,8 @@ SCM gucu_tcflush (SCM s_fd_or_port, SCM s_queue)
   return SCM_UNSPECIFIED;
 }
 
-SCM gucu_tcgetattr (SCM s_fd_or_port)
+SCM
+gucu_tcgetattr (SCM s_fd_or_port)
 {
   SCM s_fd, s_termios;
   struct termios *c_termios;
@@ -305,7 +316,8 @@ SCM gucu_tcgetattr (SCM s_fd_or_port)
 }
 
 #ifdef HAVE_TCGETSID
-SCM gucu_tcgetsid (SCM s_fd_or_port)
+SCM
+gucu_tcgetsid (SCM s_fd_or_port)
 {
   SCM s_fd;
   int c_fd;
@@ -322,14 +334,15 @@ SCM gucu_tcgetsid (SCM s_fd_or_port)
 
   c_pid = tcgetsid (c_fd);
 
-  if (c_pid == (pid_t)-1)
+  if (c_pid == (pid_t) - 1)
     scm_syserror ("tcgetsid");
   return scm_from_int (c_pid);
 }
 #endif
 
 
-SCM gucu_tcsendbreak (SCM s_fd_or_port, SCM s_duration)
+SCM
+gucu_tcsendbreak (SCM s_fd_or_port, SCM s_duration)
 {
   SCM s_fd;
   int c_fd, c_duration, c_ret;
@@ -341,7 +354,8 @@ SCM gucu_tcsendbreak (SCM s_fd_or_port, SCM s_duration)
   else
     scm_wrong_type_arg ("tcsendbreak", SCM_ARG1, s_fd_or_port);
 
-  SCM_ASSERT(scm_is_integer (s_duration), s_duration, SCM_ARG2, "tcsendbreak");
+  SCM_ASSERT (scm_is_integer (s_duration), s_duration, SCM_ARG2,
+              "tcsendbreak");
 
   c_fd = scm_to_int (s_fd);
   c_duration = scm_to_int (s_duration);
@@ -353,7 +367,8 @@ SCM gucu_tcsendbreak (SCM s_fd_or_port, SCM s_duration)
 }
 
 
-SCM gucu_tcsetattr_x (SCM s_fd_or_port, SCM s_opt, SCM s_termios)
+SCM
+gucu_tcsetattr_x (SCM s_fd_or_port, SCM s_opt, SCM s_termios)
 {
   SCM s_fd;
   int c_fd, c_opt, c_ret;
@@ -371,7 +386,7 @@ SCM gucu_tcsetattr_x (SCM s_fd_or_port, SCM s_opt, SCM s_termios)
   c_fd = scm_to_int (s_fd);
   c_opt = scm_to_int (s_opt);
   c_termios = _scm_to_termios (s_termios);
-  c_ret = tcsetattr(c_fd, c_opt, c_termios);
+  c_ret = tcsetattr (c_fd, c_opt, c_termios);
   if (c_ret != 0)
     scm_syserror ("tcsetattr!");
   return SCM_UNSPECIFIED;
@@ -427,8 +442,7 @@ gucu_termios_cc (SCM s_termios, SCM s_mode)
   int c_mode;
   struct termios *c_termios;
 
-  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1,
-              "termios-cc");
+  SCM_ASSERT (_scm_is_termios (s_termios), s_termios, SCM_ARG1, "termios-cc");
   SCM_ASSERT (scm_is_integer (s_mode), s_mode, SCM_ARG2, "termios-cc");
 
   c_termios = _scm_to_termios (s_termios);
@@ -537,7 +551,7 @@ gucu_unlockpt (SCM s_fd_or_port)
   else
     scm_wrong_type_arg ("unlockpt", SCM_ARG1, s_fd_or_port);
 
-  c_fd = scm_to_int(s_fd);
+  c_fd = scm_to_int (s_fd);
   ret = unlockpt (c_fd);
   if (ret == -1)
     scm_syserror ("unlockpt");
@@ -560,7 +574,7 @@ gucu_strwidth (SCM str)
   SCM_ASSERT (scm_is_string (str), str, SCM_ARG1, "%strwidth");
   len = scm_c_string_length (str);
   s = (uint32_t *) malloc ((len + 1) * sizeof (uint32_t));
-  for (i = 0; i < len; i ++)
+  for (i = 0; i < len; i++)
     s[i] = SCM_CHAR (scm_c_string_ref (str, i));
   s[len] = 0;
   s_siz = scm_from_int (u32_strwidth (s, "UTF-8"));
@@ -573,7 +587,7 @@ gucu_strwidth (SCM str)
   SCM_ASSERT (scm_is_string (str), str, SCM_ARG1, "%strwidth");
   len = scm_c_string_length (str);
   siz = 0;
-  for (i = 0; i < len; i ++)
+  for (i = 0; i < len; i++)
     {
       s = wcwidth (btowc (SCM_CHAR (scm_c_string_ref (str, i))));
       if (s >= 0 && s <= 2)
@@ -581,7 +595,7 @@ gucu_strwidth (SCM str)
     }
   return scm_from_int (siz);
 #else
-  return scm_c_string_length(str);
+  return scm_c_string_length (str);
 #endif
 #endif
 }
@@ -591,7 +605,8 @@ gucu_string_split_at_line_endings (SCM str)
 {
   SCM res = SCM_EOL;
 
-  SCM_ASSERT (scm_is_string (str), str, SCM_ARG1, "string-split-at-line-endings");
+  SCM_ASSERT (scm_is_string (str), str, SCM_ARG1,
+              "string-split-at-line-endings");
 
   long idx, last_idx;
 
@@ -601,25 +616,32 @@ gucu_string_split_at_line_endings (SCM str)
       last_idx = idx;
 
       do
-	{
-	  int c = scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 1)));
-	  if ((c == 0xD) | (c == 0xA) || (c == 0x85) || (c == 0x2028) || (c == 2029))
-	    break;
-	  idx --;
-	}
+        {
+          int c =
+            scm_to_int (scm_char_to_integer
+                        (scm_c_string_ref (str, idx - 1)));
+          if ((c == 0xD) | (c == 0xA) || (c == 0x85) || (c == 0x2028)
+              || (c == 2029))
+            break;
+          idx--;
+        }
       while (idx > 0);
       if ((idx >= 2)
-	  && (scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 1))) == 0xA)
-	  && (scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 2))) == 0xD))
-	{
-	  res = scm_cons (scm_c_substring_copy (str, idx, last_idx), res);
-	  idx -= 2;
-	}
+          &&
+          (scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 1)))
+           == 0xA)
+          &&
+          (scm_to_int (scm_char_to_integer (scm_c_string_ref (str, idx - 2)))
+           == 0xD))
+        {
+          res = scm_cons (scm_c_substring_copy (str, idx, last_idx), res);
+          idx -= 2;
+        }
       else if (idx >= 0)
-	{
-	  res = scm_cons (scm_c_substring_copy (str, idx, last_idx), res);
-	  idx--;
-	}
+        {
+          res = scm_cons (scm_c_substring_copy (str, idx, last_idx), res);
+          idx--;
+        }
     }
 
   scm_remember_upto_here_1 (str);
@@ -663,10 +685,14 @@ gucu_extra_init_function ()
   scm_c_define_gsubr ("termios-cflag", 1, 0, 0, gucu_termios_cflag);
   scm_c_define_gsubr ("termios-lflag", 1, 0, 0, gucu_termios_lflag);
   scm_c_define_gsubr ("termios-cc", 2, 0, 0, gucu_termios_cc);
-  scm_c_define_gsubr ("termios-iflag-set!", 2, 0, 0, gucu_termios_iflag_set_x);
-  scm_c_define_gsubr ("termios-oflag-set!", 2, 0, 0, gucu_termios_oflag_set_x);
-  scm_c_define_gsubr ("termios-cflag-set!", 2, 0, 0, gucu_termios_cflag_set_x);
-  scm_c_define_gsubr ("termios-lflag-set!", 2, 0, 0, gucu_termios_lflag_set_x);
+  scm_c_define_gsubr ("termios-iflag-set!", 2, 0, 0,
+                      gucu_termios_iflag_set_x);
+  scm_c_define_gsubr ("termios-oflag-set!", 2, 0, 0,
+                      gucu_termios_oflag_set_x);
+  scm_c_define_gsubr ("termios-cflag-set!", 2, 0, 0,
+                      gucu_termios_cflag_set_x);
+  scm_c_define_gsubr ("termios-lflag-set!", 2, 0, 0,
+                      gucu_termios_lflag_set_x);
   scm_c_define_gsubr ("termios-cc-set!", 3, 0, 0, gucu_termios_cc_set_x);
 #endif /* ENABLE_TERMIOS */
 
@@ -675,6 +701,7 @@ gucu_extra_init_function ()
 #endif
 
 #ifdef GUILE_CHARS_ARE_UCS4
-  scm_c_define_gsubr ("string-split-at-line-endings", 1, 0, 0, gucu_string_split_at_line_endings);
+  scm_c_define_gsubr ("string-split-at-line-endings", 1, 0, 0,
+                      gucu_string_split_at_line_endings);
 #endif
 }

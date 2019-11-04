@@ -99,13 +99,13 @@ wchar_to_codepoint (wchar_t c, uint32_t * p_codepoint)
   wchar_str[0] = c;
   wchar_str[1] = (wchar_t) 0;
   u32_str = u32_conv_from_encoding ("WCHAR_T",
-				    iconveh_error,
-				    (const char *) wchar_str,
-				    sizeof (wchar_t), NULL, NULL, &u32_len);
+                                    iconveh_error,
+                                    (const char *) wchar_str,
+                                    sizeof (wchar_t), NULL, NULL, &u32_len);
   if (u32_str == NULL)
     {
       /* If WCHAR_T conversion fails, chances are that this setup
-	 has WCHAR_T == UCS4, so just assume that it true.  */
+         has WCHAR_T == UCS4, so just assume that it true.  */
       *p_codepoint = c;
       return 1;
     }
@@ -138,18 +138,18 @@ codepoint_to_locale_char (uint32_t codepoint, char *p_c)
   u32_str[0] = codepoint;
   u32_str[1] = 0;
 #if defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
-  enc = malloc(100);
-  snprintf(enc, 100, "CP%u", GetACP());
+  enc = malloc (100);
+  snprintf (enc, 100, "CP%u", GetACP ());
 #else
   enc = nl_langinfo (CODESET);
 #endif
   str = u32_conv_to_encoding (enc,
-			      iconveh_error,
-			      u32_str, 1, NULL, NULL, &str_len);
+                              iconveh_error,
+                              u32_str, 1, NULL, NULL, &str_len);
 #if defined(_WIN32) || defined(__WIN32__) && !defined(__CYGWIN__)
-  free(enc);
+  free (enc);
 #endif
-  
+
   if (str == NULL)
     {
       return 0;
@@ -167,7 +167,7 @@ codepoint_to_locale_char (uint32_t codepoint, char *p_c)
 }
 
 int
-codepoint_to_wchar (uint32_t codepoint, wchar_t * p_c)
+codepoint_to_wchar (uint32_t codepoint, wchar_t *p_c)
 {
   uint32_t u32_str[2];
   wchar_t *wchar_str;
@@ -185,28 +185,28 @@ codepoint_to_wchar (uint32_t codepoint, wchar_t * p_c)
   if (stdc_iso_10646)
     {
       if ((SIZEOF_WCHAR_T == 4)
-	  || (SIZEOF_WCHAR_T == 2 && codepoint <= 0xFFFF))
-	{
-	  *p_c = codepoint;
-	  return 1;
-	}
+          || (SIZEOF_WCHAR_T == 2 && codepoint <= 0xFFFF))
+        {
+          *p_c = codepoint;
+          return 1;
+        }
       else
-	{
-	  *p_c = 0;
-	  return 0;
-	}
+        {
+          *p_c = 0;
+          return 0;
+        }
     }
 
   u32_str[0] = codepoint;
   u32_str[1] = 0;
   wchar_str = (wchar_t *) u32_conv_to_encoding ("WCHAR_T",
-						iconveh_error,
-						u32_str,
-						1, NULL, NULL, &wchar_len);
+                                                iconveh_error,
+                                                u32_str,
+                                                1, NULL, NULL, &wchar_len);
   if (wchar_str == NULL)
     {
       /* If WCHAR_T conversion fails, chances are that this setup
-	 has WCHAR_T == UCS4, so just assume that is true.  */
+         has WCHAR_T == UCS4, so just assume that is true.  */
       *p_c = codepoint;
       return 1;
     }

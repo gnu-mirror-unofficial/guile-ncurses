@@ -82,7 +82,7 @@ gucu_menu_spacing (SCM menu)
 
   if (ret_val == E_OK)
     return scm_list_3 (scm_from_int (spc_description),
-		       scm_from_int (spc_rows), scm_from_int (spc_columns));
+                       scm_from_int (spc_rows), scm_from_int (spc_columns));
   else
     return SCM_BOOL_F;
 }

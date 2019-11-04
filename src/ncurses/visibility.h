@@ -39,8 +39,8 @@
 #endif
 #endif
 
-#ifdef GUCU_DLL		 /* defined if GUCU is compiled as a DLL */
-#ifdef GUCU_DLL_EXPORTS	 /* defined if we are building the GUCU DLL */
+#ifdef GUCU_DLL                 /* defined if GUCU is compiled as a DLL */
+#ifdef GUCU_DLL_EXPORTS         /* defined if we are building the GUCU DLL */
 #define GUCU_API GUCU_HELPER_DLL_EXPORT
 #else
 #define GUCU_API GUCU_HELPER_DLL_IMPORT

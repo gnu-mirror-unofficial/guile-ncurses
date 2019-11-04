@@ -168,14 +168,14 @@ gucu_newterm (SCM type, SCM outp, SCM inp)
   SCM outp_fileno = scm_fileno (outp);
   int c_outp_fileno_orig = scm_to_int (outp_fileno);
   int c_outp_fileno = dup (c_outp_fileno_orig);
-  FILE *c_outp = fdopen(c_outp_fileno, "wb+");
+  FILE *c_outp = fdopen (c_outp_fileno, "wb+");
   if (c_outp == NULL)
     return scm_from_int (2);
 
   SCM inp_fileno = scm_fileno (inp);
   int c_inp_fileno_orig = scm_to_int (inp_fileno);
   int c_inp_fileno = dup (c_inp_fileno_orig);
-  FILE *c_inp = fdopen(c_inp_fileno, "rb");
+  FILE *c_inp = fdopen (c_inp_fileno, "rb");
 
   if (c_inp == NULL)
     return scm_from_int (1);
@@ -212,7 +212,7 @@ gucu_getwin (SCM port)
               "getwin");
 
 #ifdef GUCU_USE_COOKIE
-  fp = fopencookie (SCM2PTR(port), "rb", port_funcs);
+  fp = fopencookie (SCM2PTR (port), "rb", port_funcs);
 
   if (fp == NULL)
     return SCM_BOOL_F;
@@ -278,7 +278,7 @@ gucu_putwin (SCM win, SCM port)
        closing this opencookie port destroys it. */
     out_string_port = scm_open_output_string ();
 
-    fp = fopencookie (SCM2PTR(out_string_port), "wb", port_funcs);
+    fp = fopencookie (SCM2PTR (out_string_port), "wb", port_funcs);
 
     if (fp == NULL)
       return SCM_BOOL_F;
@@ -298,7 +298,7 @@ gucu_putwin (SCM win, SCM port)
     /* Shutdown the FILE * stream. */
     fclose (fp);
 
-    for (i = 0; i < scm_c_string_length (out_string); i ++)
+    for (i = 0; i < scm_c_string_length (out_string); i++)
       {
         SCM c = scm_c_string_ref (out_string, i);
         scm_write_char (c, port);

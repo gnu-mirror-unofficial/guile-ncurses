@@ -155,149 +155,149 @@ gucu_extra_init_const ()
 #endif
 
 #if HAVE_DECL_OCRNL
-  D(OCRNL);
+  D (OCRNL);
 #else
-  F(OCRNL);
+  F (OCRNL);
 #endif
 #if HAVE_DECL_ONLCR
-  D(ONLCR);
+  D (ONLCR);
 #else
-  F(ONLCR);
+  F (ONLCR);
 #endif
 #if HAVE_DECL_ONLRET
-  D(ONLRET);
+  D (ONLRET);
 #else
-  F(ONLRET);
+  F (ONLRET);
 #endif
 #if HAVE_DECL_ONOCR
-  D(ONOCR);
+  D (ONOCR);
 #else
-  F(ONOCR);
+  F (ONOCR);
 #endif
 
-  D(ONLCR);
-  D(ONLRET);
-  D(OPOST);
-  D(TCIFLUSH);
-  D(TCIOFF);
-  D(TCIOFLUSH);
-  D(TCION);
-  D(TCOFLUSH);
-  D(TCOOFF);
-  D(TCOON);
-  D(TCSADRAIN);
-  D(TCSAFLUSH);
-  D(TCSANOW);
+  D (ONLCR);
+  D (ONLRET);
+  D (OPOST);
+  D (TCIFLUSH);
+  D (TCIOFF);
+  D (TCIOFLUSH);
+  D (TCION);
+  D (TCOFLUSH);
+  D (TCOOFF);
+  D (TCOON);
+  D (TCSADRAIN);
+  D (TCSAFLUSH);
+  D (TCSANOW);
 
-  D(VEOF);
-  D(VEOL);
-  D(VERASE);
-  D(VINTR);
-  D(VKILL);
-  D(VMIN);
-  D(VQUIT);
-  D(VSTART);
-  D(VSTOP);
-  D(VSUSP);
+  D (VEOF);
+  D (VEOL);
+  D (VERASE);
+  D (VINTR);
+  D (VKILL);
+  D (VMIN);
+  D (VQUIT);
+  D (VSTART);
+  D (VSTOP);
+  D (VSUSP);
 
-  D(BRKINT);
-  D(ICRNL);
-  D(IGNBRK);
-  D(IGNCR);
-  D(IGNPAR);
-  D(INLCR);
-  D(INPCK);
-  D(ISTRIP);
-  #if HAVE_DECL_IXANY
-  D(IXANY);
-  #else
-  F(IXANY);
-  #endif
-  D(IXOFF);
-  D(IXON);
-  D(PARMRK);
-
-  D(CLOCAL);
-  D(CREAD);
-  D(CS5);
-  D(CS6);
-  D(CS7);
-  D(CS8);
-  D(CSIZE);
-  D(CSTOPB);
-  D(HUPCL);
-  D(PARENB);
-  D(PARODD);
-  D(VTIME);
-
-  D(ECHO);
-  D(ECHOE);
-  D(ECHOK);
-  D(ECHONL);
-  D(ICANON);
-  D(ISIG);
-  D(NOFLSH);
-  D(TOSTOP);
-
-  D(B0);
-  D(B110);
-  D(B1200);
-  D(B134);
-  D(B150);
-  D(B1800);
-  D(B19200);
-  D(B200);
-  D(B2400);
-  D(B300);
-  D(B38400);
-  D(B4800);
-  D(B50);
-  D(B600);
-  D(B75);
-  D(B9600);
-#if HAVE_DECL_B115200
-  D(B115200);
+  D (BRKINT);
+  D (ICRNL);
+  D (IGNBRK);
+  D (IGNCR);
+  D (IGNPAR);
+  D (INLCR);
+  D (INPCK);
+  D (ISTRIP);
+#if HAVE_DECL_IXANY
+  D (IXANY);
 #else
-  F(B115200);
+  F (IXANY);
+#endif
+  D (IXOFF);
+  D (IXON);
+  D (PARMRK);
+
+  D (CLOCAL);
+  D (CREAD);
+  D (CS5);
+  D (CS6);
+  D (CS7);
+  D (CS8);
+  D (CSIZE);
+  D (CSTOPB);
+  D (HUPCL);
+  D (PARENB);
+  D (PARODD);
+  D (VTIME);
+
+  D (ECHO);
+  D (ECHOE);
+  D (ECHOK);
+  D (ECHONL);
+  D (ICANON);
+  D (ISIG);
+  D (NOFLSH);
+  D (TOSTOP);
+
+  D (B0);
+  D (B110);
+  D (B1200);
+  D (B134);
+  D (B150);
+  D (B1800);
+  D (B19200);
+  D (B200);
+  D (B2400);
+  D (B300);
+  D (B38400);
+  D (B4800);
+  D (B50);
+  D (B600);
+  D (B75);
+  D (B9600);
+#if HAVE_DECL_B115200
+  D (B115200);
+#else
+  F (B115200);
 #endif
 #if HAVE_DECL_B14400
-  D(B14400);
+  D (B14400);
 #else
-  F(B14400);
+  F (B14400);
 #endif
 #if HAVE_DECL_B230400
-  D(B230400);
+  D (B230400);
 #else
-  F(B230400);
+  F (B230400);
 #endif
 #if HAVE_DECL_B28800
-  D(B28800);
+  D (B28800);
 #else
-  F(B28800);
+  F (B28800);
 #endif
 #if HAVE_DECL_B57600
-  D(B57600);
+  D (B57600);
 #else
-  F(B57600);
+  F (B57600);
 #endif
 #if HAVE_DECL_B7200
-  D(B7200);
+  D (B7200);
 #else
-  F(B7200);
+  F (B7200);
 #endif
 #if HAVE_DECL_B76800
-  D(B76800);
+  D (B76800);
 #else
-  F(B76800);
+  F (B76800);
 #endif
 #if HAVE_DECL_O_RDWR
-  D(O_RDWR);
+  D (O_RDWR);
 #else
-  F(O_RDWR);
+  F (O_RDWR);
 #endif
 #if HAVE_DECL_O_NOCTTY
-  D(O_NOCTTY);
+  D (O_NOCTTY);
 #else
-  F(O_NOCTTY);
+  F (O_NOCTTY);
 #endif
 }

@@ -80,7 +80,8 @@ _scm_from_termios (struct termios *x)
 #if 0
   if (0)
     {
-      fprintf (stderr, "Making foreign object from termios based on *%p\n", x);
+      fprintf (stderr, "Making foreign object from termios based on *%p\n",
+               x);
     }
 #endif
 
@@ -100,8 +101,8 @@ gc_free_termios (SCM x)
       fprintf (stderr, "Freeing termios at %p\n", gp);
       fprintf (stderr, "Flags: I %u O %u C %u L %u\n", gp->c_iflag,
                gp->c_oflag, gp->c_cflag, gp->c_lflag);
-      fprintf (stderr, "Speed: O %u I %u\n", cfgetospeed(gp),
-               cfgetispeed(gp));
+      fprintf (stderr, "Speed: O %u I %u\n", cfgetospeed (gp),
+               cfgetispeed (gp));
       fflush (stderr);
       sleep (1);
     }
@@ -127,7 +128,7 @@ gucu_new_termios (void)
   gp = scm_gc_malloc (sizeof (struct termios), "termios");
 
   /* Step 2: initialize it with C code */
-  memset (gp, 0, sizeof(struct termios));
+  memset (gp, 0, sizeof (struct termios));
   gp->c_cflag = CS8;
 
   /* Step 3: create the foreign object */
@@ -142,9 +143,10 @@ void
 gucu_extra_init_type ()
 {
 #ifdef ENABLE_TERMIOS
-  termios_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("termios"),
-                                                  scm_list_1 (scm_from_utf8_symbol ("data")),
-                                                  gc_free_termios);
+  termios_fo_type =
+    scm_make_foreign_object_type (scm_from_utf8_symbol ("termios"),
+                                  scm_list_1 (scm_from_utf8_symbol ("data")),
+                                  gc_free_termios);
   scm_c_define_gsubr ("termios?", 1, 0, 0, gucu_is_termios_p);
 
   scm_c_define_gsubr ("new-termios", 0, 0, 0, gucu_new_termios);

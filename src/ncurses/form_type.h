@@ -48,7 +48,7 @@ struct gucu_form
 
 GUCU_LOCAL int _scm_is_field (SCM x);
 GUCU_LOCAL FIELD *_scm_to_field (SCM x);
-GUCU_LOCAL SCM _scm_from_field (FIELD * x);
+GUCU_LOCAL SCM _scm_from_field (FIELD *x);
 GUCU_LOCAL void field_init_refcount (FIELD *item);
 GUCU_LOCAL bool field_increase_refcount (FIELD *item);
 GUCU_LOCAL bool field_decrease_refcount (FIELD *item);
@@ -62,7 +62,7 @@ GUCU_LOCAL int _scm_is_form (SCM x);
 GUCU_LOCAL FORM *_scm_to_form (SCM x);
 
 GUCU_API SCM gucu_new_field (SCM height, SCM width, SCM top, SCM left,
-			     SCM offscreen, SCM nbuffers);
+                             SCM offscreen, SCM nbuffers);
 GUCU_API SCM gucu_is_field_p (SCM x);
 GUCU_API SCM gucu_field_refcount (SCM x);
 

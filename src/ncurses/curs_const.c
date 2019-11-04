@@ -534,8 +534,8 @@ gucu_init_constant ()
 #endif
   gucu_NCURSES_MOUSE_VERSION =
     scm_permanent_object (scm_c_define
-			  ("NCURSES_MOUSE_VERSION",
-			   scm_from_uint (NCURSES_MOUSE_VERSION)));
+                          ("NCURSES_MOUSE_VERSION",
+                           scm_from_uint (NCURSES_MOUSE_VERSION)));
   gucu_BUTTON1_PRESSED =
     scm_permanent_object (scm_c_define
                           ("BUTTON1_PRESSED",
