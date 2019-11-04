@@ -441,7 +441,7 @@ gucu_new_menu (SCM items)
       free (c_items);
       if (errno == E_NOT_CONNECTED)
         {
-          scm_misc_error ("new-menu", "menu has no items", SCM_BOOL_F);
+          scm_misc_error ("new-menu", "menu has no items", SCM_EOL);
         }
       else if (errno == E_SYSTEM_ERROR)
         {

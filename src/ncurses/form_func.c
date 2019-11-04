@@ -48,26 +48,26 @@ extern SCM field_fo_type;
 void
 form_bad_state_error (const char *funcname)
 {
-  scm_misc_error (funcname, "bad state", SCM_BOOL_F);
+  scm_misc_error (funcname, "bad state", SCM_EOL);
 }
 
 void
 form_connected_error (const char *funcname)
 {
   scm_misc_error (funcname, "field is already connected to a form",
-                  SCM_BOOL_F);
+                  SCM_EOL);
 }
 
 void
 form_current_field_error (const char *funcname)
 {
-  scm_misc_error (funcname, "the field is the current field", SCM_BOOL_F);
+  scm_misc_error (funcname, "the field is the current field", SCM_EOL);
 }
 
 void
 form_invalid_field_error (const char *funcname)
 {
-  scm_misc_error (funcname, "the field is invalid", SCM_BOOL_F);
+  scm_misc_error (funcname, "the field is invalid", SCM_EOL);
 }
 
 void
@@ -81,19 +81,19 @@ void
 form_not_connected_error (const char *funcname)
 {
   scm_misc_error (funcname, "the field is not connected to a form",
-                  SCM_BOOL_F);
+                  SCM_EOL);
 }
 
 void
 form_not_posted_error (const char *funcname)
 {
-  scm_misc_error (funcname, "the form is not posted", SCM_BOOL_F);
+  scm_misc_error (funcname, "the form is not posted", SCM_EOL);
 }
 
 void
 form_posted_error (const char *funcname)
 {
-  scm_misc_error (funcname, "the form is posted", SCM_BOOL_F);
+  scm_misc_error (funcname, "the form is posted", SCM_EOL);
 }
 
 /* Given a form, return the current field. */
@@ -106,7 +106,7 @@ gucu_current_field (SCM form)
   FIELD *c_field = current_field (c_form);
   if (c_field != (FIELD *) 0)
     if (!field_increase_refcount (c_field))
-      scm_misc_error ("current-field", "too many references to field", NULL);
+      scm_misc_error ("current-field", "too many references to field", SCM_EOL);
   SCM s_field = _scm_from_field (c_field);
 
   return s_field;

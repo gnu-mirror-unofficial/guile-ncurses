@@ -48,7 +48,7 @@
 static void
 curs_bad_state_error (const char *funcname)
 {
-  scm_misc_error (funcname, "bad curses internal state", SCM_BOOL_F);
+  scm_misc_error (funcname, "bad curses internal state", SCM_EOL);
 }
 
 /* Assign the colors to color pair zero */

@@ -44,13 +44,13 @@
 static void
 menu_posted_error (const char *funcname)
 {
-  scm_misc_error (funcname, "menu already posted", SCM_BOOL_F);
+  scm_misc_error (funcname, "menu already posted", SCM_EOL);
 }
 
 static void
 menu_not_connected_error (const char *funcname)
 {
-  scm_misc_error (funcname, "menu has no items", SCM_BOOL_F);
+  scm_misc_error (funcname, "menu has no items", SCM_EOL);
 }
 
 /* Set the foreground attribute of the menu */
@@ -591,7 +591,7 @@ gucu_current_item (SCM arg1)
   if (ret != (ITEM *) 0)
     if (!item_increase_refcount (ret))
       scm_misc_error ("gucu-current-item", "too many references to item",
-                      NULL);
+                      SCM_EOL);
   SCM s_ret = _scm_from_item (ret);
 
   return s_ret;
