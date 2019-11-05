@@ -47,7 +47,7 @@ size_t gc_free_panel (SCM x);
 SCM mark_panel (SCM x);
 int print_panel (SCM x, SCM port, scm_print_state * pstate);
 
-/* panel -- in C, a gucu_window struct that has a non-NULL panel. In
+/* panel -- in C, a window foreign object that has a non-NULL panel. In
    Scheme, a foreign object that contains a pointer to that
    structure. */
 
@@ -56,17 +56,10 @@ _scm_is_panel (SCM x)
 {
   if (_scm_is_window (x))
     {
-      if (scm_foreign_object_ref (x, 0) == NULL)
+      if (scm_foreign_object_ref (x, 1) == NULL)
         return 0;
       else
-        {
-          struct gucu_window *wp =
-            (struct gucu_window *) scm_foreign_object_ref (x, 0);
-          if (wp != NULL && wp->panel != NULL)
-            return 1;
-          else
-            return 0;
-        }
+        return 1;
     }
   else
     return 0;
@@ -75,13 +68,11 @@ _scm_is_panel (SCM x)
 PANEL *
 _scm_to_panel (SCM x)
 {
-  struct gucu_window *wp;
-
   assert (_scm_is_window (x));
-  wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
-  assert (wp->panel != NULL);
+  PANEL *panel = scm_foreign_object_ref (x, 1);
+  assert (panel != NULL);
 
-  return wp->panel;
+  return panel;
 }
 
 // Panels are equal if they point to the same C structure
@@ -96,7 +87,7 @@ equalp_panel (SCM x1, SCM x2)
 
   if ((panel1 == NULL) || (panel2 == NULL))
     return SCM_BOOL_F;
-  else if ((panel1 != panel2))
+  else if (panel1 != panel2)
     return SCM_BOOL_F;
   else
     return SCM_BOOL_T;
@@ -107,17 +98,16 @@ equalp_panel (SCM x1, SCM x2)
 size_t
 free_panel (SCM x)
 {
-  struct gucu_window *wp;
-
   scm_assert_foreign_object_type (window_fo_type, x);
   if (_scm_is_panel (x))
     {
       // Window has an associated panel
-      wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
-      if (wp && wp->window && wp->panel)
+      PANEL *panel = scm_foreign_object_ref (x, 1);
+
+      if (panel)
         {
-          set_panel_userptr (wp->panel, NULL);
-          int retval = del_panel (wp->panel);
+          set_panel_userptr (panel, NULL);
+          int retval = del_panel (panel);
           if (retval != OK)
             {
               scm_error_scm (scm_from_locale_symbol ("ncurses"),
@@ -125,7 +115,7 @@ free_panel (SCM x)
                              scm_from_locale_string ("bad argument"),
                              SCM_BOOL_F, SCM_BOOL_F);
             }
-          wp->panel = (PANEL *) NULL;
+          scm_foreign_object_set_x (x, 1, NULL);
         }
     }
 
@@ -151,26 +141,24 @@ gucu_is_panel_p (SCM x)
 SCM
 gucu_make_panel_x (SCM win)
 {
-  struct gucu_window *wp = NULL;
-
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "make-panel!");
 
   if (_scm_is_panel (win))
     scm_misc_error ("make-panel!", "already a panel ~A", scm_list_1 (win));
 
-  wp = (struct gucu_window *) scm_foreign_object_ref (win, 0);
-  if (wp && wp->window)
+  WINDOW *c_win = scm_foreign_object_ref (win, 0);
+  if (c_win)
     {
-      wp->panel = new_panel (wp->window);
+      PANEL *panel = new_panel (c_win);
 
-      if (wp->panel == NULL)
+      if (panel == NULL)
         scm_misc_error ("make-panel!", "bad window ~A", scm_list_1 (win));
-      {
-        /* We need a reference back to the parent #<window> so we can
-           write a panel. */
-        assert (!SCM_IMP (win));
-        set_panel_userptr (wp->panel, SCM2PTR (win));
-      }
+
+      /* We need a reference back to the parent #<window> so we can
+         write a panel. */
+      assert (!SCM_IMP (win));
+      set_panel_userptr (panel, SCM2PTR (win));
+      scm_foreign_object_set_x (win, 1, panel);
     }
   return SCM_UNSPECIFIED;
 }

@@ -871,15 +871,8 @@ gucu_curscr ()
 SCM
 gucu_getparent (SCM win)
 {
-  struct gucu_window *wp = NULL;
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG1, "%getparent");
-
-  wp = (struct gucu_window *) scm_foreign_object_ref (win, 0);
-  if (wp != (struct gucu_window *) NULL)
-    if (SCM_UNPACK_POINTER (wp->parent) != NULL)
-      return wp->parent;
-
-  return SCM_BOOL_F;
+  return SCM_PACK_POINTER (scm_foreign_object_ref (win, 2));
 }
 
 void

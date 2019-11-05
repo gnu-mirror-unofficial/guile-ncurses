@@ -146,25 +146,6 @@ GUCU_API SCM gucu_is_screen_p (SCM x);
 
 extern SCM window_fo_type;
 
-struct gucu_window
-{
-  /* The parent window of a subwin or derwin, or SCM_BOOL_F if
-     there is no parent. */
-  SCM parent;
-
-  /* The name of the window for debugging purposes, or SCM_BOOL_F
-     if there is no name. */
-  SCM name;
-
-  /* The ncurses window structure for this window, or NULL if the
-     window has been freed. */
-  WINDOW *window;
-
-  /* If this window has been turned into a panel, then its related
-     panel structore, or NULL otherwise. */
-  PANEL *panel;
-};
-
 GUCU_LOCAL size_t free_window (SCM x);
 
 GUCU_LOCAL int _scm_is_window (SCM x);

@@ -936,7 +936,7 @@ gucu_screen_equalp (SCM x, SCM y)
   return scm_from_bool (_scm_to_screen (x) == _scm_to_screen (y));
 }
 
-// window -- in C, a struct gucu_window *.  In Scheme, a foreign
+// window -- in C, a WINDOW *.  In Scheme, a foreign
 // object that contains the pointer
 
 int
@@ -944,7 +944,7 @@ _scm_is_window (SCM x)
 {
   if (SCM_IS_A_P (x, window_fo_type))
     {
-      if (scm_foreign_object_ref (x, 0) != 0)
+      if (scm_foreign_object_ref (x, 0) != NULL)
         return 1;
       else
         return 0;
@@ -957,34 +957,24 @@ _scm_is_window (SCM x)
 WINDOW *
 _scm_to_window (SCM x)
 {
-  struct gucu_window *wp = NULL;
   assert (_scm_is_window (x));
 
-  wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
-  if (wp != (struct gucu_window *) NULL)
-    return wp->window;
-
-  return (WINDOW *) NULL;
+  return scm_foreign_object_ref (x, 0);
 }
 
 SCM
 _scm_from_window_full (SCM parent, SCM name, WINDOW *win)
 {
   SCM s_win;
-  struct gucu_window *wp;
 
   assert (win != NULL);
   assert (_scm_is_window (parent) || scm_is_false (parent));
   assert (scm_is_string (name) || scm_is_false (name));
+  void *vals[4] = { win, NULL, SCM_UNPACK_POINTER (parent),
+    SCM_UNPACK_POINTER (name)
+  };
 
-  wp = scm_gc_malloc (sizeof (struct gucu_window), "_scm_from_window_full");
-
-  s_win = scm_make_foreign_object_1 (window_fo_type, wp);
-
-  wp->parent = parent;
-  wp->name = name;
-  wp->window = win;
-  wp->panel = (PANEL *) NULL;
+  s_win = scm_make_foreign_object_n (window_fo_type, 4, vals);
 
   if (0)
     {
@@ -1028,19 +1018,20 @@ gucu_window_equalp (SCM x1, SCM x2)
 static void
 gc_free_window (SCM x)
 {
-  struct gucu_window *wp;
-
-  wp = (struct gucu_window *) scm_foreign_object_ref (x, 0);
+  WINDOW *win = scm_foreign_object_ref (x, 0);
   /* Windows should already be null if delwin has been called on them */
-  if (wp != NULL)
+  if (win != NULL)
     {
-      wp->parent = SCM_BOOL_F;
-      wp->name = SCM_BOOL_F;
-      if (wp->panel != (PANEL *) NULL)
+      // Detach the parent window, if any.
+      scm_foreign_object_set_x (x, 2, SCM_UNPACK_POINTER (SCM_BOOL_F));
+      // The window name
+      scm_foreign_object_set_x (x, 3, SCM_UNPACK_POINTER (SCM_BOOL_F));
+      PANEL *panel = scm_foreign_object_ref (x, 1);
+      if (panel != NULL)
         {
           int retval;
-          set_panel_userptr (wp->panel, NULL);
-          retval = del_panel (wp->panel);
+          set_panel_userptr (panel, NULL);
+          retval = del_panel (panel);
           if (retval != OK)
             {
               scm_error_scm (scm_from_locale_symbol ("ncurses"),
@@ -1049,15 +1040,16 @@ gc_free_window (SCM x)
                              scm_from_locale_string ("bad argument"),
                              SCM_BOOL_F, SCM_BOOL_F);
             }
-          wp->panel = (PANEL *) NULL;
+          scm_foreign_object_set_x (x, 1, NULL);
         }
 
-      if (wp->window != stdscr)
+      // Bad things happen if you allow the stdscr to be garbage
+      // collected.
+      if (win != stdscr)
         {
-          delwin (wp->window);
-          wp->window = (WINDOW *) NULL;
+          delwin (win);
+          scm_foreign_object_set_x (x, 0, NULL);
         }
-      scm_foreign_object_set_x (x, 0, NULL);
     }
 }
 
@@ -1094,10 +1086,20 @@ gucu_init_type ()
       scm_c_define_gsubr ("screen?", 1, 0, 0, gucu_is_screen_p);
       scm_c_define_gsubr ("screen=?", 2, 0, 0, gucu_screen_equalp);
 
-      window_fo_type =
-        scm_make_foreign_object_type (scm_from_utf8_symbol ("window"),
-                                      scm_list_1 (scm_from_utf8_symbol
-                                                  ("data")), gc_free_window);
+      /* The window foreign object has 4 slots.
+         1. The ncurses WINDOW * structure for this window, or NULL if
+         the window has been freed.
+         2. The PANEL * if this window has been turned into a PANEL,
+         or NULL otherwise.
+         3. The SCM parent <window> of a subwin or derwin, or SCM_BOOL_F if
+         there is no parent.
+         4. The name of the window for debugging purposes, or SCM_BOOL_F
+         if there is no name. */
+      window_fo_type = makeFO (u8sym ("window"),
+                               scm_list_4 (u8sym ("window"),
+                                           u8sym ("panel"),
+                                           u8sym ("parent"),
+                                           u8sym ("name")), gc_free_window);
       scm_c_define_gsubr ("window?", 1, 0, 0, gucu_is_window_p);
       scm_c_define_gsubr ("window=?", 2, 0, 0, gucu_window_equalp);
 
