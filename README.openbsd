@@ -1,26 +1,41 @@
 A README file for using GNU Guile-Ncurses on OpenBSD
 
-  Copyright (C) 2016 Free Software Foundation, Inc.
+  Copyright (C) 2016, 2019 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-This version Guile-ncurses was tested on OpenBSD 5.9 i386, which was
+This version Guile-ncurses was tested on OpenBSD 6.5 amd64, which was
 already one release behind current OpenBSD at the time of the release.
 
-I used the version of guile2 in the packages collection. I didn't use
-the default guile in the packages collection because it was version
-1.8.  All the other required libraries (libunistring, ncurses) also
-came from the packages collection.
+OpenBSD requires you to set environment variables to run bootstrap
+and configure.
+I used
+  AUTOMAKE_VERSION=1.16
+  AUTOCONF_VERSION=2.69
+
+I used the version of guile2 in the packages collection, which, at the
+time of this writing, installed guile 2.2.4 as
+'/usr/local/bin/guile2.2'.  I didn't use the default guile in the
+packages collection because it was version 1.8.  All the other
+required libraries (libunistring, ncurses) also came from the packages
+collection.
+
+Note that the version of the gcc compiler that ships with OpenBSD is
+too old to compile guile-ncurses. The clang compiler is the native
+compiler for OpenBSD.  You should use clang.
 
 Because the guile2 in the packages collection installs its libraries
 and headers in /usr/local, I had to invoke the configure script like
 so...
 
-  ./configure LDFLAGS="-L/usr/local/lib" CPPFLAGS=-I/usr/local/include
+  ./configure LDFLAGS="-L/usr/local/lib" CPPFLAGS=-I/usr/local/include \
+    CC=clang
 
 Aside from that, installation is standard.
 
-Note that the default ncurses version in OpenBSD is 5.7, which has
-many old bugs.
+The version of ncurses that ships with OpenBSD is 5.7, which is old.
+As a consequence, OpenBSD does not install the ncurses 'toe' utility
+by default, which is desired by the test suite.  Without 'toe', the
+'make check' will run an abbreviated set of tests.
