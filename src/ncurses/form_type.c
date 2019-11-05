@@ -306,7 +306,7 @@ gc_free_form (SCM x)
         }
 
       /* Decrease the refcount and maybe free the fields.  */
-      for (int i = 0; i < len; i ++)
+      for (int i = 0; i < len; i++)
         {
           field_decrease_refcount (pfields[i]);
           if (field_get_refcount (pfields[i]) == 0)

@@ -234,15 +234,8 @@ _scm_is_menu (SCM x)
 MENU *
 _scm_to_menu (SCM x)
 {
-  struct gucu_menu *gm;
-
   scm_assert_foreign_object_type (menu_fo_type, x);
-
-  gm = (struct gucu_menu *) scm_foreign_object_ref (x, 0);
-  if (gm == NULL)
-    return NULL;
-
-  return gm->menu;
+  return (MENU *) scm_foreign_object_ref (x, 0);
 }
 
 SCM
@@ -260,18 +253,17 @@ gucu_menu_equal_p (SCM menu1, SCM menu2)
 void
 gc_free_menu (SCM x)
 {
-  struct gucu_menu *gm;
   int retval;
   int i;
 
-  gm = (struct gucu_menu *) scm_foreign_object_ref (x, 0);
-  if (gm != NULL && gm->menu != NULL)
+  MENU *menu = (MENU *) scm_foreign_object_ref (x, 0);
+  if (menu != NULL)
     {
-      // First, we need make our own store the ITEM *.  If free_menu
+      // First, we need make our own store of the ITEM *.  If free_menu
       // succeeds, the list of ITEM * provided by menu_items will no
       // longer be valid.
-      int len = item_count (gm->menu);
-      ITEM **pitem = menu_items (gm->menu);
+      int len = item_count (menu);
+      ITEM **pitem = menu_items (menu);
       ITEM **pitem_store = scm_malloc (sizeof (ITEM *) * len);
       for (i = 0; i < len; i++)
         pitem_store[i] = pitem[i];
@@ -282,7 +274,7 @@ gc_free_menu (SCM x)
 
       int free_attempts = 0;
     freemenu:
-      retval = free_menu (gm->menu);
+      retval = free_menu (menu);
 
       if (retval == E_BAD_ARGUMENT)
         {
@@ -304,7 +296,7 @@ gc_free_menu (SCM x)
           // mistake here.
           if (free_attempts == 0)
             {
-              unpost_menu (gm->menu);
+              unpost_menu (menu);
               free_attempts++;
               goto freemenu;
             }
@@ -352,17 +344,12 @@ gc_free_menu (SCM x)
       // Free our storage of the ITEM *
       free (pitem_store);
 
-      gm->menu = NULL;
+      scm_foreign_object_set_x (x, 0, NULL);
     }
 
-  /* Release the references holding the windows. */
-  if (gm != NULL)
-    {
-      gm->win_guard = SCM_BOOL_F;
-      gm->subwin_guard = SCM_BOOL_F;
-    }
-
-  scm_foreign_object_set_x (x, 0, NULL);
+  /* Release the references holding the window and subwindow. */
+  scm_foreign_object_set_x (x, 1, SCM_UNPACK_POINTER (SCM_BOOL_F));
+  scm_foreign_object_set_x (x, 2, SCM_UNPACK_POINTER (SCM_BOOL_F));
 }
 
 SCM
@@ -374,7 +361,6 @@ gucu_is_menu_p (SCM x)
 SCM
 gucu_new_menu (SCM items)
 {
-  struct gucu_menu *gm;
   size_t len;
   ITEM **c_items;
   SCM fobj;
@@ -409,14 +395,15 @@ gucu_new_menu (SCM items)
     }
 
   // Step 1: allocate memory
-  gm = scm_gc_malloc (sizeof (struct gucu_menu), "gucu_menu");
-
-  c_items = scm_gc_malloc (sizeof (ITEM *) * (len + 1), "gucu_menu");
+  c_items = malloc (sizeof (ITEM *) * (len + 1));
 
   // Step 2: initialize it with C code
 
   // Step 3: create the foreign object
-  fobj = scm_make_foreign_object_1 (menu_fo_type, gm);
+  fobj =
+    scm_make_foreign_object_3 (menu_fo_type, NULL,
+                               SCM_UNPACK_POINTER (SCM_BOOL_F),
+                               SCM_UNPACK_POINTER (SCM_BOOL_F));
 
   // Step 4: finish the initialization
   for (i = 0; i < len; i++)
@@ -436,9 +423,9 @@ gucu_new_menu (SCM items)
   /* This is a null-terminated array */
   c_items[len] = NULL;
 
-  gm->menu = new_menu (c_items);
+  MENU *menu = new_menu (c_items);
 
-  if (gm->menu == NULL)
+  if (menu == NULL)
     {
       free (c_items);
       if (errno == E_NOT_CONNECTED)
@@ -455,30 +442,26 @@ gucu_new_menu (SCM items)
       else
         abort ();
     }
-  scm_remember_upto_here_1 (items);
-
-  gm->win_guard = SCM_BOOL_F;
-  gm->subwin_guard = SCM_BOOL_F;
+  scm_foreign_object_set_x (fobj, 0, menu);
 
   return fobj;
 }
 
+#define makeFO(a,b,c) scm_make_foreign_object_type((a),(b),(c))
+#define u8sym(x) scm_from_utf8_symbol(x)
 void
 gucu_menu_init_type ()
 {
-  item_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("item"),
-                                               scm_list_1
-                                               (scm_from_utf8_symbol
-                                                ("data")), gc_free_item);
+  item_fo_type = makeFO (u8sym ("item"),
+                         scm_list_1 (u8sym ("data")), gc_free_item);
   scm_c_define_gsubr ("item?", 1, 0, 0, gucu_is_item_p);
   scm_c_define_gsubr ("item=?", 2, 0, 0, gucu_item_equal_p);
   scm_c_define_gsubr ("new-item", 2, 0, 0, gucu_new_item);
   scm_c_define_gsubr ("%item-refcount", 1, 0, 0, gucu_item_refcount);
 
-  menu_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("menu"),
-                                               scm_list_1
-                                               (scm_from_utf8_symbol
-                                                ("data")), gc_free_menu);
+  menu_fo_type = makeFO (u8sym ("menu"),
+                         scm_list_3 (u8sym ("menu"), u8sym ("window"),
+                                     u8sym ("subwindow")), gc_free_menu);
   scm_c_define_gsubr ("menu?", 1, 0, 0, gucu_is_menu_p);
   scm_c_define_gsubr ("menu=?", 2, 0, 0, gucu_menu_equal_p);
   scm_c_define_gsubr ("new-menu", 1, 0, 0, gucu_new_menu);

@@ -492,7 +492,6 @@ gucu_set_menu_win (SCM menu, SCM win)
   MENU *c_menu;
   WINDOW *c_win;
   int ret;
-  struct gucu_menu *gm;
 
   SCM_ASSERT (_scm_is_menu (menu), menu, SCM_ARG1, "set-menu-win!");
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "set-menu-win!");
@@ -505,8 +504,7 @@ gucu_set_menu_win (SCM menu, SCM win)
     menu_posted_error ("set-menu-win!");
 
   /* Protect the window from GC */
-  gm = (struct gucu_menu *) scm_foreign_object_ref (menu, 0);
-  gm->win_guard = win;
+  scm_foreign_object_set_x (menu, 1, SCM_UNPACK_POINTER (win));
 
   return SCM_UNSPECIFIED;
 }
@@ -518,7 +516,6 @@ gucu_set_menu_sub (SCM menu, SCM win)
   MENU *c_menu;
   WINDOW *c_win;
   int ret;
-  struct gucu_menu *gm;
 
   SCM_ASSERT (_scm_is_menu (menu), menu, SCM_ARG1, "set-menu-sub!");
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "set-menu-sub!");
@@ -531,8 +528,7 @@ gucu_set_menu_sub (SCM menu, SCM win)
     menu_posted_error ("set-menu-sub!");
 
   /* Protect the window from GC */
-  gm = (struct gucu_menu *) scm_foreign_object_ref (menu, 0);
-  gm->subwin_guard = win;
+  scm_foreign_object_set_x (menu, 2, SCM_UNPACK_POINTER (win));
 
   return SCM_UNSPECIFIED;
 }
@@ -541,28 +537,14 @@ SCM
 gucu_menu_win (SCM arg1)
 {
   SCM_ASSERT (_scm_is_menu (arg1), arg1, SCM_ARG1, "menu-win");
-
-  struct gucu_menu *gm =
-    (struct gucu_menu *) scm_foreign_object_ref (arg1, 0);
-
-  if (gm == NULL)
-    return SCM_BOOL_F;
-
-  return gm->win_guard;
+  return SCM_PACK_POINTER (scm_foreign_object_ref (arg1, 1));
 }
 
 SCM
 gucu_menu_sub (SCM arg1)
 {
   SCM_ASSERT (_scm_is_menu (arg1), arg1, SCM_ARG1, "menu-sub");
-
-  struct gucu_menu *gm =
-    (struct gucu_menu *) scm_foreign_object_ref (arg1, 0);
-
-  if (gm == NULL)
-    return SCM_BOOL_F;
-
-  return gm->subwin_guard;
+  return SCM_PACK_POINTER (scm_foreign_object_ref (arg1, 2));
 }
 
 SCM

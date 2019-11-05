@@ -48,16 +48,6 @@ GUCU_API SCM gucu_is_item_p (SCM x);
 GUCU_API SCM gucu_item_equal_p (SCM item1, SCM item2);
 GUCU_API SCM gucu_new_item (SCM x, SCM y);
 
-struct gucu_menu
-{
-  // Pointer to the menu
-  MENU *menu;
-
-  /* References to hold the window, and subwindow SCM objects */
-  SCM win_guard;
-  SCM subwin_guard;
-};
-
 GUCU_LOCAL int _scm_is_menu (SCM x);
 GUCU_LOCAL MENU *_scm_to_menu (SCM x);
 GUCU_LOCAL SCM _scm_from_menu (MENU *x);
