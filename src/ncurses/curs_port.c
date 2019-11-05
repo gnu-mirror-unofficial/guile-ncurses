@@ -193,7 +193,7 @@ gucu_newterm (SCM type, SCM outp, SCM inp)
   if (ret == NULL)
     return scm_from_int (3);
 
-  SCM s_ret = _scm_from_screen_and_ports (ret, c_outp, c_inp);
+  SCM s_ret = _scm_from_screen_and_ports (ret, c_inp, c_outp);
 
   return s_ret;
 }

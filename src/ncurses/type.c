@@ -843,19 +843,12 @@ gucu_is_mevent_p (SCM x)
 // garbage collected prematurely, we carry references to them along
 // with the SCREEN structure.  They must all exist as a set.
 
-struct screen_and_ports
-{
-  SCREEN *screen;               /* the SCREEN* created by ncurses newterm */
-  FILE *ifp;                    /* The associated input file stream */
-  FILE *ofp;                    /* The associated output file stream */
-};
-
 int
 _scm_is_screen (SCM x)
 {
   if (SCM_IS_A_P (x, screen_fo_type))
     {
-      if (scm_foreign_object_ref (x, 0) != 0)
+      if (scm_foreign_object_ref (x, 0) != NULL)
         return 1;
       else
         return 0;
@@ -868,65 +861,32 @@ SCREEN *
 _scm_to_screen (SCM x)
 {
   assert (_scm_is_screen (x));
-  struct screen_and_ports *sp =
-    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
-  return sp->screen;
+  return scm_foreign_object_ref (x, 0);
 }
 
 void
-_scm_to_screen_and_ports (SCM x, SCREEN **screen, FILE **ofp, FILE **ifp)
+_scm_to_screen_and_ports (SCM x, SCREEN **screen, FILE **ifp, FILE **ofp)
 {
   assert (_scm_is_screen (x));
   assert (screen != NULL);
-  assert (ofp != NULL);
   assert (ifp != NULL);
-  struct screen_and_ports *sp =
-    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
-  *screen = sp->screen;
-  *ofp = sp->ofp;
-  *ifp = sp->ifp;
+  assert (ofp != NULL);
+  *screen = scm_foreign_object_ref (x, 0);
+  *ifp = scm_foreign_object_ref (x, 1);
+  *ofp = scm_foreign_object_ref (x, 2);
 }
 
 SCM
-_scm_from_screen_and_ports (SCREEN *x, FILE *ofp, FILE *ifp)
+_scm_from_screen_and_ports (SCREEN *x, FILE *ifp, FILE *ofp)
 {
   SCM s_screen;
 
   assert (x != NULL);
-  assert (ofp != NULL);
   assert (ifp != NULL);
+  assert (ofp != NULL);
 
-  struct screen_and_ports *sp = scm_malloc (sizeof (struct screen_and_ports));
-  sp->screen = x;
-  sp->ofp = ofp;
-  sp->ifp = ifp;
-  s_screen = scm_make_foreign_object_1 (screen_fo_type, sp);
+  s_screen = scm_make_foreign_object_3 (screen_fo_type, x, ifp, ofp);
   return s_screen;
-}
-
-void
-_scm_free_screen (SCM x)
-{
-  assert (_scm_is_screen (x));
-  struct screen_and_ports *sp =
-    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
-
-  if (sp->screen)
-    {
-      delscreen (sp->screen);
-      /* delscreen returns void */
-      sp->screen = NULL;
-    }
-  if (sp->ifp)
-    {
-      fclose (sp->ifp);
-      sp->ifp = NULL;
-    }
-  if (sp->ofp)
-    {
-      fclose (sp->ofp);
-      sp->ofp = NULL;
-    }
 }
 
 /*  This procedure frees a screen without checking its type. In GC
@@ -935,37 +895,45 @@ _scm_free_screen (SCM x)
 static void
 gc_free_screen (SCM x)
 {
-  struct screen_and_ports *sp =
-    (struct screen_and_ports *) scm_foreign_object_ref (x, 0);
+  SCREEN *screen = scm_foreign_object_ref (x, 0);
+  FILE *ifp = scm_foreign_object_ref (x, 1);
+  FILE *ofp = scm_foreign_object_ref (x, 2);
 
-  /* Screens should already be null if delwin has been called on them */
-  if (sp != NULL)
+  if (screen != NULL)
     {
-      if (sp->screen)
-        {
-          delscreen (sp->screen);
-          /* delscreen returns void */
-          sp->screen = NULL;
-        }
-      if (sp->ifp)
-        {
-          fclose (sp->ifp);
-          sp->ifp = NULL;
-        }
-      if (sp->ofp)
-        {
-          fclose (sp->ofp);
-          sp->ofp = NULL;
-        }
-      free (sp);
+      delscreen (screen);
+      /* delscreen returns void */
       scm_foreign_object_set_x (x, 0, NULL);
     }
+  if (ifp)
+    {
+      fclose (ifp);
+      scm_foreign_object_set_x (x, 1, NULL);
+    }
+  if (ofp)
+    {
+      fclose (ofp);
+      scm_foreign_object_set_x (x, 2, NULL);
+    }
+}
+
+void
+_scm_free_screen (SCM x)
+{
+  assert (_scm_is_screen (x));
+  gc_free_screen (x);
 }
 
 SCM
 gucu_is_screen_p (SCM x)
 {
   return scm_from_bool (_scm_is_screen (x));
+}
+
+SCM
+gucu_screen_equalp (SCM x, SCM y)
+{
+  return scm_from_bool (_scm_to_screen (x) == _scm_to_screen (y));
 }
 
 // window -- in C, a struct gucu_window *.  In Scheme, a foreign
@@ -1107,6 +1075,8 @@ gucu_is_window_p (SCM x)
   return scm_from_bool (_scm_is_window (x));
 }
 
+#define u8sym(x) scm_from_utf8_symbol(x)
+#define makeFO(a,b,c) scm_make_foreign_object_type((a),(b),(c))
 void
 gucu_init_type ()
 {
@@ -1117,11 +1087,12 @@ gucu_init_type ()
 
       scm_c_define_gsubr ("mevent?", 1, 0, 0, gucu_is_mevent_p);
 
-      screen_fo_type =
-        scm_make_foreign_object_type (scm_from_utf8_symbol ("screen"),
-                                      scm_list_1 (scm_from_utf8_symbol
-                                                  ("data")), gc_free_screen);
+      screen_fo_type = makeFO (u8sym ("screen"),
+                               scm_list_3 (u8sym ("screen"),
+                                           u8sym ("ifp"),
+                                           u8sym ("ofp")), gc_free_screen);
       scm_c_define_gsubr ("screen?", 1, 0, 0, gucu_is_screen_p);
+      scm_c_define_gsubr ("screen=?", 2, 0, 0, gucu_screen_equalp);
 
       window_fo_type =
         scm_make_foreign_object_type (scm_from_utf8_symbol ("window"),

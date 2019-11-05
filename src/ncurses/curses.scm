@@ -387,6 +387,7 @@
             scr-restore
             scr-set
             screen?
+            screen=?
             scrl
             scroll
             scrollok!

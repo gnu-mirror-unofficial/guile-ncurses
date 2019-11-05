@@ -1,4 +1,4 @@
-;; Copyright 2009, 2010, 2016 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2016, 2019 Free Software Foundation, Inc.
 
 ;; This file is part of Guile-Ncurses.
 
@@ -34,23 +34,23 @@
   (let ((fp (open-input-file fname #:binary #t)))
     (display
      (let loop ((c (read-char fp))
-		(str ""))
+                (str ""))
        (if (not (eof-object? c))
-	   (loop (read-char fp)
-		 (string-append str (string c)))
-	   ;; else
-	   str)))))
+           (loop (read-char fp)
+                 (string-append str (string c)))
+           ;; else
+           str)))))
 
 (automake-test
  (if (defined? 'newterm)
      (let* ((tmpl-1 (string-copy "gucuXXXXXX"))
-	    (tmpl-2 (string-copy "gucuXXXXXX"))
-	    (input-port-1 (mkstemp! tmpl-1))
-	    (input-port-2 (mkstemp! tmpl-2))
-	    (output-port-1 input-port-1)
-	    (output-port-2 input-port-2)
-	    (scr-1 (newterm "xterm" output-port-1 input-port-1))
-	    (scr-2 (newterm "vt100" output-port-2 input-port-2)))
+            (tmpl-2 (string-copy "gucuXXXXXX"))
+            (input-port-1 (mkstemp! tmpl-1))
+            (input-port-2 (mkstemp! tmpl-2))
+            (output-port-1 input-port-1)
+            (output-port-2 input-port-2)
+            (scr-1 (newterm "xterm" output-port-1 input-port-1))
+            (scr-2 (newterm "vt100" output-port-2 input-port-2)))
        (set-term scr-1)
        (addstr (stdscr) "window #1!!")
        (refresh (stdscr))
@@ -81,14 +81,8 @@
        (format #t "newterm #2: ~s~%" scr-2)
 
        (and
-	(screen? scr-1)
-	(screen? scr-2)
-	(not (equal? scr-1 scr-1)))
-
-       ;; Either ncurses 6.0.20160116 is broken, or I don't
-       ;; understand how this is supposed to work.  I keep
-       ;; getting the same screen instead of two different screens.
-       'skipped)
+        (screen? scr-1)
+        (screen? scr-2)
+        (not (screen=? scr-1 scr-2))))
      ;; else
      'skipped))
-
