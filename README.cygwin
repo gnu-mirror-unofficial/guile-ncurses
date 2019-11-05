@@ -6,11 +6,11 @@ A README file for using GNU Guile-Ncurses on Cygwin
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-This version Guile-ncurses was not tested on Cygwin 3.0.7 on Windows 10..
+This version of guile-ncurses was tested on Cygwin 3.0.7 on Windows 10.
 
 I used the packaged version of Guile 2.2.4, and the packaged
-ncurses library.  The library builds and check normally.
+ncurses library.  The library builds and checks normally.
 
 At of guile-ncurses v3.0, guile-ncurses-shell.exe is not working on
-Cygwin because it needs to be updated to use the new pseudoterminal
-functionality.
+Cygwin because it needs to be updated to use the new Cygwin
+pseudoterminal functionality.
