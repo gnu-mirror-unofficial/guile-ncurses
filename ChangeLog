@@ -1,3 +1,307 @@
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    nerf menu_gc_refcount test
+    
+    It seems to depend on GC timing.
+    
+    * test/menu_gc_refcount.scm: weaken test
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Make <menu> a 3-element foreign object
+    
+    * src/ncurses/menu_func.c (gucu_set_menu_win, gucu_set_menu_sub)
+      (gucu_menu_win, gucu_menu_use): use new foreign object
+    * src/ncurses/menu_type.c (_scm_to_menu, gc_free_menu)
+      (gucu_new_menu): use new foreign object
+      (gucu_menu_init_type): define new foreign object
+    * src/ncurses/menu_type.h: remove struct gucu_menu
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Make <form> a 3-element foreign object
+    
+    This removes struct gucu_form.
+    Also, don't use GC's memory for field list.
+    
+    * src/ncurses/form_func.c (gucu_form_sub, gucu_form_win): use new foreign object
+      (gucu_set_form_sub_x, gucu_set_form_win_x): use new foreign object
+    * src/ncurses/form_type.c (_scm_to_form, gc_free_form, gucu_new_form)
+      (gucu_form_fields, gucu_set_form_fields_x): use new foreign object
+      (gucu_form_init_type): define new foreign object
+    * src/ncurses/form_type.h: remove struct gucu_form
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Make <window> a 4-slot foreign object
+    
+    Thereby removing struct gucu_window.
+    
+    * src/ncurses/curs_spec.c (gucu_getparent): use new foreign object
+    * src/ncurses/panel_type.c (_scm_is_panel): use new foreign object
+      (_scm_to_panel, free_panel, gucu_make_panel_x): use new foreign object
+    * src/ncurses/type.c (_scm_is_window, _scm_to_window): usenew foreign object
+      (_scm_from_window_full, gc_free_window): use new foreign object
+      (gucu_init_type): define 4-slot foreign object for window
+    * src/ncurses/type.h: remove struct gucu_window
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Make <screen> a 3-slot foreign object
+    
+    * src/ncurses/curs_port.c (gucu_newterm): use reordered args
+    * src/ncurses/curses.scm: export screen=?
+    * src/ncurses/type.c: remove struct screen_and_ports
+      (_scm_is_screen): prefer NULL to 0
+      (_scm_to_screen): use 3-slot object
+      (_scm_to_screen_and_ports): reorder args, use 3 slots
+      (_scm_from_screen_and_ports): reorder args, use 3 slots
+      (_scm_free_screen): rewrite in terms of gc_free_screen
+      (gc_free_screen): use 3 slots
+      (gucu_screen_equalp): new function
+      (gucu_init_type): use u8sym, makeFO macros for sake of brevity
+        screen_fo_type is 3 slots now
+        export screen=?
+    * src/ncurses/type.h: reorder args for _scm_from_screen_and_ports
+        and _scm_to_screen_and_ports
+    * test/curs_initscr_newterm_multiple_screens.scm: update to use screen=?
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Update autoconf archive m4 files
+    
+    * m4/ac_c___attribute__.m4: updated from upstream
+    * m4/ax_check_define.m4: update from upstream
+    * m4/attributes.m4: import from upstream
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Add hardening flags configure option
+    
+    * configure.ac
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    reindent
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Quiet const warning in gucu_panels_list
+    
+    * src/ncurses/panel_spec.c (gucu_panels_list): modified
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Add new procedure window=?
+    
+    * doc/guile-ncurses.texi: add window=? doc
+    * src/ncurses/curses.scm: export window=?
+    * src/ncurses/type.c (equalp_window): rename to gucu_window_equalp
+      (gucu_window_equalp): throw on bad arg
+      (gucu_init_type): export window=?
+    * test/Makefile.am: add new test curs_initscr_equal.scm
+    * test/curs_initscr_equal.scm: new test
+
+Michael Gran <spk121@yahoo.com>	2019-11-04
+
+    Prefer scm_is_false syntax
+    
+    Rather than testing equality to SCM_BOOL_F directly
+    
+    * src/ncurses/type.c (_scm_from_window_full): use scm_is_false
+
+Michael Gran <spk121@yahoo.com>	2019-11-03
+
+    Remove some unused variables
+    
+    * src/ncurses/panel_type.c (free_panel, gucu_make_panel_x): unused variables
+
+Michael Gran <spk121@yahoo.com>	2019-11-03
+
+    Use SCM_EOL to terminate scm_misc_error
+    
+    * src/ncurses/curs_func.c (curs_bad_state_error): modified
+    * src/ncurses/form_func.c (form_bad_state_error, form_connected_error)
+      (form_current_field_error, form_invalid_field_error, form_not_connected_error)
+      (form_not_posted_error, form_posted_error, gucu_current_field): modified
+    * src/ncurses/menu_func.c (menu_posted_error, menu_not_connected_error)
+      (gucu_current_item): modified
+    * src/ncurses/menu_type.c (gucu_new_menu): modified
+    * src/ncurses/panel_func.c (gucu_panel_hidden_p): modified
+
+Michael Gran <spk121@yahoo.com>	2019-11-03
+
+    New equality predicates item=? and menu=?
+    
+    * src/ncurses/menu.scm: export menu=? and item=?
+    * src/ncurses/menu_type.c (gucu_item_equal_p, gucu_menu_equal_p: new functions
+      (gucu_menu_init_type): new exports menu=? and item=?
+    * src/ncurses/menu_type.h (gucu_item_equal_p, gucu_menu_equal_p): export new functions
+    * src/Makefile.am: add menu_equal.scm test
+    * test/menu_equal.scm: new test
+    * test/mitem_current_set_current_item.scm: use item=?
+
+Merge: eb638d8 e66deb5
+Mike Gran <spk121@yahoo.com>	2019-10-09
+
+    Merge branch 'master' of ssh://git.sv.gnu.org/srv/git/guile-ncurses
+
+Mike Gran <spk121@yahoo.com>	2019-10-09
+
+    Document and fix VTIME and VMIN getter/setter
+    
+    * src/ncurses/extra.scm (termios-vtime-get, termios-vtime-set!): document
+      (termios-vmin-get, termios-vmin-set!): document
+      (termios-vmin-get, termios-vmin-set!): don't confuse VMIN and VTIME
+
+Mike Gran <spk121@yahoo.com>	2019-10-09
+
+    Typo in NEWS
+    
+    * NEWS: updated
+
+Michael Gran <spk121@yahoo.com>	2019-10-09
+
+    Remove some doc references to 8-bit chars
+
+Michael Gran <spk121@yahoo.com>	2019-10-09
+
+    change foreign objects to smobs in documentation
+
+Michael Gran <spk121@yahoo.com>	2019-10-09
+
+    Avoid signed char error causing getwin/putwin failure
+    
+    * src/ncurses/curs_port.c (port_write): handle negative chars
+
+Michael Gran <spk121@yahoo.com>	2019-10-09
+
+    prefer foreign objects to smobs for forms
+    
+    * src/ncurses/form_func.c: form_tag becomes form_fo_type, field_tag becomes field_fo_type
+      (gucu_form_request_name, gucu_form_sub, gucu_set_form_sub_x): use FO
+      (gucu_set_form_sub_x, gucu_form_init_function): use FO
+    * src/ncurses/form_spec.c: whitespace
+    * src/ncurses/form_type.c (equalp_field, mark_field, print_field): removed
+      (gc_free_field, gc_free_form): now returns void
+      (equalp_form, mark_form, print_form): removed
+      (_scm_is_field, _scm_to_field, _scm_from_field): removed
+      (_scm_is_form, _scm_to_form): use FO
+      (gucu_new_form, gucu_form_fields, gucu_set_form_fields_x): use FO
+      (gucu_init_form_type): use FO
+    * src/ncurses/form_type.h: gc_free_form returns null, gc_free_field returns null
+
+Michael Gran <spk121@yahoo.com>	2019-10-09
+
+    prefer foreign objects to smobs in menu types
+    
+    * src/ncurses/menu_func.c (gucu_set_menu_win, gucu_set_menu_sub): use FO
+      (gucu_menu_win, gucu_menu_sub): use foreign objects
+    * src/ncurses/menu_type.c (equalp_item, mark_item, print_item): removed
+      (equalp_menu, mark_menu, print_menu): removed
+      (_scm_is_item, _scm_to_item, _scm_from_item): use fo
+      (gc_free_item): returns void
+      (_scm_is_menu, _scm_to_menu, _scm_from_menu): use fo
+      (gucu_menu_init_type): modified
+
+Michael Gran <spk121@yahoo.com>	2019-10-09
+
+    Prefer foreign objects to smobs for panels
+    
+    * src/ncurses/panel_type.c (_scm_is_panel, _scm_to_panel): use foreign objects
+      (free_panel, gucu_make_panel_x): use foreign objects
+    * src/ncurses/type.c: remove window_tag
+    * src/ncurses/type.h: remove window_tag
+
+Michael Gran <spk121@yahoo.com>	2019-10-08
+
+    Use foreign object, not smob, for termios type
+    
+    * src/ncurses/extra_type.c: remove termios_tag global.  New global termios_fo_type;
+      (equalp_termios, mark_termios, print_termios): removed
+      (gc_free_termios): now returns void
+      (_scm_is_termios, _scm_to_termios, _scm_from_termios, gc_free_termios)
+      (new_termios, gucu_extra_init_type): use foreign object
+
+Michael Gran <spk121@yahoo.com>	2019-10-08
+
+    getparent should use foreign object, not smob
+    
+    * src/ncurses/curs_spec.c (gucu_getparent): modified
+
+Michael Gran <spk121@yahoo.com>	2019-10-08
+
+    Remove guile 1.6 compatibility layer
+    * src/ncurses/Makefile.am: remove compat.c compat.h
+    * src/ncurses/compat.c: removed
+    * src/ncurses/compat.h: removed
+    * src/ncurses/curs_const.c: don't include compat.h
+    * src/ncurses/curs_func.c: ditto
+    * src/ncurses/curs_port.c: ditto
+    * src/ncurses/curs_spec.c: ditto
+    * src/ncurses/eti_const.c: ditto
+    * src/ncurses/extra_const.c: ditto
+    * src/ncurses/extra_func.c: ditto
+    * src/ncurses/extra_type.c: ditto
+    * src/ncurses/form_const.c: ditto
+    * src/ncurses/form_func.c: ditto
+    * src/ncurses/form_spec.c: ditto
+    * src/ncurses/form_type.c: ditto
+    * src/ncurses/gucuconfig.h: remove GUILE_1_POINT_6 test
+    * src/ncurses/menu_const.c: don't use compat.h
+    * src/ncurses/menu_func.c: ditto
+    * src/ncurses/menu_spec.c: ditto
+    * src/ncurses/menu_type.c: ditto
+    * src/ncurses/panel_func.c: ditto
+    * src/ncurses/panel_type.c: ditto
+    * src/ncurses/slk_func.c: ditto
+    * src/ncurses/type.c: ditto
+
+Michael Gran <spk121@yahoo.com>	2019-10-08
+
+    convert window and screen from smobs to foreign objects
+    
+    * src/ncurses/type.h: new extern window_fo_type
+    * src/ncurses/type.c: new global screen_fo_type, window_fo_type
+      (print_screen, mark_window, print_window): removed
+      (gc_free_screen, gc_free_window): return type now void
+      (_scm_is_screen, _scm_to_screen, _scm_to_screen_and_ports): use FO
+      (_scm_from_screen_and_ports, _scm_free_screen): use FO
+      (_scm_is_window, _scm_from_window_full, gc_free_window): use FO
+      (gucu_init_type): updated
+
+Michael Gran <spk121@yahoo.com>	2019-10-08
+
+    Use version of guile detected by configure in test runner
+    
+    * test/Makefile.am (SCM_LOG_COMPILER): use $(GUILE)
+
+Michael Gran <spk121@yahoo.com>	2019-09-04
+
+    new procedure openpt to open pseudoterminals ports
+    
+    * configure.ac: test for posix_openpt, O_RDWR, O_NOCTTY
+    * src/ncurses/extra.scm: export openpt, O_RDWR, O_NOCTTY
+    * src/ncurses/extra_const.c (gucu_O_RDWR, gucu_O_NOCTTY): new variables
+      (gucu_extra_init_const): initialize new variables
+    * src/ncurses/extra_func.c (gucu_openpt): new procedure
+      (gucu_extra_init_function): export new procedure to scheme
+    * src/ncurses/extra_func.h: declare gucu_openpt
+    * doc/guile-ncurses.texi (Pseudoterminal helper functions): update docs
+      for openpt, O_RDWR, O_NOCTTY
+
+Michael Gran <spk121@yahoo.com>	2019-09-04
+
+    ptsname had uninitialized file descriptor
+    
+    * src/ncurses/extra_func.c (gucu_ptsname): unitialized file descriptor
+
+Mike Gran <spk121@yahoo.com>	2017-04-08
+
+    Update ChangeLog
+    
+    * ChangeLog: updated
+
 Mike Gran <spk121@yahoo.com>	2017-04-08
 
     make config.rpath executable

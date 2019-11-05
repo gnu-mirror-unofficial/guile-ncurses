@@ -1,18 +1,18 @@
 The README file for GNU Guile-Ncurses
 
-  Copyright (C) 2009, 2010, 2011, 2014, 2016 Free Software Foundation, Inc.
+  Copyright (C) 2009, 2010, 2011, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-This is GNU Guile-Ncurses v2.2.  It provides functionality to allow
+This is GNU Guile-Ncurses v3.0.  It provides functionality to allow
 programs written in the GNU Guile interpreter of the Scheme
 programming language to interact with character screens in a
 terminal-independent manner.  It is a wrapper to the underlying
 ncurses library.
 
-This library can be found at http://www.gnu.org/software/guile-ncurses/
+This library can be found at https://www.gnu.org/software/guile-ncurses/
 
 It provides bindings for most of the ncurses ecosystem. The base
 ncurses library is for creating simple text applications. The
@@ -28,7 +28,7 @@ Depending on how it is compiled, Guile-Ncurses will use either the
 locales like ASCII or Latin1, or the "wide" version of the ncurses
 libraries, which can handle UTF-8 locales.
 
-A version of Guile >= 2.0.11 and a version of Ncurses >= 6.0 is
+A version of Guile >= 2.2.4 and a version of Ncurses >= 6.0 is
 preferred. Earlier releases of Guile or Ncurses have not been tested.
 
 For more information on the current state of the build on Cygwin,
@@ -105,6 +105,9 @@ that you need to get correct.
        warnings.  This won't have an effect on how the library
        is actually built.
 
+--enable-hardening: this enables some stack protection features and some
+       tests I like to use when developing.  This might be generally
+       useful, depending on your distro and compiler.
 
 For an explanation of the copying restrictions for this package, see
 COPYING.LESSER.
