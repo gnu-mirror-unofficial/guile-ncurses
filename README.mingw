@@ -1,43 +1,10 @@
 A README file for using GNU Guile-Ncurses on MinGW
 
-  Copyright (C) 2014, 2016 Free Software Foundation, Inc.
+  Copyright (C) 2014, 2016, 2019 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-I tried to test guile-ncurses on both flavors of MinGW:
-the version from mingw.org, and the mingw-w64.org version.
-
-* mingw.org
-
-On MinGW, which is intentionally a bare-bones environment, the
-dependencies of Guile 2.0.13 need to be built before Guile itself can
-be built.
-
-Guile 2.0.13 depends on pkg-config.  The current pkg-config 0.29.1
-itself depends on Glib.  The current Glib 2.50.1 will not compile on
-current MinGW on Windows 10 Anniversary Edition.
-
-* mingw-w64.org
-
-This version of guile-ncurses has been built and tested on the
-MinGW-w64 fork of the MinGW project. I used the version of
-Guile-2.0.11 and ncurses available from their Pacman package manager.
-
-There was some difficulty with the pkg-config information for Guile in
-this version of mingw.  Somewhere in the bowels of pkg-config,
-guile-config, or autoconf, it seems to be including both static
-dependencies and DLL dependencies in the GUILE_LDFLAGS makefile
-variable.
-
-To get it to build, I had to specify Guile's library dependencies
-explicitly, like so...
- ./configure
- make GUILE_LDFLAGS="-lguile-2.0 -lgc"
-
-Note that the functionality for setting default colors is not working
-on MinGW at the moment. Nor is SLK attributes.
-
-If one does attempt to get it to work, remember to set the
-environment variable TERM=#w32con when attempting to use it.
+This release of guile-ncurses is broken for MinGW, and will
+require a better version of Guile on those platforms to work.
