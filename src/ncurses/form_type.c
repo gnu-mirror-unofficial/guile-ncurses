@@ -270,29 +270,24 @@ _scm_is_form (SCM x)
 FORM *
 _scm_to_form (SCM x)
 {
-  struct gucu_form *gf;
-
   scm_assert_foreign_object_type (form_fo_type, x);
-
-  gf = (struct gucu_form *) scm_foreign_object_ref (x, 0);
-
-  return (FORM *) gf->form;
+  return (FORM *) scm_foreign_object_ref (x, 0);
 }
 
 void
 gc_free_form (SCM x)
 {
-  struct gucu_form *form;
   int retval;
 
-  form = (struct gucu_form *) scm_foreign_object_ref (x, 0);
+  FORM *form = (FORM *) scm_foreign_object_ref (x, 0);
 
-  if (form != NULL && form->form != NULL)
+  if (form != NULL)
     {
-      FIELD **pfields = form_fields (form->form);
+      int len = field_count (form);
+      FIELD **pfields = form_fields (form);
 
-      retval = free_form (form->form);
-      form->form = (FORM *) NULL;
+      retval = free_form (form);
+      scm_foreign_object_set_x (x, 0, NULL);
       if (retval == E_BAD_ARGUMENT)
         {
           scm_error_scm (scm_from_locale_symbol ("ncurses"),
@@ -311,19 +306,18 @@ gc_free_form (SCM x)
         }
 
       /* Decrease the refcount and maybe free the fields.  */
-      while (*pfields != NULL)
+      for (int i = 0; i < len; i ++)
         {
-          field_decrease_refcount (*pfields);
-          if (field_get_refcount (*pfields) == 0)
-            free_field (*pfields);
-          pfields++;
+          field_decrease_refcount (pfields[i]);
+          if (field_get_refcount (pfields[i]) == 0)
+            free_field (pfields[i]);
         }
+      free (pfields);
 
       /* Release the hold on any windows.  */
-      form->win_guard = SCM_BOOL_F;
-      form->sub_guard = SCM_BOOL_F;
+      scm_foreign_object_set_x (x, 1, SCM_UNPACK_POINTER (SCM_BOOL_F));
+      scm_foreign_object_set_x (x, 2, SCM_UNPACK_POINTER (SCM_BOOL_F));
     }
-  scm_foreign_object_set_x (x, 0, NULL);
 }
 
 SCM
@@ -335,7 +329,6 @@ gucu_is_form_p (SCM x)
 SCM
 gucu_new_form (SCM fields)
 {
-  struct gucu_form *gf;
   size_t len;
   FIELD **c_fields;
   SCM fobj;
@@ -352,16 +345,14 @@ gucu_new_form (SCM fields)
 
   // Step 1: allocate memory
   len = scm_to_size_t (scm_length (fields));
-  gf = scm_gc_malloc (sizeof (struct gucu_form), "gucu_form");
-  c_fields = scm_gc_malloc (sizeof (FIELD *) * (len + 1), "gucu_form");
+  c_fields = malloc (sizeof (FIELD *) * (len + 1));
 
   // Step 2: initialize it with C code
-  gf->form = 0;
-  gf->win_guard = SCM_BOOL_F;
-  gf->sub_guard = SCM_BOOL_F;
-
   // Step 3: Create the foreign object
-  fobj = scm_make_foreign_object_1 (form_fo_type, gf);
+  fobj =
+    scm_make_foreign_object_3 (form_fo_type, NULL,
+                               SCM_UNPACK_POINTER (SCM_BOOL_F),
+                               SCM_UNPACK_POINTER (SCM_BOOL_F));
 
   // Step 4: Finish the initialization
   for (i = 0; i < len; i++)
@@ -371,9 +362,9 @@ gucu_new_form (SCM fields)
     }
   c_fields[len] = (FIELD *) NULL;
 
-  gf->form = new_form (c_fields);
+  FORM *form = new_form (c_fields);
 
-  if (gf->form == NULL)
+  if (form == NULL)
     {
       free (c_fields);
       if (errno == E_BAD_ARGUMENT)
@@ -406,6 +397,7 @@ gucu_new_form (SCM fields)
       entry = scm_list_ref (fields, scm_from_int (i));
       field_increase_refcount (c_fields[i]);
     }
+  scm_foreign_object_set_x (fobj, 0, form);
 
   return fobj;
 }
@@ -414,23 +406,22 @@ gucu_new_form (SCM fields)
 SCM
 gucu_form_fields (SCM form)
 {
-  struct gucu_form *gf;
   int i;
 
   scm_assert_foreign_object_type (form_fo_type, form);
 
-  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
-  if (gf == NULL || gf->form == NULL)
+  FORM *c_form = (FORM *) scm_foreign_object_ref (form, 0);
+  if (c_form == NULL)
     return SCM_EOL;
   else
     {
-      int len = field_count (gf->form);
+      int len = field_count (c_form);
       if (len == ERR || len == 0)
         return SCM_EOL;
       else
         {
           FIELD **pfields;
-          pfields = form_fields (gf->form);
+          pfields = form_fields (c_form);
           SCM list = SCM_EOL;
           if (pfields == NULL)
             return SCM_EOL;
@@ -457,7 +448,6 @@ gucu_set_form_fields_x (SCM form, SCM fields)
 {
   SCM_ASSERT (_scm_is_form (form), form, SCM_ARG1, "set-form-fields!");
 
-  struct gucu_form *gf;
   FIELD **c_fields;
   SCM entry;
   size_t i;
@@ -470,21 +460,20 @@ gucu_set_form_fields_x (SCM form, SCM fields)
   /* FIXME: Check that all of the fields are either unattached or are attached to this
      form.  Is there a way to do that check?  */
 
-  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
-  if (gf != NULL && gf->form != NULL)
+  FORM *c_form = (FORM *) scm_foreign_object_ref (form, 0);
+  if (c_form != NULL)
     {
       FIELD **pfield_prev = NULL;
       int len_prev;
       int len_cur;
 
       /* Hold on to the old fields list.  */
-      len_prev = field_count (gf->form);
-      pfield_prev = form_fields (gf->form);
+      len_prev = field_count (c_form);
+      pfield_prev = form_fields (c_form);
 
       /* Make a new fields list.  */
       len_cur = scm_to_int (scm_length (fields));
-      c_fields =
-        scm_gc_malloc (sizeof (FIELD *) * (len_cur + 1), "set-form-fields!");
+      c_fields = malloc (sizeof (FIELD *) * (len_cur + 1));
       for (i = 0; i < len_cur; i++)
         {
           entry = scm_list_ref (fields, scm_from_int (i));
@@ -493,7 +482,7 @@ gucu_set_form_fields_x (SCM form, SCM fields)
       c_fields[len_cur] = (FIELD *) NULL;
 
       /* Attach the new fields to the form.  */
-      ret = set_form_fields (gf->form, c_fields);
+      ret = set_form_fields (c_form, c_fields);
       if (ret == E_BAD_ARGUMENT)
         scm_out_of_range ("set-form-fields!", fields);
       else if (ret == E_CONNECTED)
@@ -516,6 +505,7 @@ gucu_set_form_fields_x (SCM form, SCM fields)
               if (field_get_refcount (pfield_prev[i]) == 0)
                 free_field (pfield_prev[i]);
             }
+          free (pfield_prev);
         }
     }
 
@@ -523,21 +513,20 @@ gucu_set_form_fields_x (SCM form, SCM fields)
 }
 
 
+#define makeFO(a,b,c) scm_make_foreign_object_type((a),(b),(c))
+#define u8sym(x) scm_from_utf8_symbol(x)
 void
 gucu_form_init_type ()
 {
-  field_fo_type =
-    scm_make_foreign_object_type (scm_from_utf8_symbol ("field"),
-                                  scm_list_1 (scm_from_utf8_symbol ("data")),
-                                  gc_free_field);
+  field_fo_type = makeFO (u8sym ("field"),
+                          scm_list_1 (u8sym ("field")), gc_free_field);
   scm_c_define_gsubr ("field?", 1, 0, 0, gucu_is_field_p);
   scm_c_define_gsubr ("%field-refcount", 1, 0, 0, gucu_field_refcount);
 
-
-  form_fo_type = scm_make_foreign_object_type (scm_from_utf8_symbol ("form"),
-                                               scm_list_1
-                                               (scm_from_utf8_symbol
-                                                ("data")), gc_free_form);
+  form_fo_type = makeFO (u8sym ("form"),
+                         scm_list_3 (u8sym ("form"),
+                                     u8sym ("window"),
+                                     u8sym ("subwindow")), gc_free_form);
   scm_c_define_gsubr ("form?", 1, 0, 0, gucu_is_form_p);
 
   scm_c_define_gsubr ("new-field", 6, 0, 0, gucu_new_field);

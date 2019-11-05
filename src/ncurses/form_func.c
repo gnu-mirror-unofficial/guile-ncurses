@@ -444,36 +444,21 @@ gucu_form_request_name (SCM req)
 SCM
 gucu_form_sub (SCM form)
 {
-  struct gucu_form *gf;
-
   scm_assert_foreign_object_type (form_fo_type, form);
-
-  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
-
   /* Return the subwindow, if one has already been assigned */
-  if (scm_is_true (gf->sub_guard))
-    return gf->sub_guard;
-
-  /* Otherwise, the subwindow is stdscr */
-  return SCM_BOOL_F;
+  /* Otherwise, the subwindow is stdscr. */
+  return SCM_PACK_POINTER (scm_foreign_object_ref (form, 2));
 }
 
 /* Return the main window of this form */
 SCM
 gucu_form_win (SCM form)
 {
-  struct gucu_form *gf;
-
   scm_assert_foreign_object_type (form_fo_type, form);
 
-  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
-
   /* Return the window, if one has already been assigned */
-  if (scm_is_true (gf->win_guard))
-    return gf->win_guard;
-
-  /* Otherwise, the subwindow is stdscr */
-  return SCM_BOOL_F;
+  /* Otherwise, the window is stdscr. */
+  return SCM_PACK_POINTER (scm_foreign_object_ref (form, 1));
 }
 
 /* Manually free the storage associated with the field */
@@ -794,17 +779,13 @@ gucu_set_form_page_x (SCM form, SCM n)
 SCM
 gucu_set_form_sub_x (SCM form, SCM win)
 {
-  struct gucu_form *gf;
-
   scm_assert_foreign_object_type (form_fo_type, form);
-
-  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
 
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "set-form-sub!");
 
   WINDOW *c_win = _scm_to_window (win);
 
-  int ret = set_form_sub (gf->form, c_win);
+  int ret = set_form_sub (scm_foreign_object_ref (form, 0), c_win);
 
   if (ret == E_BAD_ARGUMENT)
     scm_out_of_range ("set-form-sub!", win);
@@ -818,9 +799,7 @@ gucu_set_form_sub_x (SCM form, SCM win)
   /* If this is stdscr, we shouldn't store it as SUB, because it could
      be returned by form_sub and then possibly freed */
   if (c_win != stdscr)
-    {
-      gf->sub_guard = win;
-    }
+    scm_foreign_object_set_x (form, 2, SCM_UNPACK_POINTER (win));
 
   return SCM_UNSPECIFIED;
 }
@@ -829,17 +808,13 @@ gucu_set_form_sub_x (SCM form, SCM win)
 SCM
 gucu_set_form_win_x (SCM form, SCM win)
 {
-  struct gucu_form *gf;
-
   scm_assert_foreign_object_type (form_fo_type, form);
-
-  gf = (struct gucu_form *) scm_foreign_object_ref (form, 0);
 
   SCM_ASSERT (_scm_is_window (win), win, SCM_ARG2, "set-form-win!");
 
   WINDOW *c_win = _scm_to_window (win);
 
-  int ret = set_form_win (gf->form, c_win);
+  int ret = set_form_win (scm_foreign_object_ref (form, 0), c_win);
 
   if (ret == E_BAD_ARGUMENT)
     scm_out_of_range ("set-form-win!", win);
@@ -853,9 +828,7 @@ gucu_set_form_win_x (SCM form, SCM win)
   /* If this is stdscr, we shouldn't store it as WIN, because it could
      be returned by form_win and then possibly freed */
   if (c_win != stdscr)
-    {
-      gf->win_guard = win;
-    }
+    scm_foreign_object_set_x (form, 1, SCM_UNPACK_POINTER (win));
 
   return SCM_UNSPECIFIED;
 }

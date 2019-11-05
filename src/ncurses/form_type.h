@@ -1,7 +1,7 @@
 /*
   form_type.h
 
-  Copyright 2009, 2010, 2014, 2016 Free Software Foundation, Inc.
+  Copyright 2009, 2010, 2014, 2016, 2019 Free Software Foundation, Inc.
 
   This file is part of GNU Guile-Ncurses.
 
@@ -34,17 +34,6 @@
 #else
 #error "No curses.h file included"
 #endif
-
-struct gucu_form
-{
-  // Pointer to the FORM structure
-  FORM *form;
-
-  // Storage to hold references to the main and sub windows
-  SCM win_guard;
-  SCM sub_guard;
-};
-
 
 GUCU_LOCAL int _scm_is_field (SCM x);
 GUCU_LOCAL FIELD *_scm_to_field (SCM x);
