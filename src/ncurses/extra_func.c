@@ -91,7 +91,7 @@ gucu_cfsetispeed_x (SCM s_termios, SCM s_speed)
   c_termios = _scm_to_termios (s_termios);
   c_speed = scm_to_uint (s_speed);
   c_ret = cfsetispeed (c_termios, c_speed);
-  if (c_ret == 0)
+  if (c_ret == -1)
     scm_syserror ("cfsetispeed!");
   return SCM_UNSPECIFIED;
 }

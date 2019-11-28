@@ -310,7 +310,8 @@ WIDETESTS = \
  form_new_unicode.scm
 
 TERMIOSTESTS = \
- termios_type.scm
+ termios_type.scm \
+ termios_speed.scm
 
 TESTS = $(NOTERMTESTS)
 
