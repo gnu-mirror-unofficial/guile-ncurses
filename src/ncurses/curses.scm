@@ -2,7 +2,7 @@
 
 ;; curses.scm
 
-;; Copyright 2009, 2010, 2011, 2013, 2014, 2016 Free Software Foundation, Inc.
+;; Copyright 2009, 2010, 2011, 2013, 2014, 2016, 2020 Free Software Foundation, Inc.
 
 ;; This file is part of GNU Guile-Ncurses.
 
@@ -23,8 +23,6 @@
 (define-module (ncurses curses)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-34)
-  #:use-module (srfi srfi-35)
   #:export (
 
             %filter
@@ -427,18 +425,6 @@
             syncdown
             syncup
 
-            ;; error codes
-            &curses-error
-            &curses-wrong-type-arg-error
-            &curses-out-of-range-error
-            &curses-bad-state-error
-            &curses-missing-function-error
-            curses-error?
-            curses-wrong-type-arg-error?
-            curses-out-of-range-error?
-            curses-bad-state-error?
-            curses-missing-function-error?
-
             ;; xchar type library
             xchar-attr
             xchar-color
@@ -508,29 +494,6 @@
 
 (if (string=? "1.8" (string-take (version) 3))
     (use-syntax (ice-9 syncase)))
-
-;;; Exceptions
-
-(define-condition-type &curses-error &error
-  curses-error?)
-
-(define-condition-type &curses-wrong-type-arg-error &curses-error
-  curses-wrong-type-arg-error?
-  (arg           curses-wrong-type-arg-error:arg)
-  (expected-type curses-wrong-type-arg-error:expected-type))
-
-(define-condition-type &curses-out-of-range-error &curses-error
-  curses-out-of-range-error?
-  (arg           curses-wrong-type-arg-error:arg))
-
-;; Usually this indicates and attempt to use an already freed object
-(define-condition-type &curses-bad-state-error &curses-error
-  curses-bad-state-error?)
-
-;; Indicates that a function isn't available because
-(define-condition-type &curses-missing-function-error &curses-error
-  curses-missing-function-error?
-  (function           curses-missing-function-error:arg))
 
 ;;; The xchar type library
 
@@ -1169,15 +1132,15 @@ not modified, but the color pair, if any, is modified."
 (define-syntax typecheck
   (syntax-rules ()
     ((_ val type-name type-test)
-     (if (not (type-test val))
-         (raise (condition (&curses-wrong-type-arg-error
-                            (arg val)
-                            (expected-type type-name))))))
+     (unless (type-test val)
+       (scm-error 'wrong-type-arg #f "Wrong type (expecting ~A): ~S"
+                  (list type-name val)
+                  (list val))))
     ((_ val type-name type-test1 type-test2)
-     (if (not (and (type-test1 val) (type-test2 val)))
-         (raise (condition (&curses-wrong-type-arg-error
-                            (arg val)
-                            (expected-type type-name))))))))
+     (unless (and (type-test1 val) (type-test2 val))
+       (scm-error 'wrong-type-arg #f "Wrong type (expecting ~A): ~S"
+                  (list type-name val)
+                  (list val))))))
 
 (define-syntax assert-boolean
   (syntax-rules ()
@@ -1190,10 +1153,10 @@ not modified, but the color pair, if any, is modified."
 (define-syntax assert-list-of-chars
   (syntax-rules ()
     ((_ loc)
-     (if (or (not (list? loc)) (not (every char? loc)))
-         (raise (condition (&curses-wrong-type-arg-error
-                            (arg str)
-                            (expected-type 'list))))))))
+     (unless (and (list? loc) (every char? loc))
+       (scm-error 'wrong-type-arg #f "Wrong type (expecting list of chars): ~S"
+                  (list loc)
+                  (list loc))))))
 (define-syntax assert-pad
   (syntax-rules ()
     ((_ val)
@@ -1220,10 +1183,10 @@ not modified, but the color pair, if any, is modified."
 (define-syntax assert-xstring
   (syntax-rules ()
     ((_ str)
-     (if (or (not (list? str)) (not (every xchar? str)))
-         (raise (condition (&curses-wrong-type-arg-error
-                            (arg str)
-                            (expected-type 'xstring))))))))
+     (unless (and (list? str) (every xchar? str))
+       (scm-error 'wrong-type-arg #f "Wrong type (expecting list of xchars): ~S"
+                  (list str)
+                  (list str))))))
 
 (define (set-xchar-attr! ch attr)
   "Directly set the attributes for a complex character"
@@ -1338,17 +1301,16 @@ any other attributes on or off."
   (assert-window win)
   (assert-integer attrs)
   (let ((ret (%attr-off! win attrs)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+    (unless ret
+      (scm-error 'misc-error "attr-off!" "Bad state" '() #f))))
 
 (define (attr-on! win attrs)
   "Turns on the attributes ATTRS of the given window without turning
 any other attributes on or off."
   (assert-window win)
   (assert-integer attrs)
-  (let ((ret (%attr-on! win attrs)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%attr-on! win attrs)
+    (scm-error 'misc-error "attr-on!" "Bad state" '() #f)))
 
 (define* (attr-set! win attr #:optional color)
   "Sets the given window to have the attributes ATTRS and optionally
@@ -1393,10 +1355,10 @@ element."
   (assert-window win)
   (for-each
    (lambda (ch)
-     (if (and (not (xchar? ch)) (not (eq? ch 0)))
-         (raise (condition (&curses-wrong-type-arg-error
-                            (arg ch)
-                            (expected-type 'xchar))))))
+     (unless (or (xchar? ch) (eq? ch 0))
+       (scm-error 'wrong-type-arg "border" "Wrong type (expecting xchar or 0): ~S"
+                  (list ch)
+                  (list ch))))
    (list left right top bottom topleft topright bottomleft bottomright))
 
   (let ((l (if (equal? left 0)
@@ -1459,16 +1421,15 @@ If X and Y are defined, first move to that position."
                       (%wmove win y x)
                       #t)
                   (%wchgat win n attr color))))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+    (unless ret
+      (scm-error 'misc-error "chgat" "Bad state" '() #f))))
 
 (define (clear win)
   "Copy blanks to every position in the window, and set it to
 be cleared completely and repainted at the next window refresh."
   (assert-window win)
-  (let ((ret (%clear win)))
-    (or ret
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%clear win)
+    (scm-error 'misc-error "clear" "Bad state" '() #f)))
 
 (define (clearok! win bf)
   "If clearok is called with BF as #t, the next call to 'refresh' with
@@ -1481,9 +1442,8 @@ scratch."
 (define (clrtobot win)
   "Erases from the cursor location to the end of screen."
   (assert-window win)
-  (let ((ret (%clrtobot win)))
-    (or ret
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%clrtobot win)
+    (scm-error 'misc-error "clrtobot" "Bad state" '() #f)))
 
 (define (clrtoeol win)
   "Erases from the cursor location to the end of the current line."
@@ -1502,19 +1462,22 @@ initialized."
   "Sets the window's color pair to the color pair number PAIR."
   (assert-window win)
   (assert-integer pair)
-  (let ((ret (%color-set! win pair)))
-    (if (not ret)
-        (raise (condition (&curses-out-of-range-error
-                           (arg win)))))))
+  (unless (%color-set! win pair)
+    (scm-error 'out-of-range "color-set!"
+               "Argument 2 out of range: ~S"
+               (list pair)
+               (list pair))))
 
 (define (curs-set vis)
   "Sets the visiblity of the cursor.  If VIS is 0, it is invisible.
 1 is visible.  2 is very visible.  Returns the previous setting, or #f
 on error."
   (assert-integer vis)
-  (if (or (< vis 0) (> vis 2))
-      (raise (condition (&curses-out-of-range-error
-                         (arg vis)))))
+  (when (or (< vis 0) (> vis 2))
+    (scm-error 'out-of-range "curs-set"
+               "Argument 1 out of range: ~S"
+               (list vis)
+               (list vis)))
   (%curs-set vis))
 
 (define (cursyncup win)
@@ -1562,7 +1525,7 @@ optionally first moving to the location X, Y."
        (%wmove win y x)
        #t)
    (or (%wdelch win)
-       (raise (condition (&curses-bad-state-error))))))
+       (scm-error 'misc-error "delch" "Bad state" '() #f))))
 
 (define* (deleteln win #:key y x)
   "Deletes the line under the cursor in the given window, optionally first
@@ -1574,16 +1537,17 @@ moving to the position X, Y"
        (%wmove win y x)
        #t)
    (or (%winsdelln win -1)
-       (raise (condition (&curses-bad-state-error))))))
+       (scm-error 'misc-error "deleteln" "Bad state" '() #f))))
 
 (define (delscreen scr)
   "Frees a screen created by 'newterm'.  Can't be called before 'endwin'."
-  (if (not (screen? scr))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg scr)
-                         (expected-type 'screen)))))
+  (unless (screen? scr)
+    (scm-error 'wrong-type-arg "delscreen"
+               "Wrong type argument in position 1 (expecting screen): ~S"
+               (list scr)
+               (list scr)))
   (or (%delscreen scr)
-      (raise (condition (&curses-bad-state-error)))))
+       (scm-error 'misc-error "delscreen" "Bad state" '() #f)))
 
 (define (delwin win)
   "Forcibly frees a window.  Note that the garbage collector will normally
@@ -1615,7 +1579,7 @@ The subwindow shares memory with the original window."
   (assert-window win)
   (let ((ret (%dupwin win)))
     (if (not ret)
-        (raise (condition (&curses-bad-state-error)))
+        (scm-error 'misc-error "dupwin" "Bad state" '() #f)
         ret)))
 
 (define (echo!)
@@ -1658,7 +1622,7 @@ char."
   (assert-window win)
   (let ((ret (%getbkgd win)))
     (or ret
-        (raise (condition (&curses-bad-state-error))))))
+        (scm-error 'misc-error "getbkgd" "Bad state" '() #f))))
 
 (define (getbegx win)
   "Returns the beginning x coordinate of the specified window."
@@ -1791,9 +1755,11 @@ two-element list (y x)."
   "Disable line buffering and erase/kill character processing, but,
 only wait TENTHS tenths of seconds for a keypress"
   (assert-integer tenths)
-  (if (or (< tenths 1) (> tenths 255))
-      (raise (condition (&curses-out-of-range-error
-                         (arg tenths)))))
+  (when (or (< tenths 1) (> tenths 255))
+    (scm-error 'out-of-range "halfdelay!"
+               "Argument 1 out of range: ~S"
+               (list tenths)
+               (list tenths)))
   (%halfdelay! tenths))
 
 (define (has-colors?)
@@ -1832,7 +1798,7 @@ If X and Y are given, the cursor is first moved to that location."
            #t)
        (or
         (%whline win (xchar->list ch) n)
-        (raise (condition (&curses-bad-state-error))))))
+        (scm-error 'misc-error "hline" "Bad state" '() #f))))
 
 (define* (inch win #:key y x)
   "Returns a complex character containg the character at the current
@@ -1844,7 +1810,7 @@ position in the given window, optionally first moving to Y, X."
            #t)
        (or
         (list->xchar (%winch win))
-        (raise (condition (&curses-bad-state-error))))))
+        (scm-error 'misc-error "inch" "Bad state" '() #f))))
 
 (define* (inchstr win #:key y x (n -1))
   "Returns a the list of complex characters that are in the window
@@ -1859,7 +1825,7 @@ X are given, it first moves the cursor to that location."
            #t)
        (let ((ret (%winchnstr win n)))
          (if (not ret)
-             (raise (conditions (&curses-bad-state-error)))
+             (scm-error 'misc-error "inchstr" "Bad state" '() #f)
              (map list->xchar ret)))))
 
 (define (idcok! win bf)
@@ -1889,9 +1855,10 @@ success or #f on failure."
   (for-each (lambda (x) (assert-integer x))
             (list color r g b))
   (map (lambda (x)
-         (if (or (< color 0) (> color 1000))
-             (raise (condition (&curses-out-of-range-error
-                                (arg x))))))
+         (when (or (< color 0) (> color 1000))
+           (scm-error 'out-of-range "init-color!"
+                      "Value out of range: ~S"
+                      (list x) (list x))))
        (list r g b))
   (%init-color color r g b))
 
@@ -1909,7 +1876,7 @@ foreground color and color number BACK as its background color.  Returns
   (or (false-if-exception (stdscr))
       (let ((ret (%initscr)))
         (if (not ret)
-            (raise (condition (&curses-bad-state-error)))
+            (scm-error 'misc-error "initscr" "Bad state" '() #f)
             ret))))
 
 (define* (insch win ch #:key y x)
@@ -1920,9 +1887,8 @@ in the given window.  Optionally move to X, Y before doing the insertion."
   (assert-pos-if-defined x y)
   (if (and y x)
       (%wmove win y x))
-  (let ((ret (%winsch win (xchar->list ch))))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%winsch win (xchar->list ch))
+    (scm-error 'misc-error "insch" "Bad state" '() #f)))
 
 (define* (instr win #:key y x (n -1))
   "Returns, as a simple string, the characters starting at the current
@@ -1948,7 +1914,7 @@ under the cursor.  Optionally, move to position X, Y first."
        (%wmove win y x)
        #t)
    (or (%winsdelln win n)
-       (raise (condition (&curses-bad-state-error))))))
+       (scm-error 'misc-error "insdelln" "Bad state" '() #f))))
 
 (define* (insertln win #:key y x)
   "Inserts a line in the current window above the current line,
@@ -1960,7 +1926,7 @@ optionally first moving to the location X, Y. "
        (%wmove win y x)
        #t)
    (or (%winsdelln win 1)
-       (raise (condition (&curses-bad-state-error))))))
+       (scm-error 'misc-error "insertln" "Bad state" '() #f))))
 
 (define* (insstr win str #:key y x (n -1))
   "Insert a character string (a regular scheme string) before the
@@ -1975,9 +1941,8 @@ location before inserting."
   (if (and y x)
       (%wmove win y x)
       #t)
-  (let ((ret (%winsnstr win str n)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%winsnstr win str n)
+    (scm-error 'misc-error "insstr" "Bad state" '() #f)))
 
 (define (intrflush! bf)
   "If BF is #t, this enables the intrflush option.  When an interrupt key
@@ -2109,9 +2074,8 @@ returns #f on error or otherwise the number of characters sent."
   "If BF is true, the terminal will return 8 significant bits on input.  If
 it is #f, 7 bit input will be returned."
   (assert-boolean bf)
-  (let ((ret (%meta! bf)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%meta! bf)
+    (scm-error 'misc-error "meta!" "Bad state" '() #f)))
 
 (define (mouseinterval delay)
   "Set the maximum time, in thousandths of a second, between click and
@@ -2179,31 +2143,28 @@ or #f on failure"
 
 (define (newterm type outport inport)
   "Create a new terminal whose input and output are Guile ports."
-  ;; (if (not (defined? '%newterm))
-  ;;     (raise (condition (&curses-missing-function-error
-  ;;                        (function '%newterm)))))
   (assert-string type)
-  (if (not (output-port? outport))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg outport)
-                         (expected-type 'output-port)))))
-  (if (not (input-port? inport))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg inport)
-                         (expected-type 'input-port)))))
+  (unless (output-port? outport)
+    (scm-error 'wrong-type-arg "newterm" "Wrong type in position 2 (expecting output port): ~S"
+               (list outport)
+               (list outport)))
+  (unless (input-port? inport)
+    (scm-error 'wrong-type-arg "newterm" "Wrong type in position 3 (expecting input port): ~S"
+               (list inport)
+               (list inport)))
   (let ((ret (%newterm type outport inport)))
     (cond
      ((integer? ret)
-      (if (= ret 1)
-          (raise (condition (&curses-wrong-type-arg-error
-                             (arg inport)
-                             (expected-type 'input-port)))))
-      (if (= ret 2)
-          (raise (condition (&curses-wrong-type-arg-error
-                             (arg outport)
-                             (expected-type 'output-port)))))
-      (if (= ret 3)
-          (raise (condition (&curses-bad-state-error)))))
+      (when (= ret 1)
+        (scm-error 'wrong-type-arg "newterm" "Wrong type in position 3 (expecting input port): ~S"
+                   (list inport)
+                   (list inport)))
+      (when (= ret 2)
+        (scm-error 'wrong-type-arg "newterm" "Wrong type in position 2 (expecting output port): ~S"
+                   (list outport)
+                   (list outport)))
+      (when (= ret 3)
+        (scm-error 'misc-error "newterm" "Bad state" '() #f)))
      (else
       ret))))
 
@@ -2237,9 +2198,8 @@ line-feed on output."
 will wait for input."
   (assert-window win)
   (assert-boolean bf)
-  (let ((ret (%nodelay! win bf)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%nodelay! win bf)
+    (scm-error 'misc-error "nodelay!" "Bad state" '() #f)))
 
 (define (noecho!)
   "Disable echoing of typed characters."
@@ -2257,9 +2217,8 @@ bytes that make up an escape sequence.  If it is true, it does not set
 a timer and will likely not interpret function keys correctly."
   (assert-window win)
   (assert-boolean bf)
-  (let ((ret (%notimeout! win bf)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%notimeout! win bf)
+    (scm-error 'misc-error "notimeout!" "Bad state" '() #f)))
 
 ;; I hate it when people are 'clever' with dropping letters
 (define (nooutrefresh win)
@@ -2276,15 +2235,13 @@ a timer and will likely not interpret function keys correctly."
 (define (noqiflush!)
   "Disable flushing of the input and output queues when an interrupt is
 received."
-  (let ((ret (%noqiflush!)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%noqiflush!)
+    (scm-error 'misc-error "noqiflush!" "Bad state" '() #f)))
 
 (define (noraw!)
   "Enable line buffering and erase/kill character processing."
-  (let ((ret (%noraw!)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%noraw!)
+    (scm-error 'misc-error "noraw!" "Bad state" '() #f)))
 
 (define (overlay srcwin dstwin)
   "This procedure overlays window SRCWIN on top of the window DSTWIN,
@@ -2292,9 +2249,8 @@ so that the text in SRCWIN is copied to DSTWIN.  SRCWWIN and DSTWIN
 need not be the same size.  Blanks are not copied."
   (assert-window srcwin)
   (assert-window dstwin)
-  (let ((ret (%overlay srcwin dstwin)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%overlay srcwin dstwin)
+    (scm-error 'misc-error "overlay" "Bad state" '() #f)))
 
 (define (overwrite srcwin dstwin)
   "This procedure overlays window SRCWIN on top of the window DSTWIN,
@@ -2302,9 +2258,8 @@ so that the text in SRCWIN is copied to DSTWIN.  SRCWWIN and DSTWIN
 need not be the same size.  Both text and blanks are copied."
   (assert-window srcwin)
   (assert-window dstwin)
-  (let ((ret (%overwrite srcwin dstwin)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%overwrite srcwin dstwin)
+    (scm-error 'misc-error "overwrite" "Bad state" '() #f)))
 
 (define (pair-content pair)
   "Given a color pair number, this procedure returns a two-element
@@ -2353,16 +2308,14 @@ to be displayed on the screen."
 (define (qiflush!)
   "Enable flushing of the input and output queues when an interrupt is
 received."
-  (let ((ret (%qiflush!)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%qiflush!)
+    (scm-error 'misc-error "qiflush!" "Bad state" '() #f)))
 
 (define (raw!)
   "Disable line buffering, interrupt processing, and erase/kill
 character processing."
-  (let ((ret (%raw!)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%raw!)
+    (scm-error 'misc-error "raw!" "Bad state" '() #f)))
 
 (define (redrawln win beg_line end_line)
   "This procedure notifies curses that it should not use optimization when
@@ -2446,10 +2399,11 @@ initialize the curses data structures as well as the virtual screen."
 (define (set-term term)
   "Switch to a new terminal indicated by the parameter TERM.  TERM has
 the <#screen> type and is created by 'newterm'."
-  (if (not (screen? term))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg term)
-                         (expected-type 'screen)))))
+  (unless (screen? term)
+    (scm-error 'wrong-type-arg "set-term"
+               "Wrong type argument in position 1 (expecting screen): ~S"
+               (list term)
+               (list term)))
   (%set-term term))
 
 (define (setscrreg! win top bot)
@@ -2489,9 +2443,8 @@ to query terminfo capabilities for this terminal."
 
 (define (start-color!)
   "Enables color support for curses.  Usually called directly after 'initscr.'"
-  (let ((ret (%start-color!)))
-    (if (not ret)
-        (raise (condition (&curses-bad-state-error))))))
+  (unless (%start-color!)
+    (scm-error 'misc-error "start-color!" "Bad state" '() #f)))
 
 (define (subpad origwin nlines ncols begin_y begin_x)
   "Creates and returns a window strucure of a subwindow within a pad window.
@@ -2583,10 +2536,11 @@ are not present."
 (define (typeahead! port-or-fd)
   "Specifies an input port or file descriptor to be used for typeahead
 checking."
-  (if (and (not (input-port? port-or-fd)) (not (integer? port-or-fd)))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg port-or-fd)
-                         (expected-type 'input-port)))))
+  (unless (or (input-port? port-or-fd) (integer? port-or-fd))
+    (scm-error 'wrong-type-arg "typeahead!"
+               "Wrong type arg in position 1 (expecting integer or input port): ~S"
+               (list port-or-fd)
+               (list port-or-fd)))
   (cond
    ((port? port-or-fd) (%typeahead! (fileno port-or-fd)))
    (else (%typeahead! port-or-fd))))
@@ -2601,26 +2555,29 @@ The DEL character will be displayed as ^?."
    ((xchar? ch)
     (%unctrl (xchar->list ch)))
    (else
-    (raise (condition (&curses-wrong-type-arg-error
-                       (arg ch)
-                       (expected-type 'xchar)))))))
+    (scm-error 'wrong-type-arg "unctrl"
+               "Wrong type in position 1 (expecting xchar): ~S"
+               (list ch)
+               (list ch)))))
 
 (define (ungetch ch)
   "Pushes back a character onto the input queue so that it can later
 be retrieved with getch.  CH must either be a character or a curses
 key constant like KEY_ENTER."
-  (if (and (not (integer? ch)) (not (char? ch)))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg ch)
-                         (expected-type 'integer/char)))))
+  (unless (or (integer? ch) (char? ch))
+    (scm-error 'wrong-type-arg "ungetch"
+               "Wrong type argument in position 1 (expecting integer or char): ~S"
+               (list ch)
+               (list ch)))
   (%ungetch ch))
 
 (define (ungetmouse event)
   "Pushes the mouse event EVENT back onto the input queue."
-  (if (not (mevent? event))
-      (raise (condition (&curses-wrong-type-arg-error
-                         (arg event)
-                         (expected-type 'mevent)))))
+  (unless (mevent? event)
+    (scm-error 'wrong-type-arg "ungetmouse"
+               "Wrong type argument in position 1 (expecting mevent): ~S"
+               (list event)
+               (list event)))
   (%ungetmouse event))
 
 (define (use-extended-names enable)
@@ -2642,7 +2599,8 @@ If X and Y are given, the cursor is first moved to that location."
            #t)
        (or
         (%wvline win (xchar->list ch) n)
-        (raise (condition (&curses-bad-state-error))))))
+        (scm-error 'misc-error
+                   "vline" "Bad state" '() #f))))
 
 (define (wenclose? win y x)
   "Returns #t if the screen-relative coordinates Y and X are enclosed

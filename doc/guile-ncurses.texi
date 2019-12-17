@@ -20,7 +20,7 @@ This manual is for the GNU Guile-NCurses library, (version
 ncurses library, which provides functionality for updating character
 screens.
 
-Copyright @copyright{} 1998-2010,2011,2013,2014,2016,2019 Free Software Foundation, Inc. @*
+Copyright @copyright{} 1998-2010,2011,2013,2014,2016,2019,2020 Free Software Foundation, Inc. @*
 Copyright @copyright{} 2001-2005 Pradeep Padala @*
 
 @quotation
@@ -224,7 +224,6 @@ The basic curses library: @code{(ncurses curses)}
 * Overview::
 * Features determined at compile time::
 * Curses screen initialization and manipulation routines::
-* Errors and Exceptions::
 * Making rendered characters::
 * Adding characters::
 * Adding strings of characters and attributes::
@@ -3061,7 +3060,6 @@ C-language API.
 * Overview::
 * Features determined at compile time::
 * Curses screen initialization and manipulation routines::
-* Errors and Exceptions::
 * Making rendered characters::
 * Adding characters::
 * Adding strings of characters and attributes::
@@ -3268,7 +3266,7 @@ This is always @code{#t} and it represents that Guile-Ncurses expects
 that characters are stored as UCS4 codepoints.
 @end defvr
 
-@node Curses screen initialization and manipulation routines, Errors and Exceptions, Features determined at compile time, The basic curses library
+@node Curses screen initialization and manipulation routines, Making rendered characters, Features determined at compile time, The basic curses library
 @subsection Curses screen initialization and manipulation routines
 
 @cindex Initialization
@@ -3435,27 +3433,7 @@ The return value is unspecified.
 
 @end deffn
 
-@node Errors and Exceptions, Making rendered characters, Curses screen initialization and manipulation routines, The basic curses library
-@subsection Errors and Exceptions
-
-The curses library uses SRFI-34's raise and SRFI-35 conditions to signal
-errors.
-
-All errors in the curses library are of type @code{&curses-error}.
-
-@deffn Procedure curses-error? err
-Returns true if @var{err} is a @code{&curses-error}
-@end deffn
-
-The wrong type error has two fields: @code{arg} and @code{expected-type}.
-
-@deffn Procedure curses-wrong-type-arg-error? err
-@deffnx Procedure curses-wrong-type-arg-error:arg err
-@deffnx Procedure curses-wrong-type-arg-error:expected-type err
-The predicate and accessors for the wrong type error.
-@end deffn
-
-@node Making rendered characters, Adding characters, Errors and Exceptions, The basic curses library
+@node Making rendered characters, Adding characters, Curses screen initialization and manipulation routines, The basic curses library
 @subsection Making rendered characters
 
 Many curses functions take rendered, complex characters: characters
